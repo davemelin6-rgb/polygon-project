@@ -63,11 +63,14 @@ export default async function handler(req, res) {
       })
     );
 
-    // Save to Supabase if available
+    // Save to Supabase only if we got real data
     if (supabase) {
-      await supabase
-        .from("scores")
-        .upsert(freshResults, { onConflict: "symbol" });
+      const validResults = freshResults.filter(r => r.momentum !== null);
+      if (validResults.length > 0) {
+        await supabase
+          .from("scores")
+          .upsert(validResults, { onConflict: "symbol" });
+      }
     }
 
     for (const row of freshResults) {
