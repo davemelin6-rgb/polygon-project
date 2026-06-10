@@ -1,0 +1,427 @@
+/* ── Hugo wrapper ───────────────────────────────────────── */
+.hugo-wrap {
+  position: fixed;
+  bottom: 2rem;
+  right: -440px;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.75rem;
+  z-index: 1000;
+  transition: right 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.hugo-in {
+  right: 1.5rem;
+}
+
+/* ── Speech bubble ──────────────────────────────────────── */
+.hugo-bubble {
+  background: rgba(8, 15, 26, 0.97);
+  border: 1px solid rgba(0, 180, 255, 0.25);
+  border-radius: 16px 16px 4px 16px;
+  box-shadow: 0 0 40px rgba(0, 180, 255, 0.1), 0 8px 32px rgba(0,0,0,0.5);
+  max-width: 290px;
+  padding: 1.25rem 1.4rem;
+  position: relative;
+}
+
+.hugo-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  right: 24px;
+  border: 10px solid transparent;
+  border-top-color: rgba(0, 180, 255, 0.25);
+  border-bottom: 0;
+}
+
+.hugo-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: #2d4a5f;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  transition: color 0.2s;
+  padding: 0;
+}
+.hugo-close:hover { color: #ff3c50; }
+
+.hugo-name {
+  color: #00b4ff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.hugo-text {
+  color: #8ba0b5;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.hugo-text em {
+  color: #00dc82;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* ── Suggestion chips ───────────────────────────────────── */
+.hugo-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+}
+
+.hugo-chip {
+  background: rgba(0, 180, 255, 0.08);
+  border: 1px solid rgba(0, 180, 255, 0.25);
+  border-radius: 999px;
+  color: #00b4ff;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.7rem;
+  transition: background 0.15s, border-color 0.15s;
+}
+.hugo-chip:hover {
+  background: rgba(0, 180, 255, 0.18);
+  border-color: rgba(0, 180, 255, 0.5);
+}
+
+/* ── Back link ──────────────────────────────────────────── */
+.hugo-back {
+  background: none;
+  border: none;
+  color: #2d4a5f;
+  cursor: pointer;
+  font-size: 0.78rem;
+  margin-top: 0.6rem;
+  padding: 0;
+  transition: color 0.15s;
+}
+.hugo-back:hover { color: #00b4ff; }
+
+/* ── Input row ──────────────────────────────────────────── */
+.hugo-input-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.9rem;
+}
+
+.hugo-input {
+  background: rgba(0, 180, 255, 0.06);
+  border: 1px solid rgba(0, 180, 255, 0.2);
+  border-radius: 8px;
+  color: #c8d8e8;
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.8rem;
+  min-width: 0;
+  outline: none;
+  padding: 0.4rem 0.6rem;
+  transition: border-color 0.15s;
+}
+.hugo-input::placeholder { color: #2d4a5f; }
+.hugo-input:focus { border-color: rgba(0, 180, 255, 0.5); }
+
+.hugo-send {
+  background: rgba(0, 180, 255, 0.15);
+  border: 1px solid rgba(0, 180, 255, 0.3);
+  border-radius: 8px;
+  color: #00b4ff;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.3rem 0.6rem;
+  transition: background 0.15s;
+}
+.hugo-send:hover { background: rgba(0, 180, 255, 0.28); }
+
+/* ── Character ──────────────────────────────────────────── */
+.hugo-char {
+  flex-shrink: 0;
+  animation: hugo-bounce 2.4s ease-in-out infinite;
+}
+
+@keyframes hugo-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+.hugo-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+/* ── Head ───────────────────────────────────────────────── */
+.hugo-head {
+  position: relative;
+  width: 64px;
+  height: 64px;
+}
+
+/* Slicked-back hair */
+.hugo-hair {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 64px;
+  height: 26px;
+  background: linear-gradient(170deg, #1a0f06 40%, #2d1f10 100%);
+  border-radius: 50% 50% 0 0;
+  box-shadow: inset 0 -3px 6px rgba(0,0,0,0.4), 2px -2px 0 #0d0702;
+  z-index: 2;
+}
+
+/* Side parting shine */
+.hugo-hair::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 18px;
+  width: 4px;
+  height: 14px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  transform: rotate(-10deg);
+}
+
+/* Skin-tone face */
+.hugo-face {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(160deg, #e8c49a, #d4a574);
+  border-radius: 42% 42% 38% 38%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 -4px 8px rgba(160,80,20,0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.hugo-eyes {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.hugo-eye {
+  width: 13px;
+  height: 10px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+}
+
+.hugo-pupil {
+  width: 7px;
+  height: 7px;
+  background: #1a1a1a;
+  border-radius: 50%;
+}
+
+.hugo-nose {
+  width: 10px;
+  height: 7px;
+  background: #c08050;
+  border-radius: 50% 50% 60% 60%;
+  box-shadow: inset 0 2px 3px rgba(0,0,0,0.15);
+}
+
+/* Confident Gekko smirk */
+.hugo-mouth {
+  width: 22px;
+  height: 8px;
+  border: 2.5px solid #a06030;
+  border-top: none;
+  border-radius: 0 0 16px 16px;
+  margin-bottom: 4px;
+  transform: translateX(3px) rotate(-4deg);
+}
+
+/* ── Shirt collar ───────────────────────────────────────── */
+.hugo-collar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 52px;
+  height: 14px;
+  background: #f0ede8;
+  margin-top: -2px;
+  position: relative;
+  z-index: 1;
+  gap: 0;
+}
+
+.hugo-collar-l,
+.hugo-collar-r {
+  width: 18px;
+  height: 14px;
+  background: #f0ede8;
+  flex-shrink: 0;
+}
+.hugo-collar-l { border-radius: 0 0 0 4px; transform: skewX(-10deg); }
+.hugo-collar-r { border-radius: 0 0 4px 0; transform: skewX(10deg); }
+
+/* Red power tie */
+.hugo-tie {
+  width: 10px;
+  height: 28px;
+  background: linear-gradient(to bottom, #cc1a1a, #991010);
+  clip-path: polygon(15% 0%, 85% 0%, 100% 65%, 50% 100%, 0% 65%);
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  box-shadow: 1px 2px 4px rgba(0,0,0,0.3);
+}
+
+/* ── Pinstripe suit torso ───────────────────────────────── */
+.hugo-torso {
+  width: 56px;
+  height: 48px;
+  background: repeating-linear-gradient(
+    to right,
+    #1c2438,
+    #1c2438 7px,
+    #212b42 7px,
+    #212b42 8px
+  );
+  border-radius: 8px 8px 4px 4px;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  margin-top: -4px;
+}
+
+/* Lapels */
+.hugo-lapel {
+  position: absolute;
+  width: 20px;
+  height: 30px;
+  background: #141c2e;
+  top: 0;
+}
+
+.hugo-lapel-l {
+  left: 0;
+  border-radius: 0 10px 0 4px;
+  transform: skewX(-6deg);
+}
+
+.hugo-lapel-r {
+  right: 0;
+  border-radius: 10px 0 4px 0;
+  transform: skewX(6deg);
+}
+
+/* Suit arms */
+.hugo-arm {
+  position: absolute;
+  width: 13px;
+  height: 38px;
+  background: repeating-linear-gradient(
+    to right,
+    #1c2438,
+    #1c2438 7px,
+    #212b42 7px,
+    #212b42 8px
+  );
+  border-radius: 6px;
+  top: 4px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.hugo-arm-l {
+  left: -14px;
+  transform: rotate(10deg);
+  transform-origin: top center;
+}
+
+.hugo-arm-r {
+  right: -14px;
+  transform: rotate(-10deg);
+  transform-origin: top center;
+}
+
+/* ── Trousers ───────────────────────────────────────────── */
+.hugo-legs {
+  display: flex;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.hugo-leg {
+  width: 20px;
+  height: 30px;
+  background: linear-gradient(to bottom, #1c2438, #141c2e);
+  border-radius: 3px 3px 6px 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* ── Revive button ──────────────────────────────────────── */
+.hugo-revive {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  background: rgba(8, 15, 26, 0.95);
+  border: 1px solid rgba(0, 180, 255, 0.25);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  cursor: pointer;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 180, 255, 0.12), 0 4px 16px rgba(0,0,0,0.5);
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 0;
+  animation: hugo-bounce 2.4s ease-in-out infinite;
+}
+.hugo-revive:hover {
+  transform: scale(1.12);
+  box-shadow: 0 0 28px rgba(0, 180, 255, 0.28), 0 6px 20px rgba(0,0,0,0.5);
+}
+
+.hugo-revive-face {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.hugo-revive-hair {
+  width: 28px;
+  height: 10px;
+  background: linear-gradient(170deg, #1a0f06, #2d1f10);
+  border-radius: 50% 50% 0 0;
+  margin-bottom: -2px;
+}
+
+.hugo-revive-circle {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(160deg, #e8c49a, #d4a574);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  box-shadow: 0 0 10px rgba(200, 140, 80, 0.3);
+}
