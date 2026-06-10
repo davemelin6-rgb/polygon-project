@@ -12,6 +12,32 @@
   margin-bottom: 3rem;
   position: relative;
   padding-bottom: 2.5rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.logout-btn {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  color: #4a6a88;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 0.55rem 1.1rem;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  margin-top: 0.5rem;
+  white-space: nowrap;
+}
+
+.logout-btn:hover {
+  border-color: rgba(255,60,80,0.3);
+  color: #ff3c50;
+  background: rgba(255,60,80,0.05);
 }
 
 .header::after {

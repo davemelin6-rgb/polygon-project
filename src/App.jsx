@@ -381,7 +381,7 @@ function FinancialIntelligence({ stocks, scoresMap, selected }) {
 }
 
 // ── App ────────────────────────────────────────────────────
-export default function App() {
+export default function App({ session, onLogout }) {
   const [input, setInput]         = useState(DEFAULT_TICKERS);
   const [tickers, setTickers]     = useState(DEFAULT_TICKERS);
   const [stocks, setStocks]       = useState([]);
@@ -440,8 +440,13 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>QuantDiver</h1>
-        <div className="header-eyebrow">Real-Time Quant Scores</div>
+        <div>
+          <h1>QuantDiver</h1>
+          <div className="header-eyebrow">Real-Time Quant Scores</div>
+        </div>
+        <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
+          Sign Out
+        </button>
       </header>
 
       <form className="search-form" onSubmit={handleSubmit}>
