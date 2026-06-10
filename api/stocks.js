@@ -1,12 +1,9 @@
-// api/stocks.js — BriefMe market data endpoint (Polygon.io Stocks Starter)
-//
+// api/stocks.js — Polygon snapshot endpoint
 // GET /api/stocks?tickers=AAPL,MSFT,NVDA
-// Returns delayed (~15 min) snapshot data: price, prev close, change, change %.
 
 const POLYGON_BASE = "https://api.polygon.io";
 const CACHE_TTL_MS = 60_000;
 
-// Module-level cache — persists across requests on a warm Vercel instance.
 const cache = new Map();
 
 export default async function handler(req, res) {

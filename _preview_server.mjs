@@ -12,8 +12,8 @@ try {
   }
 } catch {}
 
-const { default: stocksHandler } = await import("./stocks.js");
-const { default: scoresHandler } = await import("./scores.js");
+const { default: stocksHandler } = await import("./api/stocks.js");
+const { default: scoresHandler } = await import("./api/scores.js");
 
 const server = http.createServer((req, res) => {
   const url   = new URL(req.url, "http://localhost:3456");
