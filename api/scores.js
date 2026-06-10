@@ -5,9 +5,9 @@
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
 import { calcMomentum, calcRisk, calcTechValue } from "../lib/formulas.js";
-import { supabase } from "../lib/supabase.js";
+import { getSupabase } from "../lib/supabase.js";
 
-const STALE_MS = 24 * 60 * 60 * 1000; // recalculate if older than 24h
+const STALE_MS = 24 * 60 * 60 * 1000;
 
 export default async function handler(req, res) {
   const polygonKey = process.env.POLYGON_API_KEY;
@@ -23,14 +23,18 @@ export default async function handler(req, res) {
   const tickers = raw.split(",").map((t) => t.trim().toUpperCase()).filter(Boolean);
   if (!tickers.length) return res.status(400).json({ error: "No valid tickers supplied" });
 
-  // Fetch existing scores from Supabase
-  const { data: existing } = await supabase
-    .from("scores")
-    .select("*")
-    .in("symbol", tickers);
+  const supabase = getSupabase();
+  const cutoff   = Date.now() - STALE_MS;
 
-  const existingMap = Object.fromEntries((existing || []).map(r => [r.symbol, r]));
-  const cutoff = Date.now() - STALE_MS;
+  // Try reading from Supabase if available
+  let existingMap = {};
+  if (supabase) {
+    const { data } = await supabase
+      .from("scores")
+      .select("*")
+      .in("symbol", tickers);
+    existingMap = Object.fromEntries((data || []).map(r => [r.symbol, r]));
+  }
 
   // Determine which tickers need recalculating
   const stale = tickers.filter(ticker => {
@@ -59,18 +63,18 @@ export default async function handler(req, res) {
       })
     );
 
-    // Upsert fresh scores into Supabase
-    await supabase
-      .from("scores")
-      .upsert(freshResults, { onConflict: "symbol" });
+    // Save to Supabase if available
+    if (supabase) {
+      await supabase
+        .from("scores")
+        .upsert(freshResults, { onConflict: "symbol" });
+    }
 
-    // Merge into existingMap
     for (const row of freshResults) {
       existingMap[row.symbol] = row;
     }
   }
 
-  // Build response in requested ticker order
   const scores = tickers.map(ticker => {
     const row = existingMap[ticker];
     if (!row) return { symbol: ticker, momentum: null, risk: null, techValue: null, hasFundamentals: false };
