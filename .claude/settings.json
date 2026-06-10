@@ -3,7 +3,8 @@
     "allow": [
       "Skill(update-config)",
       "Skill(update-config:*)",
-      "Bash(*)"
+      "Bash(*)",
+      "mcp__claude_ai_Supabase__apply_migration"
     ]
   }
 }
