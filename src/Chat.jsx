@@ -41,7 +41,7 @@ export default function Chat({ session }) {
 
     channel.subscribe(async (status) => {
       if (status === "SUBSCRIBED") {
-        await channel.track({ username: profile.username, avatar_color: profile.avatar_color, user_id: session.user.id });
+        await channel.track({ username: profile.username, avatar_color: profile.avatar_color, id: session.user.id });
       }
     });
 
