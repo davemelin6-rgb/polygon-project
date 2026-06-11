@@ -1,42 +1,42 @@
+/* ── Page layout ─────────────────────────────────────────── */
 .login-page {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 }
 
-.login-box {
-  background: rgba(7, 13, 22, 0.95);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 24px;
-  padding: 3rem 3rem 2.5rem;
-  width: 100%;
-  max-width: 420px;
+@media (max-width: 768px) {
+  .login-page { grid-template-columns: 1fr; }
+  .login-left  { display: none; }
+}
+
+/* ── Left — story ────────────────────────────────────────── */
+.login-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem 5rem;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 24px 80px rgba(0,0,0,0.5);
 }
 
-/* Blue → purple top line */
-.login-box::before {
+.login-left::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 5%, #00b4ff 35%, #7c3aed 65%, transparent 95%);
-  opacity: 0.7;
+  top: 0; right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent, rgba(0,180,255,0.2) 30%, rgba(124,58,237,0.2) 70%, transparent);
 }
 
-.login-logo {
-  text-align: center;
+.login-brand {
   margin-bottom: 2.5rem;
 }
 
-.login-logo h1 {
-  font-size: 2.8rem;
+.login-brand h1 {
+  font-size: 3.5rem;
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
   background: linear-gradient(125deg, #ffffff 0%, #c8e4f8 45%, #00b4ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -58,6 +58,87 @@
   padding: 0.25rem 0.9rem;
 }
 
+.login-tagline {
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #dce8f4;
+  line-height: 1.2;
+  margin-bottom: 3rem;
+}
+
+/* ── Value props ─────────────────────────────────────────── */
+.login-props {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.login-prop {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.login-prop-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  background: rgba(0,180,255,0.06);
+  border: 1px solid rgba(0,180,255,0.12);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-prop-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #00b4ff;
+  margin-bottom: 0.4rem;
+}
+
+.login-prop-text {
+  font-size: 0.92rem;
+  color: #4a6a88;
+  line-height: 1.7;
+}
+
+/* ── Right — form ────────────────────────────────────────── */
+.login-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+}
+
+.login-box {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-box-header {
+  margin-bottom: 2.5rem;
+}
+
+.login-welcome {
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #dce8f4;
+  margin-bottom: 0.4rem;
+}
+
+.login-sub {
+  color: #3d5c78;
+  font-size: 0.9rem;
+}
+
+/* ── Form ────────────────────────────────────────────────── */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -115,11 +196,10 @@
   color: #e2f4ff;
   cursor: pointer;
   font-family: inherit;
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   padding: 1rem;
-  text-transform: uppercase;
   transition: all 0.2s;
   box-shadow: 0 4px 20px rgba(0,100,220,0.25);
   margin-top: 0.5rem;
