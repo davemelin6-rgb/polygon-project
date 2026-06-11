@@ -4,8 +4,8 @@ import "./Chat.css";
 
 export default function Chat({ session }) {
   const [profile, setProfile]   = useState(null);
-  const [online, setOnline]     = useState([]);   // other online users
-  const [activeDM, setActiveDM] = useState(null); // { id, username, avatar_color }
+  const [online, setOnline]     = useState([]);   // other online users (presence)
+  const [activeDM, setActiveDM] = useState(null); // { id, username, avatar_color } from DB
   const [messages, setMessages] = useState([]);
   const [input, setInput]       = useState("");
   const [open, setOpen]         = useState(true);
@@ -19,7 +19,7 @@ export default function Chat({ session }) {
       .then(({ data }) => setProfile(data));
   }, [session]);
 
-  // Realtime presence
+  // Realtime presence — track self, collect others
   useEffect(() => {
     if (!session || !profile) return;
 
@@ -41,7 +41,11 @@ export default function Chat({ session }) {
 
     channel.subscribe(async (status) => {
       if (status === "SUBSCRIBED") {
-        await channel.track({ username: profile.username, avatar_color: profile.avatar_color, id: session.user.id });
+        await channel.track({
+          username:     profile.username,
+          avatar_color: profile.avatar_color,
+          id:           session.user.id,
+        });
       }
     });
 
@@ -49,33 +53,50 @@ export default function Chat({ session }) {
     return () => supabase.removeChannel(channel);
   }, [session, profile]);
 
-  // Load DM messages when activeDM changes
-  useEffect(() => {
-    if (!activeDM || !profile) return;
-    const myId   = session.user.id;
-    const theirId = activeDM.id;
+  // When user clicks a member, fetch their real DB profile to get a guaranteed UUID
+  async function openDM(presenceUser) {
+    const { data } = await supabase.from("profiles")
+      .select("id, username, avatar_color")
+      .eq("username", presenceUser.username)
+      .single();
+    if (data) {
+      setActiveDM(data);
+      setMessages([]);
+    }
+  }
 
-    supabase.from("messages")
-      .select("*")
-      .or(`and(user_id.eq.${myId},recipient_id.eq.${theirId}),and(user_id.eq.${theirId},recipient_id.eq.${myId})`)
-      .order("created_at", { ascending: true })
-      .limit(100)
-      .then(({ data }) => setMessages(data || []));
-  }, [activeDM, profile]);
-
-  // Realtime new DM messages
+  // Load conversation when activeDM is set
   useEffect(() => {
     if (!activeDM || !session) return;
     const myId    = session.user.id;
     const theirId = activeDM.id;
 
-    const sub = supabase.channel(`dm-${myId}-${theirId}`)
+    supabase.from("messages")
+      .select("*")
+      .or(`user_id.eq.${myId},user_id.eq.${theirId}`)
+      .or(`recipient_id.eq.${myId},recipient_id.eq.${theirId}`)
+      .order("created_at", { ascending: true })
+      .limit(100)
+      .then(({ data }) => setMessages(data || []));
+  }, [activeDM, session]);
+
+  // Realtime — listen for new messages in this conversation
+  useEffect(() => {
+    if (!activeDM || !session) return;
+    const myId    = session.user.id;
+    const theirId = activeDM.id;
+
+    const sub = supabase.channel(`dm-msgs`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, payload => {
         const m = payload.new;
         const relevant =
           (m.user_id === myId    && m.recipient_id === theirId) ||
           (m.user_id === theirId && m.recipient_id === myId);
-        if (relevant) setMessages(prev => [...prev, m]);
+        if (relevant) setMessages(prev => {
+          // Avoid duplicate if we already added it optimistically
+          if (prev.some(x => x.id === m.id)) return prev;
+          return [...prev, m];
+        });
       })
       .subscribe();
 
@@ -89,19 +110,35 @@ export default function Chat({ session }) {
 
   async function sendMessage() {
     if (!input.trim() || !profile || !activeDM) return;
-    await supabase.from("messages").insert({
+    const text = input.trim();
+    setInput("");
+
+    // Optimistic: show message immediately
+    const optimistic = {
+      id:           `opt-${Date.now()}`,
       user_id:      session.user.id,
       username:     profile.username,
-      content:      input.trim(),
+      content:      text,
       recipient_id: activeDM.id,
-    });
-    setInput("");
+      created_at:   new Date().toISOString(),
+    };
+    setMessages(prev => [...prev, optimistic]);
+
+    // Persist to DB
+    const { data } = await supabase.from("messages").insert({
+      user_id:      session.user.id,
+      username:     profile.username,
+      content:      text,
+      recipient_id: activeDM.id,
+    }).select().single();
+
+    // Replace optimistic with real row
+    if (data) {
+      setMessages(prev => prev.map(m => m.id === optimistic.id ? data : m));
+    }
   }
 
-  function avatarLetter(username) {
-    return (username || "?")[0].toUpperCase();
-  }
-
+  function avatarLetter(username) { return (username || "?")[0].toUpperCase(); }
   function timeStr(ts) {
     return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }
@@ -114,7 +151,7 @@ export default function Chat({ session }) {
     </button>
   );
 
-  // ── DM conversation view ───────────────────────────────────
+  // ── DM conversation ────────────────────────────────────────
   if (activeDM) return (
     <div className="chat-panel">
       <div className="chat-header">
@@ -137,7 +174,11 @@ export default function Chat({ session }) {
         )}
         {messages.map(m => (
           <div key={m.id} className={`chat-msg ${m.user_id === session.user.id ? "own" : ""}`}>
-            <div className="chat-avatar" style={{ background: m.user_id === session.user.id ? (profile?.avatar_color || "#00b4ff") : (activeDM.avatar_color || "#00b4ff") }}>
+            <div className="chat-avatar" style={{
+              background: m.user_id === session.user.id
+                ? (profile?.avatar_color || "#00b4ff")
+                : (activeDM.avatar_color || "#00b4ff")
+            }}>
               {avatarLetter(m.username)}
             </div>
             <div className="chat-msg-body">
@@ -166,7 +207,7 @@ export default function Chat({ session }) {
     </div>
   );
 
-  // ── Member picker view ─────────────────────────────────────
+  // ── Member picker ──────────────────────────────────────────
   return (
     <div className="chat-panel">
       <div className="chat-header">
@@ -184,7 +225,7 @@ export default function Chat({ session }) {
           <>
             <p className="chat-picker-label">Online now — tap to chat</p>
             {online.map((u, i) => (
-              <button key={i} className="chat-picker-row" onClick={() => setActiveDM(u)}>
+              <button key={i} className="chat-picker-row" onClick={() => openDM(u)}>
                 <div className="chat-avatar" style={{ background: u.avatar_color || "#00b4ff" }}>
                   {avatarLetter(u.username)}
                 </div>
