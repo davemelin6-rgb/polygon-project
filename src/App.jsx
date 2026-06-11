@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 import Hugo from "./Hugo.jsx";
+import Chat from "./Chat.jsx";
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
 const REFRESH_INTERVAL = 60_000;
@@ -492,6 +493,7 @@ export default function App({ session, onLogout }) {
         <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>
       )}
       <Hugo />
+      <Chat session={session} />
     </div>
   );
 }
