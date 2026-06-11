@@ -6,8 +6,53 @@
 }
 
 @media (max-width: 768px) {
-  .login-page { grid-template-columns: 1fr; }
-  .login-left  { display: none; }
+  .login-page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* Left panel: compact header strip, hide the long story content */
+  .login-left {
+    padding: 2rem 1.5rem 1.5rem;
+    justify-content: flex-start;
+  }
+
+  .login-left::after { display: none; }
+
+  .login-brand h1 {
+    font-size: 2rem;
+  }
+
+  .login-badge {
+    font-size: 0.6rem;
+    padding: 0.2rem 0.7rem;
+  }
+
+  .login-tagline {
+    font-size: 1.1rem;
+    margin-bottom: 0;
+    display: none;
+  }
+
+  /* Hide story text and product cards on mobile — keep it clean */
+  .login-origin,
+  .login-section-label,
+  .login-props,
+  .login-disclaimer {
+    display: none;
+  }
+
+  .login-brand {
+    margin-bottom: 0;
+  }
+
+  /* Right panel fills remaining space */
+  .login-right {
+    padding: 1.5rem 1.5rem 2.5rem;
+    align-items: flex-start;
+  }
+
+  .login-welcome { font-size: 1.4rem; }
 }
 
 /* ── Left — story ────────────────────────────────────────── */
