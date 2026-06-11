@@ -17,6 +17,12 @@
   justify-content: space-between;
 }
 
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
 .gear-btn {
   background: rgba(0,180,255,0.08);
   border: 1px solid rgba(0,180,255,0.25);

@@ -3,6 +3,7 @@ import "./App.css";
 import Hugo from "./Hugo.jsx";
 import Chat from "./Chat.jsx";
 import Settings from "./Settings.jsx";
+import QDLogo from "./QDLogo.jsx";
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
 const REFRESH_INTERVAL = 60_000;
@@ -487,10 +488,13 @@ export default function App({ session, onLogout }) {
   return (
     <div className="app">
       <header className="header">
-        <div>
-          <h1>QuantDiver</h1>
-          <div className="header-eyebrow">Real-Time Quant Scores</div>
-          {username && <div className="header-welcome">Welcome back, {username}</div>}
+        <div className="header-brand">
+          <QDLogo size={52} />
+          <div>
+            <h1>QuantDiver</h1>
+            <div className="header-eyebrow">Real-Time Quant Scores</div>
+            {username && <div className="header-welcome">Welcome back, {username}</div>}
+          </div>
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
           <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>

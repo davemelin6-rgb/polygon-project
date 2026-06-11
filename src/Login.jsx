@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "./supabaseClient";
 import "./Login.css";
+import QDLogo from "./QDLogo.jsx";
 
 const PROPS = [
   {
@@ -55,7 +56,10 @@ export default function Login({ onLogin }) {
       {/* Left — value proposition */}
       <div className="login-left">
         <div className="login-brand">
-          <h1>QuantDiver</h1>
+          <div className="login-brand-top">
+            <QDLogo size={56} />
+            <h1>QuantDiver</h1>
+          </div>
           <span className="login-badge">● MEMBERS ONLY</span>
         </div>
 
@@ -111,7 +115,10 @@ export default function Login({ onLogin }) {
         <div className="login-box">
           {/* Logo shown only on mobile */}
           <div className="login-mobile-brand">
-            <h1 style={{ fontSize:"2rem", fontWeight:700, letterSpacing:"-0.04em", background:"linear-gradient(125deg,#fff 0%,#c8e4f8 45%,#00b4ff 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", lineHeight:1 }}>QuantDiver</h1>
+            <div style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
+              <QDLogo size={40} />
+              <h1 style={{ fontSize:"2rem", fontWeight:700, letterSpacing:"-0.04em", background:"linear-gradient(125deg,#fff 0%,#c8e4f8 45%,#00b4ff 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", lineHeight:1 }}>QuantDiver</h1>
+            </div>
             <span className="login-badge">● MEMBERS ONLY</span>
           </div>
 

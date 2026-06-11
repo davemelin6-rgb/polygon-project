@@ -62,6 +62,13 @@
   margin-bottom: 2.5rem;
 }
 
+.login-brand-top {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
 .login-brand h1 {
   font-size: clamp(1.6rem, 5vw, 3.5rem);
   font-weight: 700;
