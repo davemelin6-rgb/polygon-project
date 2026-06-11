@@ -5,6 +5,7 @@ import Chat from "./Chat.jsx";
 import Settings from "./Settings.jsx";
 import QDLogo from "./QDLogo.jsx";
 import Sparkline from "./Sparkline.jsx";
+import PriceChart from "./PriceChart.jsx";
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
 const PRICE_INTERVAL  = 10_000;  // fast price refresh
@@ -567,6 +568,7 @@ export default function App({ session, onLogout }) {
 
       {stocks.length > 0 && (
         <div className="sections">
+          {selected && <PriceChart stock={selected} session={session} />}
           <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
           <FinancialIntelligence  stocks={stocks} scoresMap={scoresMap} selected={selected} />
         </div>

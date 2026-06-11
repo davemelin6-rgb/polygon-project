@@ -14,7 +14,8 @@ try {
 
 const { default: stocksHandler } = await import("./api/stocks.js");
 const { default: scoresHandler } = await import("./api/scores.js");
-const { default: chartsHandler } = await import("./api/charts.js");
+const { default: chartsHandler }  = await import("./api/charts.js");
+const { default: historyHandler } = await import("./api/history.js");
 
 const server = http.createServer((req, res) => {
   const url   = new URL(req.url, "http://localhost:3456");
@@ -37,6 +38,8 @@ const server = http.createServer((req, res) => {
     scoresHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/charts") {
     chartsHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/history") {
+    historyHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else {
     res.writeHead(404);
     res.end("Not found");

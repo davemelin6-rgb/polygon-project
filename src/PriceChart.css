@@ -1,0 +1,96 @@
+.chart-panel {
+  margin-bottom: 1.5rem;
+}
+
+.chart-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.chart-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.chart-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+}
+
+.chart-price {
+  font-family: 'Space Mono', monospace;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: #f0f6fc;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.chart-period-change {
+  font-size: 0.88rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+/* ── Range buttons ───────────────────────────────────────── */
+.range-btns {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.range-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 8px;
+  color: #4a6a88;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.35rem 0.7rem;
+  transition: all 0.15s;
+}
+
+.range-btn:hover {
+  background: rgba(0,180,255,0.08);
+  border-color: rgba(0,180,255,0.2);
+  color: #8aaec8;
+}
+
+.range-btn.active {
+  background: rgba(0,180,255,0.12);
+  border-color: rgba(0,180,255,0.35);
+  color: #00b4ff;
+}
+
+/* ── Chart body ──────────────────────────────────────────── */
+.chart-body {
+  position: relative;
+}
+
+.chart-container {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.chart-loader {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  color: #3d5c78;
+  letter-spacing: 0.08em;
+  z-index: 2;
+  pointer-events: none;
+}
