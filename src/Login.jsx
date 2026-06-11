@@ -4,19 +4,24 @@ import "./Login.css";
 
 const PROPS = [
   {
-    icon: "📊",
-    title: "The Market Is Noisy",
-    text: "Earnings calls, analyst upgrades, Reddit threads, breaking news — most of it is just noise. Knowing what actually matters, and when, is a full-time job. We made it ours."
+    icon: "☀️",
+    title: "The Daily Brief",
+    text: "Every morning: the stocks moving in AI, semiconductors, biotech, and clean energy — ranked by our scores. No headlines. No filler. Just the ones worth watching today."
+  },
+  {
+    icon: "⚡",
+    title: "Financial Intelligence Dashboard",
+    text: "Live MOMENTUM, RISK, and TECH VALUE scores across the hottest tickers. Real data, processed in real time, laid out so you can read the market in under a minute."
+  },
+  {
+    icon: "🛡️",
+    title: "Advanced Risk Assessment",
+    text: "Debt load, liquidity, interest coverage, price volatility — we run the full picture and hand you one number. Know exactly what you're walking into before you move."
   },
   {
     icon: "🔬",
-    title: "We Do The Heavy Lifting",
-    text: "Our quant team processes thousands of data points per ticker every day — momentum signals, risk indicators, and fundamental health metrics — then refines them into three scores you can act on in seconds."
-  },
-  {
-    icon: "🎯",
-    title: "You Stay In Control",
-    text: "We give you the data, processed and refined. You make the call. No tips, no predictions, no agenda — just clean signals so your decisions are built on something real."
+    title: "Cutting-Edge Tech, Analyzed",
+    text: "AI, quantum computing, semiconductors — the sectors that are defining the next decade. We dig into the fundamentals institutions look at, without the institutional price tag."
   },
 ];
 
