@@ -100,8 +100,15 @@ export default function PriceChart({ stock, session }) {
     });
 
     if (bars.length) {
+      // Intraday ranges use Unix seconds; daily/weekly use date strings to avoid gap artefacts
+      const intraday = range === "1D" || range === "1W";
       seriesRef.current.setData(
-        bars.map(b => ({ time: Math.floor(b.t / 1000), value: b.c }))
+        bars.map(b => ({
+          time: intraday
+            ? Math.floor(b.t / 1000)
+            : new Date(b.t).toISOString().slice(0, 10),
+          value: b.c,
+        }))
       );
       chartRef.current.timeScale().fitContent();
     }
