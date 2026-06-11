@@ -504,6 +504,12 @@ export default function App({ session, onLogout }) {
       )}
       <Hugo />
       <Chat session={session} />
+
+      <footer className="app-footer">
+        QuantDiver provides data and proprietary scores for informational purposes only.
+        Nothing on this platform constitutes financial advice.
+        Always conduct your own research before making any investment decision.
+      </footer>
     </div>
   );
 }
