@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { createChart } from "lightweight-charts";
+import { createChart, AreaSeries } from "lightweight-charts";
 import "./PriceChart.css";
 
 const RANGES = ["1D", "1W", "1M", "3M", "1Y", "5Y"];
@@ -40,16 +40,17 @@ export default function PriceChart({ stock, session }) {
         horzLine: { color: "rgba(0,180,255,0.5)", labelBackgroundColor: "#050d18" },
       },
       rightPriceScale: { borderColor: "rgba(255,255,255,0.07)" },
-      timeScale:       { borderColor: "rgba(255,255,255,0.07)", timeVisible: true, secondsVisible: false },
+      timeScale: { borderColor: "rgba(255,255,255,0.07)", timeVisible: true, secondsVisible: false },
       handleScroll: { mouseWheel: false },
       handleScale:  { mouseWheel: false, pinch: false },
     });
 
-    const series = chart.addAreaSeries({
-      lineColor:   "#00b4ff",
-      topColor:    "rgba(0,180,255,0.18)",
-      bottomColor: "rgba(0,180,255,0.0)",
-      lineWidth: 2,
+    // v5 API: addSeries(SeriesType, options)
+    const series = chart.addSeries(AreaSeries, {
+      lineColor:        "#00b4ff",
+      topColor:         "rgba(0,180,255,0.18)",
+      bottomColor:      "rgba(0,180,255,0.0)",
+      lineWidth:        2,
       priceLineVisible: false,
       lastValueVisible: true,
     });
@@ -81,7 +82,7 @@ export default function PriceChart({ stock, session }) {
       .catch(() => setLoading(false));
   }, [stock?.symbol, range, session]);
 
-  // Update chart when data arrives
+  // Update chart when data or range changes
   useEffect(() => {
     if (!seriesRef.current || !chartRef.current) return;
 
@@ -106,8 +107,8 @@ export default function PriceChart({ stock, session }) {
     }
   }, [bars, range]);
 
-  const isUp     = bars.length > 1 ? bars[bars.length - 1].c >= bars[0].c : (stock.changePercent ?? 0) >= 0;
-  const pctDiff  = bars.length > 1
+  const isUp    = bars.length > 1 ? bars[bars.length - 1].c >= bars[0].c : (stock.changePercent ?? 0) >= 0;
+  const pctDiff = bars.length > 1
     ? ((bars[bars.length - 1].c - bars[0].c) / bars[0].c * 100).toFixed(2)
     : null;
   const diffColor = isUp ? "#00dc82" : "#ff3c50";
