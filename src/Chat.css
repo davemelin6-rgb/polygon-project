@@ -2,7 +2,7 @@
 .chat-panel {
   position: fixed;
   bottom: 1.5rem;
-  right: 1.5rem;
+  right: 6rem;
   width: 320px;
   height: 480px;
   background: rgba(7, 13, 22, 0.97);
@@ -302,7 +302,7 @@
 .chat-toggle {
   position: fixed;
   bottom: 1.5rem;
-  right: 1.5rem;
+  right: 6rem;
   width: 52px;
   height: 52px;
   background: rgba(7,13,22,0.95);
