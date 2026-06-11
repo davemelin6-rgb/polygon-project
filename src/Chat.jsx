@@ -50,10 +50,17 @@ export default function Chat({ session }) {
       config: { presence: { key: session.user.id } }
     });
 
-    // Presence
+    // Presence — deduplicate by user ID, exclude self
     channel.on("presence", { event: "sync" }, () => {
       const state = channel.presenceState();
-      setOnline(Object.values(state).flat());
+      const seen = new Set();
+      const others = Object.values(state).flat().filter(u => {
+        if (u.username === profile.username) return false;
+        if (seen.has(u.username)) return false;
+        seen.add(u.username);
+        return true;
+      });
+      setOnline(others);
     });
 
     // New messages
