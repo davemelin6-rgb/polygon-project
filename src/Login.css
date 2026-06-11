@@ -67,13 +67,24 @@
   margin-bottom: 3rem;
 }
 
-.login-team-intro {
-  font-size: 0.9rem;
-  color: #3d5c78;
-  line-height: 1.75;
+.login-origin {
   margin-bottom: 2.5rem;
-  border-left: 2px solid rgba(0,180,255,0.2);
-  padding-left: 1rem;
+  border-left: 2px solid rgba(0,180,255,0.18);
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.login-origin p {
+  font-size: 0.875rem;
+  color: #3d5c78;
+  line-height: 1.8;
+  margin: 0;
+}
+
+.login-origin p:first-child {
+  color: #4a6a88;
 }
 
 /* ── Value props ─────────────────────────────────────────── */

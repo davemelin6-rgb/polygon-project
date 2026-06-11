@@ -58,12 +58,27 @@ export default function Login({ onLogin }) {
           We do the math.<br />You make the call.
         </p>
 
-        <p className="login-team-intro">
-          A dedicated team of quantitative analysts and tech professionals,
-          100% focused on one thing: giving you the most refined, processed
-          market data available — so every decision you make is backed by
-          something real.
-        </p>
+        <div className="login-origin">
+          <p>
+            We spent years staring at Yahoo Finance, Bloomberg, every screener
+            we could find — and kept hitting the same wall. Mountains of data.
+            Dozens of metrics. Zero clarity. The signal was buried somewhere
+            under all that noise. We just couldn't get to it fast enough.
+          </p>
+          <p>
+            So we built what we couldn't find. A system that takes raw market
+            data and runs it through layer after layer of quantitative analysis
+            — refining it, scoring it, stress-testing it — until what comes
+            out is clean. The kind of depth that institutional desks have
+            quietly been sitting on for years. We reverse-engineered it, built
+            our own version, and made it faster.
+          </p>
+          <p>
+            Most of us on this team have been actively trading US equities and
+            financial instruments for over fifteen years. We built QuantDiver
+            for ourselves first. Now we're sharing it.
+          </p>
+        </div>
 
         <div className="login-props">
           {PROPS.map(p => (
