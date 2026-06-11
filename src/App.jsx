@@ -453,13 +453,11 @@ export default function App({ session, onLogout }) {
         <div>
           <h1>QuantDiver</h1>
           <div className="header-eyebrow">Real-Time Quant Scores</div>
+          {username && <div className="header-welcome">Welcome back, {username}</div>}
         </div>
-        <div className="header-user">
-          {username && <span className="header-welcome">Welcome, {username}</span>}
-          <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
-            Sign Out
-          </button>
-        </div>
+        <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
+          Sign Out
+        </button>
       </header>
 
       <form className="search-form" onSubmit={handleSubmit}>

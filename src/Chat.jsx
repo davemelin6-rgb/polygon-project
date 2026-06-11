@@ -3,17 +3,13 @@ import { supabase } from "./supabaseClient";
 import "./Chat.css";
 
 export default function Chat({ session }) {
-  const [messages, setMessages]   = useState([]);
-  const [input, setInput]         = useState("");
-  const [online, setOnline]       = useState([]);
-  const [profile, setProfile]     = useState(null);
-  const [search, setSearch]       = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [contacts, setContacts]   = useState([]);
-  const [tab, setTab]             = useState("chat"); // "chat" | "members"
-  const [open, setOpen]           = useState(true);
-  const [showSearch, setShowSearch] = useState(false);
-  const bottomRef = useRef(null);
+  const [profile, setProfile]   = useState(null);
+  const [online, setOnline]     = useState([]);   // other online users
+  const [activeDM, setActiveDM] = useState(null); // { id, username, avatar_color }
+  const [messages, setMessages] = useState([]);
+  const [input, setInput]       = useState("");
+  const [open, setOpen]         = useState(true);
+  const bottomRef  = useRef(null);
   const channelRef = useRef(null);
 
   // Load own profile
@@ -23,26 +19,7 @@ export default function Chat({ session }) {
       .then(({ data }) => setProfile(data));
   }, [session]);
 
-  // Load contacts
-  useEffect(() => {
-    if (!session) return;
-    supabase.from("contacts").select("contact_id, profiles!contacts_contact_id_fkey(username, avatar_color)")
-      .eq("user_id", session.user.id)
-      .then(({ data }) => setContacts(data || []));
-  }, [session]);
-
-  // Load last 50 messages sent after this user joined
-  useEffect(() => {
-    if (!profile) return;
-    supabase.from("messages")
-      .select("*")
-      .gte("created_at", profile.created_at)
-      .order("created_at", { ascending: true })
-      .limit(50)
-      .then(({ data }) => setMessages(data || []));
-  }, [profile]);
-
-  // Realtime messages + presence
+  // Realtime presence
   useEffect(() => {
     if (!session || !profile) return;
 
@@ -50,7 +27,6 @@ export default function Chat({ session }) {
       config: { presence: { key: session.user.id } }
     });
 
-    // Presence — deduplicate by user ID, exclude self
     channel.on("presence", { event: "sync" }, () => {
       const state = channel.presenceState();
       const seen = new Set();
@@ -63,14 +39,9 @@ export default function Chat({ session }) {
       setOnline(others);
     });
 
-    // New messages
-    channel.on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, payload => {
-      setMessages(prev => [...prev, payload.new]);
-    });
-
     channel.subscribe(async (status) => {
       if (status === "SUBSCRIBED") {
-        await channel.track({ username: profile.username, avatar_color: profile.avatar_color });
+        await channel.track({ username: profile.username, avatar_color: profile.avatar_color, user_id: session.user.id });
       }
     });
 
@@ -78,43 +49,53 @@ export default function Chat({ session }) {
     return () => supabase.removeChannel(channel);
   }, [session, profile]);
 
-  // Scroll to bottom on new message
+  // Load DM messages when activeDM changes
+  useEffect(() => {
+    if (!activeDM || !profile) return;
+    const myId   = session.user.id;
+    const theirId = activeDM.id;
+
+    supabase.from("messages")
+      .select("*")
+      .or(`and(user_id.eq.${myId},recipient_id.eq.${theirId}),and(user_id.eq.${theirId},recipient_id.eq.${myId})`)
+      .order("created_at", { ascending: true })
+      .limit(100)
+      .then(({ data }) => setMessages(data || []));
+  }, [activeDM, profile]);
+
+  // Realtime new DM messages
+  useEffect(() => {
+    if (!activeDM || !session) return;
+    const myId    = session.user.id;
+    const theirId = activeDM.id;
+
+    const sub = supabase.channel(`dm-${myId}-${theirId}`)
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages" }, payload => {
+        const m = payload.new;
+        const relevant =
+          (m.user_id === myId    && m.recipient_id === theirId) ||
+          (m.user_id === theirId && m.recipient_id === myId);
+        if (relevant) setMessages(prev => [...prev, m]);
+      })
+      .subscribe();
+
+    return () => supabase.removeChannel(sub);
+  }, [activeDM, session]);
+
+  // Scroll to bottom
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Search users
-  useEffect(() => {
-    if (!search.trim()) { setSearchResults([]); return; }
-    const timer = setTimeout(async () => {
-      const { data } = await supabase.from("profiles")
-        .select("id, username, avatar_color")
-        .ilike("username", `%${search}%`)
-        .neq("id", session.user.id)
-        .limit(5);
-      setSearchResults(data || []);
-    }, 300);
-    return () => clearTimeout(timer);
-  }, [search]);
-
   async function sendMessage() {
-    if (!input.trim() || !profile) return;
+    if (!input.trim() || !profile || !activeDM) return;
     await supabase.from("messages").insert({
-      user_id:  session.user.id,
-      username: profile.username,
-      content:  input.trim(),
+      user_id:      session.user.id,
+      username:     profile.username,
+      content:      input.trim(),
+      recipient_id: activeDM.id,
     });
     setInput("");
-  }
-
-  async function addContact(contactId) {
-    await supabase.from("contacts").insert({ user_id: session.user.id, contact_id: contactId });
-    const { data } = await supabase.from("contacts")
-      .select("contact_id, profiles!contacts_contact_id_fkey(username, avatar_color)")
-      .eq("user_id", session.user.id);
-    setContacts(data || []);
-    setSearch("");
-    setSearchResults([]);
   }
 
   function avatarLetter(username) {
@@ -125,157 +106,98 @@ export default function Chat({ session }) {
     return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }
 
-  const isOnline = (userId) => online.some(p => p.username === userId);
-
+  // ── Minimized bubble ───────────────────────────────────────
   if (!open) return (
     <button className="chat-toggle" onClick={() => setOpen(true)}>
       <span>💬</span>
-      {messages.length > 0 && <span className="chat-toggle-badge">{online.length}</span>}
+      {online.length > 0 && <span className="chat-toggle-badge">{online.length}</span>}
     </button>
   );
 
-  return (
+  // ── DM conversation view ───────────────────────────────────
+  if (activeDM) return (
     <div className="chat-panel">
       <div className="chat-header">
-        <div className="chat-tabs">
-          <button className={`chat-tab ${tab === "chat" ? "active" : ""}`} onClick={() => setTab("chat")}>Chat</button>
-          <button className={`chat-tab ${tab === "members" ? "active" : ""}`} onClick={() => setTab("members")}>
-            Members <span className="online-count">{online.length}</span>
-          </button>
-        </div>
-        <button className="chat-search-btn" onClick={() => { setShowSearch(s => !s); setTab("chat"); }} title="Find member">
-          🔍
+        <button className="chat-back-btn" onClick={() => { setActiveDM(null); setMessages([]); }}>
+          ← Back
         </button>
+        <div className="chat-dm-who">
+          <div className="chat-avatar" style={{ background: activeDM.avatar_color || "#00b4ff", width: 26, height: 26, fontSize: "0.7rem" }}>
+            {avatarLetter(activeDM.username)}
+          </div>
+          <span>{activeDM.username}</span>
+          <span className="chat-dm-online-dot" />
+        </div>
         <button className="chat-minimize" onClick={() => setOpen(false)}>−</button>
       </div>
 
-      {tab === "chat" && (
-        <>
-          {/* Quick member search */}
-          {showSearch && (
-            <div className="chat-quicksearch">
-              <input
-                className="chat-search"
-                placeholder="Search username..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                autoFocus
-              />
-              {searchResults.length > 0 && (
-                <div className="chat-search-results">
-                  {searchResults.map(u => (
-                    <div key={u.id} className="chat-search-row">
-                      <div className="chat-avatar sm" style={{ background: u.avatar_color }}>{avatarLetter(u.username)}</div>
-                      <span>{u.username}</span>
-                      <button className="chat-add-btn" onClick={() => { addContact(u.id); setShowSearch(false); }}>+ Add</button>
-                    </div>
-                  ))}
-                </div>
-              )}
+      <div className="chat-messages">
+        {messages.length === 0 && (
+          <p className="chat-empty">Say hello to {activeDM.username} 👋</p>
+        )}
+        {messages.map(m => (
+          <div key={m.id} className={`chat-msg ${m.user_id === session.user.id ? "own" : ""}`}>
+            <div className="chat-avatar" style={{ background: m.user_id === session.user.id ? (profile?.avatar_color || "#00b4ff") : (activeDM.avatar_color || "#00b4ff") }}>
+              {avatarLetter(m.username)}
             </div>
-          )}
-
-          {/* Who's online strip */}
-          <div className="chat-online-strip">
-            {online.length === 0 ? (
-              <span className="chat-online-empty">No one else online</span>
-            ) : (
-              <>
-                <span className="chat-online-label">Online:</span>
-                {online.map((u, i) => (
-                  <div key={i} className="chat-online-pill" title={`Message ${u.username}`}
-                    onClick={() => setInput(v => v.startsWith(`@${u.username} `) ? v : `@${u.username} ${v}`)}>
-                    <div className="chat-avatar" style={{ background: u.avatar_color || "#00b4ff", width: 22, height: 22, fontSize: "0.65rem" }}>
-                      {avatarLetter(u.username)}
-                    </div>
-                    <span>{u.username}</span>
-                  </div>
-                ))}
-              </>
-            )}
-          </div>
-
-          <div className="chat-messages">
-            {messages.map(m => (
-              <div key={m.id} className={`chat-msg ${m.user_id === session.user.id ? "own" : ""}`}>
-                <div className="chat-avatar" style={{ background: m.avatar_color || "#00b4ff" }}>
-                  {avatarLetter(m.username)}
-                </div>
-                <div className="chat-msg-body">
-                  <div className="chat-msg-meta">
-                    <span className="chat-msg-name">{m.username}</span>
-                    <span className="chat-msg-time">{timeStr(m.created_at)}</span>
-                  </div>
-                  <div className="chat-msg-text">{m.content}</div>
-                </div>
+            <div className="chat-msg-body">
+              <div className="chat-msg-meta">
+                <span className="chat-msg-name">{m.username}</span>
+                <span className="chat-msg-time">{timeStr(m.created_at)}</span>
               </div>
+              <div className="chat-msg-text">{m.content}</div>
+            </div>
+          </div>
+        ))}
+        <div ref={bottomRef} />
+      </div>
+
+      <div className="chat-input-row">
+        <input
+          className="chat-input"
+          placeholder={`Message ${activeDM.username}...`}
+          value={input}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => e.key === "Enter" && sendMessage()}
+          autoFocus
+        />
+        <button className="chat-send" onClick={sendMessage}>→</button>
+      </div>
+    </div>
+  );
+
+  // ── Member picker view ─────────────────────────────────────
+  return (
+    <div className="chat-panel">
+      <div className="chat-header">
+        <span className="chat-title">Messages</span>
+        <button className="chat-minimize" onClick={() => setOpen(false)}>−</button>
+      </div>
+
+      <div className="chat-member-picker">
+        {online.length === 0 ? (
+          <div className="chat-no-online">
+            <span>🔍</span>
+            <p>No members online right now</p>
+          </div>
+        ) : (
+          <>
+            <p className="chat-picker-label">Online now — tap to chat</p>
+            {online.map((u, i) => (
+              <button key={i} className="chat-picker-row" onClick={() => setActiveDM(u)}>
+                <div className="chat-avatar" style={{ background: u.avatar_color || "#00b4ff" }}>
+                  {avatarLetter(u.username)}
+                </div>
+                <div className="chat-picker-info">
+                  <span className="chat-picker-name">{u.username}</span>
+                  <span className="chat-picker-hint">Tap to open conversation</span>
+                </div>
+                <span className="chat-picker-arrow">→</span>
+              </button>
             ))}
-            <div ref={bottomRef} />
-          </div>
-
-          <div className="chat-input-row">
-            <input
-              className="chat-input"
-              placeholder="Message..."
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && sendMessage()}
-            />
-            <button className="chat-send" onClick={sendMessage}>→</button>
-          </div>
-        </>
-      )}
-
-      {tab === "members" && (
-        <div className="chat-members">
-          {/* Search */}
-          <div className="chat-search-wrap">
-            <input
-              className="chat-search"
-              placeholder="Search username..."
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
-            {searchResults.length > 0 && (
-              <div className="chat-search-results">
-                {searchResults.map(u => (
-                  <div key={u.id} className="chat-search-row">
-                    <div className="chat-avatar sm" style={{ background: u.avatar_color }}>{avatarLetter(u.username)}</div>
-                    <span>{u.username}</span>
-                    <button className="chat-add-btn" onClick={() => addContact(u.id)}>+ Add</button>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Online now */}
-          <p className="chat-section-label">Online Now</p>
-          {online.map((u, i) => (
-            <div key={i} className="chat-member-row">
-              <div className="chat-avatar sm" style={{ background: u.avatar_color || "#00b4ff" }}>{avatarLetter(u.username)}</div>
-              <span>{u.username}</span>
-              <span className="online-dot" />
-            </div>
-          ))}
-
-          {/* Contacts */}
-          {contacts.length > 0 && (
-            <>
-              <p className="chat-section-label" style={{ marginTop: "1rem" }}>Contacts</p>
-              {contacts.map(c => (
-                <div key={c.contact_id} className="chat-member-row">
-                  <div className="chat-avatar sm" style={{ background: c.profiles?.avatar_color || "#00b4ff" }}>
-                    {avatarLetter(c.profiles?.username)}
-                  </div>
-                  <span>{c.profiles?.username}</span>
-                  {isOnline(c.profiles?.username) && <span className="online-dot" />}
-                </div>
-              ))}
-            </>
-          )}
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 }

@@ -17,17 +17,11 @@
   justify-content: space-between;
 }
 
-.header-user {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.35rem;
-}
-
 .header-welcome {
-  font-size: 0.72rem;
-  color: #3d5c78;
-  letter-spacing: 0.06em;
+  font-size: 0.82rem;
+  color: #4a6a88;
+  margin-top: 0.5rem;
+  letter-spacing: 0.04em;
 }
 
 .logout-btn {
