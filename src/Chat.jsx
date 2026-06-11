@@ -183,7 +183,8 @@ export default function Chat({ session }) {
               <>
                 <span className="chat-online-label">Online:</span>
                 {online.map((u, i) => (
-                  <div key={i} className="chat-online-pill" title={u.username}>
+                  <div key={i} className="chat-online-pill" title={`Message ${u.username}`}
+                    onClick={() => setInput(v => v.startsWith(`@${u.username} `) ? v : `@${u.username} ${v}`)}>
                     <div className="chat-avatar" style={{ background: u.avatar_color || "#00b4ff", width: 22, height: 22, fontSize: "0.65rem" }}>
                       {avatarLetter(u.username)}
                     </div>

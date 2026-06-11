@@ -391,6 +391,15 @@ export default function App({ session, onLogout }) {
   const [error, setError]         = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [selected, setSelected]   = useState(null);
+  const [username, setUsername]   = useState(null);
+
+  useEffect(() => {
+    if (!session) return;
+    import("./supabaseClient.js").then(({ supabase }) =>
+      supabase.from("profiles").select("username").eq("id", session.user.id).single()
+        .then(({ data }) => data && setUsername(data.username))
+    );
+  }, [session]);
 
   const fetchAll = useCallback(async () => {
     if (!tickers.trim()) return;
@@ -445,9 +454,12 @@ export default function App({ session, onLogout }) {
           <h1>QuantDiver</h1>
           <div className="header-eyebrow">Real-Time Quant Scores</div>
         </div>
-        <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
-          Sign Out
-        </button>
+        <div className="header-user">
+          {username && <span className="header-welcome">Welcome, {username}</span>}
+          <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
+            Sign Out
+          </button>
+        </div>
       </header>
 
       <form className="search-form" onSubmit={handleSubmit}>

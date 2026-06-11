@@ -141,6 +141,12 @@
   font-size: 0.72rem;
   color: #00dc82;
   font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.chat-online-pill:hover {
+  background: rgba(0,220,130,0.14);
+  border-color: rgba(0,220,130,0.3);
 }
 
 /* ── Messages ───────────────────────────────────────────── */
