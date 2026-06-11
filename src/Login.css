@@ -67,6 +67,15 @@
   margin-bottom: 3rem;
 }
 
+.login-team-intro {
+  font-size: 0.9rem;
+  color: #3d5c78;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  border-left: 2px solid rgba(0,180,255,0.2);
+  padding-left: 1rem;
+}
+
 /* ── Value props ─────────────────────────────────────────── */
 .login-props {
   display: flex;
@@ -106,6 +115,15 @@
   font-size: 0.92rem;
   color: #4a6a88;
   line-height: 1.7;
+}
+
+.login-disclaimer {
+  font-size: 0.72rem;
+  color: #1e3048;
+  line-height: 1.6;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.04);
 }
 
 /* ── Right — form ────────────────────────────────────────── */

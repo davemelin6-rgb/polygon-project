@@ -4,19 +4,19 @@ import "./Login.css";
 
 const PROPS = [
   {
-    icon: "⚡",
-    title: "The Problem",
-    text: "Choosing the right investment is hard. Every day you're buried under earnings reports, price charts, analyst opinions, and noise. Most investors never get past the surface."
+    icon: "📊",
+    title: "The Market Is Noisy",
+    text: "Earnings calls, analyst upgrades, Reddit threads, breaking news — most of it is just noise. Knowing what actually matters, and when, is a full-time job. We made it ours."
+  },
+  {
+    icon: "🔬",
+    title: "We Do The Heavy Lifting",
+    text: "Our quant team processes thousands of data points per ticker every day — momentum signals, risk indicators, and fundamental health metrics — then refines them into three scores you can act on in seconds."
   },
   {
     icon: "🎯",
-    title: "The Solution",
-    text: "QuantDiver cuts through it all. Three proprietary scores — MOMENTUM, RISK, and TECH VALUE — distill thousands of data points into one clear signal per stock."
-  },
-  {
-    icon: "🚀",
-    title: "The Experience",
-    text: "Not a spreadsheet. Not a news feed. A live, premium intelligence platform built for investors who want answers, not more questions."
+    title: "You Stay In Control",
+    text: "We give you the data, processed and refined. You make the call. No tips, no predictions, no agenda — just clean signals so your decisions are built on something real."
   },
 ];
 
@@ -50,7 +50,14 @@ export default function Login({ onLogin }) {
         </div>
 
         <p className="login-tagline">
-          Stop guessing.<br />Start diving deep.
+          We do the math.<br />You make the call.
+        </p>
+
+        <p className="login-team-intro">
+          A dedicated team of quantitative analysts and tech professionals,
+          100% focused on one thing: giving you the most refined, processed
+          market data available — so every decision you make is backed by
+          something real.
         </p>
 
         <div className="login-props">
@@ -64,6 +71,12 @@ export default function Login({ onLogin }) {
             </div>
           ))}
         </div>
+
+        <p className="login-disclaimer">
+          QuantDiver provides data and proprietary scores for informational
+          purposes only. Nothing on this platform constitutes financial advice.
+          Always conduct your own research before making any investment decision.
+        </p>
       </div>
 
       {/* Right — login form */}
