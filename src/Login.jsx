@@ -80,6 +80,8 @@ export default function Login({ onLogin }) {
           </p>
         </div>
 
+        <p className="login-section-label">What We Offer</p>
+
         <div className="login-props">
           {PROPS.map(p => (
             <div key={p.title} className="login-prop">
@@ -103,8 +105,8 @@ export default function Login({ onLogin }) {
       <div className="login-right">
         <div className="login-box">
           <div className="login-box-header">
-            <p className="login-welcome">Welcome back</p>
-            <p className="login-sub">Sign in to your QuantDiver account</p>
+            <p className="login-welcome">Member Access</p>
+            <p className="login-sub">Enter your credentials to continue</p>
           </div>
 
           <form className="login-form" onSubmit={handleSubmit}>

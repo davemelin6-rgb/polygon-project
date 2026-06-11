@@ -87,6 +87,15 @@
   color: #4a6a88;
 }
 
+.login-section-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #00b4ff;
+  margin-bottom: 1.25rem;
+}
+
 /* ── Value props ─────────────────────────────────────────── */
 .login-props {
   display: flex;
