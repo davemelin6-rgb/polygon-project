@@ -31,11 +31,16 @@ export default function Chat({ session }) {
       .then(({ data }) => setContacts(data || []));
   }, [session]);
 
-  // Load last 50 messages
+  // Load last 50 messages sent after this user joined
   useEffect(() => {
-    supabase.from("messages").select("*").order("created_at", { ascending: true }).limit(50)
+    if (!profile) return;
+    supabase.from("messages")
+      .select("*")
+      .gte("created_at", profile.created_at)
+      .order("created_at", { ascending: true })
+      .limit(50)
       .then(({ data }) => setMessages(data || []));
-  }, []);
+  }, [profile]);
 
   // Realtime messages + presence
   useEffect(() => {
