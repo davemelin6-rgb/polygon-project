@@ -493,10 +493,10 @@ export default function App({ session, onLogout }) {
           {username && <div className="header-welcome">Welcome back, {username}</div>}
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
-          <button className="gear-btn" onClick={() => setShowSettings(true)} title="Settings">⚙</button>
           <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
             Sign Out
           </button>
+          <button className="gear-btn" onClick={() => setShowSettings(true)} title="Settings">⚙</button>
         </div>
       </header>
 
