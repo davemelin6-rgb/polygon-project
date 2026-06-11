@@ -5,7 +5,7 @@
   grid-template-columns: 1fr 1fr;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
   .login-page {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -15,6 +15,7 @@
   .login-left {
     padding: 2rem 1.5rem 1.5rem;
     justify-content: flex-start;
+    overflow: visible;
   }
 
   .login-left::after { display: none; }
@@ -79,7 +80,7 @@
 }
 
 .login-brand h1 {
-  font-size: 3.5rem;
+  font-size: clamp(1.6rem, 5vw, 3.5rem);
   font-weight: 700;
   letter-spacing: -0.05em;
   background: linear-gradient(125deg, #ffffff 0%, #c8e4f8 45%, #00b4ff 100%);
@@ -88,6 +89,7 @@
   background-clip: text;
   line-height: 1;
   margin-bottom: 0.75rem;
+  white-space: nowrap;
 }
 
 .login-badge {
@@ -104,7 +106,7 @@
 }
 
 .login-tagline {
-  font-size: 2.2rem;
+  font-size: clamp(1.2rem, 3.5vw, 2.2rem);
   font-weight: 700;
   letter-spacing: -0.03em;
   color: #dce8f4;
