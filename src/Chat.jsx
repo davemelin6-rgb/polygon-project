@@ -12,6 +12,7 @@ export default function Chat({ session }) {
   const [contacts, setContacts]   = useState([]);
   const [tab, setTab]             = useState("chat"); // "chat" | "members"
   const [open, setOpen]           = useState(true);
+  const [showSearch, setShowSearch] = useState(false);
   const bottomRef = useRef(null);
   const channelRef = useRef(null);
 
@@ -130,11 +131,57 @@ export default function Chat({ session }) {
             Members <span className="online-count">{online.length}</span>
           </button>
         </div>
+        <button className="chat-search-btn" onClick={() => { setShowSearch(s => !s); setTab("chat"); }} title="Find member">
+          🔍
+        </button>
         <button className="chat-minimize" onClick={() => setOpen(false)}>−</button>
       </div>
 
       {tab === "chat" && (
         <>
+          {/* Quick member search */}
+          {showSearch && (
+            <div className="chat-quicksearch">
+              <input
+                className="chat-search"
+                placeholder="Search username..."
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                autoFocus
+              />
+              {searchResults.length > 0 && (
+                <div className="chat-search-results">
+                  {searchResults.map(u => (
+                    <div key={u.id} className="chat-search-row">
+                      <div className="chat-avatar sm" style={{ background: u.avatar_color }}>{avatarLetter(u.username)}</div>
+                      <span>{u.username}</span>
+                      <button className="chat-add-btn" onClick={() => { addContact(u.id); setShowSearch(false); }}>+ Add</button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Who's online strip */}
+          <div className="chat-online-strip">
+            {online.length === 0 ? (
+              <span className="chat-online-empty">No one else online</span>
+            ) : (
+              <>
+                <span className="chat-online-label">Online:</span>
+                {online.map((u, i) => (
+                  <div key={i} className="chat-online-pill" title={u.username}>
+                    <div className="chat-avatar" style={{ background: u.avatar_color || "#00b4ff", width: 22, height: 22, fontSize: "0.65rem" }}>
+                      {avatarLetter(u.username)}
+                    </div>
+                    <span>{u.username}</span>
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+
           <div className="chat-messages">
             {messages.map(m => (
               <div key={m.id} className={`chat-msg ${m.user_id === session.user.id ? "own" : ""}`}>

@@ -83,6 +83,66 @@
 }
 .chat-minimize:hover { color: #8aaec8; }
 
+/* ── Search button in header ────────────────────────────── */
+.chat-search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+  line-height: 1;
+  color: #2d4a5f;
+}
+.chat-search-btn:hover { background: rgba(0,180,255,0.08); }
+
+/* ── Quick search dropdown ──────────────────────────────── */
+.chat-quicksearch {
+  position: relative;
+  padding: 0.5rem 1rem 0;
+  flex-shrink: 0;
+}
+
+/* ── Online strip ───────────────────────────────────────── */
+.chat-online-strip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.chat-online-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1e3048;
+  flex-shrink: 0;
+}
+
+.chat-online-empty {
+  font-size: 0.72rem;
+  color: #1e3048;
+  font-style: italic;
+}
+
+.chat-online-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(0,220,130,0.06);
+  border: 1px solid rgba(0,220,130,0.12);
+  border-radius: 99px;
+  padding: 0.15rem 0.55rem 0.15rem 0.25rem;
+  font-size: 0.72rem;
+  color: #00dc82;
+  font-weight: 600;
+}
+
 /* ── Messages ───────────────────────────────────────────── */
 .chat-messages {
   flex: 1;
