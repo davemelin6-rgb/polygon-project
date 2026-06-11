@@ -1,47 +1,69 @@
 export default function QDLogo({ size = 44 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width={size} height={size} viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="qd-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#60d8ff" />
-          <stop offset="60%" stopColor="#0099ee" />
-          <stop offset="100%" stopColor="#0055bb" />
+        {/* Blue — top arc highlight */}
+        <linearGradient id="qdB" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stopColor="#a0ecff" />
+          <stop offset="45%"  stopColor="#1aabf0" />
+          <stop offset="100%" stopColor="#0044bb" />
         </linearGradient>
-        <linearGradient id="qd-silver" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#c8c8c8" />
-          <stop offset="50%" stopColor="#e8e8e8" />
-          <stop offset="100%" stopColor="#909090" />
+
+        {/* Silver — main arc body */}
+        <linearGradient id="qdS" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stopColor="#c0c0c0" />
+          <stop offset="30%"  stopColor="#eeeeee" />
+          <stop offset="65%"  stopColor="#aaaaaa" />
+          <stop offset="100%" stopColor="#707070" />
         </linearGradient>
-        <linearGradient id="qd-gold" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#f5e080" />
-          <stop offset="50%" stopColor="#d4a020" />
-          <stop offset="100%" stopColor="#a07010" />
+
+        {/* Gold — left bar */}
+        <linearGradient id="qdG1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stopColor="#f8e870" />
+          <stop offset="40%"  stopColor="#d4a020" />
+          <stop offset="100%" stopColor="#8a5c08" />
         </linearGradient>
-        <linearGradient id="qd-gold2" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#f0d060" />
-          <stop offset="100%" stopColor="#c09020" />
+
+        {/* Gold — right bar (slightly lighter face) */}
+        <linearGradient id="qdG2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%"   stopColor="#f0d858" />
+          <stop offset="100%" stopColor="#b88018" />
         </linearGradient>
+
+        {/* Clip to circle interior for bars */}
+        <clipPath id="qdC">
+          <circle cx="30" cy="26" r="14" />
+        </clipPath>
       </defs>
 
-      {/* ── Outer ring ── */}
-      {/* Blue arc — sweeps the long way from lower-left gap, up and around through top to lower-right */}
-      <path
-        d="M 7,31 A 17,17 0 1,1 37,31"
-        stroke="url(#qd-blue)"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
-      {/* Silver arc — short lower arc connecting right back to left (the bottom of the Q) */}
-      <path
-        d="M 37,31 A 17,17 0 0,1 7,31"
-        stroke="url(#qd-silver)"
-        strokeWidth="5.5"
-        strokeLinecap="round"
-      />
+      {/* ── Shadow ring (depth effect) ──────────────────────── */}
+      <path d="M 13.1,32.2 A 18,18 0 0,1 39,10.4"
+        stroke="rgba(0,0,0,0.35)" strokeWidth="9.5" strokeLinecap="round" />
+      <path d="M 39,10.4 A 18,18 0 1,1 18.4,39.8"
+        stroke="rgba(0,0,0,0.35)" strokeWidth="9.5" strokeLinecap="round" />
 
-      {/* ── Inner diagonal bars (the "diver" marks) ── */}
-      <line x1="17" y1="13" x2="23" y2="33" stroke="url(#qd-gold)"  strokeWidth="4.5" strokeLinecap="round" />
-      <line x1="22" y1="12" x2="28" y2="32" stroke="url(#qd-gold2)" strokeWidth="3"   strokeLinecap="round" opacity="0.75" />
+      {/* ── Silver arc — the large portion (1 o'clock → 7 o'clock CW) ── */}
+      <path d="M 39,10.4 A 18,18 0 1,1 18.4,39.8"
+        stroke="url(#qdS)" strokeWidth="7.5" strokeLinecap="round" />
+
+      {/* ── Blue arc — top portion (8 o'clock → 1 o'clock CW through top) ── */}
+      <path d="M 13.1,32.2 A 18,18 0 0,1 39,10.4"
+        stroke="url(#qdB)" strokeWidth="7.5" strokeLinecap="round" />
+
+      {/* ── Inner gold bars — clipped to circle interior ──── */}
+      {/* Single shared rotation keeps both bars perfectly parallel */}
+      <g clipPath="url(#qdC)" transform="rotate(28 30 27)">
+        {/* Left bar */}
+        <rect x="18.5" y="14" width="7" height="26" rx="2.5"
+          fill="url(#qdG1)" />
+        {/* Highlight stripe on left bar */}
+        <rect x="19.5" y="14" width="2" height="26" rx="1"
+          fill="rgba(255,255,255,0.22)" />
+        {/* Right bar — same rotation context, shifted right */}
+        <rect x="28" y="14" width="5.5" height="26" rx="2"
+          fill="url(#qdG2)"
+          opacity="0.9" />
+      </g>
     </svg>
   );
 }

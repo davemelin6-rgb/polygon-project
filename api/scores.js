@@ -1,15 +1,22 @@
 // api/scores.js — Scoring engine endpoint
 // GET /api/scores?tickers=AAPL,MSFT,NVDA
-// Reads from Supabase first. Recalculates only if scores are missing or older than 24h.
 
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
 import { calcMomentum, calcRisk, calcTechValue } from "../lib/formulas.js";
 import { getSupabase } from "../lib/supabase.js";
+import { verifySession, parseTickers } from "../lib/apiGuard.js";
 
 const STALE_MS = 24 * 60 * 60 * 1000;
 
 export default async function handler(req, res) {
+  // ── Auth guard ───────────────────────────────────────────
+  const authed = await verifySession(req);
+  if (!authed) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  // ── API keys ─────────────────────────────────────────────
   const polygonKey = process.env.POLYGON_API_KEY;
   const fmpKey     = process.env.FMP_API_KEY;
 
@@ -17,16 +24,17 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "POLYGON_API_KEY is not configured" });
   }
 
+  // ── Input validation ─────────────────────────────────────
   const raw = (req.query.tickers || "").toString().trim();
   if (!raw) return res.status(400).json({ error: "Provide ?tickers=AAPL,MSFT" });
 
-  const tickers = raw.split(",").map((t) => t.trim().toUpperCase()).filter(Boolean);
+  const tickers = parseTickers(raw);
   if (!tickers.length) return res.status(400).json({ error: "No valid tickers supplied" });
 
   const supabase = getSupabase();
   const cutoff   = Date.now() - STALE_MS;
 
-  // Try reading from Supabase if available
+  // ── Read from Supabase cache ─────────────────────────────
   let existingMap = {};
   if (supabase) {
     const { data } = await supabase
@@ -36,14 +44,13 @@ export default async function handler(req, res) {
     existingMap = Object.fromEntries((data || []).map(r => [r.symbol, r]));
   }
 
-  // Determine which tickers need recalculating
+  // ── Recalculate stale tickers ────────────────────────────
   const stale = tickers.filter(ticker => {
     const row = existingMap[ticker];
     if (!row) return true;
     return new Date(row.calculated_at).getTime() < cutoff;
   });
 
-  // Recalculate stale tickers
   if (stale.length > 0) {
     const freshResults = await Promise.all(
       stale.map(async (ticker) => {
@@ -63,7 +70,6 @@ export default async function handler(req, res) {
       })
     );
 
-    // Save to Supabase only if we got real data
     if (supabase) {
       const validResults = freshResults.filter(r => r.momentum !== null);
       if (validResults.length > 0) {

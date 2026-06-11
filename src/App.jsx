@@ -4,9 +4,11 @@ import Hugo from "./Hugo.jsx";
 import Chat from "./Chat.jsx";
 import Settings from "./Settings.jsx";
 import QDLogo from "./QDLogo.jsx";
+import Sparkline from "./Sparkline.jsx";
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
-const REFRESH_INTERVAL = 60_000;
+const PRICE_INTERVAL  = 10_000;  // fast price refresh
+const SCORE_INTERVAL  = 60_000;  // full scores + charts refresh
 
 function fmt(n, decimals = 2) {
   if (n == null) return "—";
@@ -61,7 +63,7 @@ function ChangeChip({ value }) {
   );
 }
 
-function StockCard({ stock, scores, selected, onClick }) {
+function StockCard({ stock, scores, chart, selected, onClick }) {
   const positive = (stock.change ?? 0) >= 0;
   return (
     <div
@@ -77,6 +79,9 @@ function StockCard({ stock, scores, selected, onClick }) {
         <ChangeChip value={stock.changePercent} />
       </div>
       <div className="price">{stock.price ? `$${fmt(stock.price)}` : "—"}</div>
+      <div className="sparkline-wrap">
+        <Sparkline bars={chart} ticker={stock.symbol} />
+      </div>
       <div className="meta">
         <div className="meta-row">
           <span className="label">Prev Close</span>
@@ -392,6 +397,7 @@ export default function App({ session, onLogout }) {
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [chartsMap, setChartsMap] = useState({});
   const [selected, setSelected]   = useState(null);
   const [username, setUsername]   = useState(null);
   const [profile,  setProfile]   = useState(null);
@@ -439,41 +445,63 @@ export default function App({ session, onLogout }) {
     }
   }
 
+  // Full refresh: prices + scores + charts
   const fetchAll = useCallback(async () => {
     if (!tickers.trim()) return;
     setLoading(true);
     setError(null);
     try {
-      const [stocksRes, scoresRes] = await Promise.all([
-        fetch(`/api/stocks?tickers=${encodeURIComponent(tickers)}`),
-        fetch(`/api/scores?tickers=${encodeURIComponent(tickers)}`),
+      const headers = session?.access_token
+        ? { Authorization: `Bearer ${session.access_token}` }
+        : {};
+      const q = encodeURIComponent(tickers);
+      const [stocksRes, scoresRes, chartsRes] = await Promise.all([
+        fetch(`/api/stocks?tickers=${q}`, { headers }),
+        fetch(`/api/scores?tickers=${q}`, { headers }),
+        fetch(`/api/charts?tickers=${q}`, { headers }),
       ]);
 
       const stocksJson = await stocksRes.json();
       const scoresJson = await scoresRes.json();
+      const chartsJson = chartsRes.ok ? await chartsRes.json() : { charts: {} };
 
       if (!stocksRes.ok) throw new Error(stocksJson.error || "Stocks request failed");
 
       setStocks(stocksJson.data || []);
-
-      // Build symbol → scores lookup
       const map = {};
       for (const s of scoresJson.scores || []) map[s.symbol] = s;
       setScoresMap(map);
-
+      setChartsMap(chartsJson.charts || {});
       setLastUpdated(new Date());
     } catch (e) {
       setError(e.message);
     } finally {
       setLoading(false);
     }
-  }, [tickers]);
+  }, [tickers, session]);
+
+  // Fast price-only refresh (every 10s) — no loading spinner, silent update
+  const fetchPrices = useCallback(async () => {
+    if (!tickers.trim()) return;
+    const headers = session?.access_token
+      ? { Authorization: `Bearer ${session.access_token}` }
+      : {};
+    try {
+      const res = await fetch(`/api/stocks?tickers=${encodeURIComponent(tickers)}`, { headers });
+      if (res.ok) {
+        const j = await res.json();
+        setStocks(j.data || []);
+        setLastUpdated(new Date());
+      }
+    } catch {}
+  }, [tickers, session]);
 
   useEffect(() => {
     fetchAll();
-    const id = setInterval(fetchAll, REFRESH_INTERVAL);
-    return () => clearInterval(id);
-  }, [fetchAll]);
+    const fullId  = setInterval(fetchAll,   SCORE_INTERVAL);
+    const priceId = setInterval(fetchPrices, PRICE_INTERVAL);
+    return () => { clearInterval(fullId); clearInterval(priceId); };
+  }, [fetchAll, fetchPrices]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -529,6 +557,7 @@ export default function App({ session, onLogout }) {
               key={s.symbol}
               stock={s}
               scores={scoresMap[s.symbol]}
+              chart={chartsMap[s.symbol]}
               selected={selected?.symbol === s.symbol}
               onClick={() => handleSelect(s)}
             />
