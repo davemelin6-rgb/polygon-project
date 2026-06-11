@@ -17,6 +17,28 @@
   justify-content: space-between;
 }
 
+.gear-btn {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  color: #4a6a88;
+  cursor: pointer;
+  font-size: 1.1rem;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  line-height: 1;
+}
+.gear-btn:hover {
+  color: #00b4ff;
+  border-color: rgba(0,180,255,0.3);
+  background: rgba(0,180,255,0.06);
+  transform: rotate(45deg);
+}
+
 .header-welcome {
   font-size: 0.82rem;
   color: #4a6a88;

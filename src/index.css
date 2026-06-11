@@ -1,9 +1,15 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+:root {
+  --bg-base: #020509;
+  --bg-card: rgba(255,255,255,0.03);
+  --accent:  #00b4ff;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
 
 body {
-  background: #020509;
+  background: var(--bg-base);
   color: #e2e8f0;
   font-family: 'Space Grotesk', sans-serif;
   min-height: 100vh;

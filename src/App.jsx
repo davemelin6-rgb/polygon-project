@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 import Hugo from "./Hugo.jsx";
 import Chat from "./Chat.jsx";
+import Settings from "./Settings.jsx";
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
 const REFRESH_INTERVAL = 60_000;
@@ -392,14 +393,50 @@ export default function App({ session, onLogout }) {
   const [lastUpdated, setLastUpdated] = useState(null);
   const [selected, setSelected]   = useState(null);
   const [username, setUsername]   = useState(null);
+  const [profile,  setProfile]   = useState(null);
+  const [settings, setSettings]  = useState({});
+  const [showSettings, setShowSettings] = useState(false);
 
   useEffect(() => {
     if (!session) return;
     import("./supabaseClient.js").then(({ supabase }) =>
-      supabase.from("profiles").select("username").eq("id", session.user.id).single()
-        .then(({ data }) => data && setUsername(data.username))
+      supabase.from("profiles").select("*").eq("id", session.user.id).single()
+        .then(({ data }) => {
+          if (!data) return;
+          setProfile(data);
+          setUsername(data.username);
+          const s = data.settings || {};
+          setSettings(s);
+          applySettings(s);
+          // Load saved watchlist
+          if (s.defaultTickers) {
+            setInput(s.defaultTickers);
+            setTickers(s.defaultTickers);
+          }
+        })
     );
   }, [session]);
+
+  function applySettings(s) {
+    const root = document.documentElement;
+    // Brightness
+    const b = s.brightness || "dark";
+    root.style.setProperty("--bg-base",  b === "dark" ? "#020509" : b === "balanced" ? "#050d18" : "#0a1828");
+    root.style.setProperty("--bg-card",  b === "dark" ? "rgba(255,255,255,0.03)" : b === "balanced" ? "rgba(255,255,255,0.05)" : "rgba(255,255,255,0.08)");
+    // Accent
+    const accents = { blue: "#00b4ff", teal: "#00dc82", purple: "#7c3aed" };
+    root.style.setProperty("--accent", accents[s.accent || "blue"]);
+  }
+
+  function handleSaveSettings(newSettings, newAvatarColor) {
+    setSettings(newSettings);
+    setProfile(p => ({ ...p, avatar_color: newAvatarColor }));
+    applySettings(newSettings);
+    if (newSettings.defaultTickers) {
+      setInput(newSettings.defaultTickers);
+      setTickers(newSettings.defaultTickers);
+    }
+  }
 
   const fetchAll = useCallback(async () => {
     if (!tickers.trim()) return;
@@ -455,9 +492,12 @@ export default function App({ session, onLogout }) {
           <div className="header-eyebrow">Real-Time Quant Scores</div>
           {username && <div className="header-welcome">Welcome back, {username}</div>}
         </div>
-        <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
-          Sign Out
-        </button>
+        <div style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
+          <button className="gear-btn" onClick={() => setShowSettings(true)} title="Settings">⚙</button>
+          <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
+            Sign Out
+          </button>
+        </div>
       </header>
 
       <form className="search-form" onSubmit={handleSubmit}>
@@ -504,6 +544,15 @@ export default function App({ session, onLogout }) {
       )}
       <Hugo />
       <Chat session={session} />
+      {showSettings && (
+        <Settings
+          session={session}
+          profile={profile}
+          settings={settings}
+          onSave={handleSaveSettings}
+          onClose={() => setShowSettings(false)}
+        />
+      )}
 
       <footer className="app-footer">
         QuantDiver provides data and proprietary scores for informational purposes only.
