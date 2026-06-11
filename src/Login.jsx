@@ -23,6 +23,11 @@ const PROPS = [
     title: "Cutting-Edge Tech, Analyzed",
     text: "AI, quantum computing, semiconductors — the sectors that are defining the next decade. We dig into the fundamentals institutions look at, without the institutional price tag."
   },
+  {
+    icon: "💬",
+    title: "Talk to Real Traders, Live",
+    text: "Connect directly with experienced traders on the platform in real time. Ask questions, share what you're seeing, trade ideas — with people who actually know the market."
+  },
 ];
 
 export default function Login({ onLogin }) {
