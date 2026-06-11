@@ -109,6 +109,12 @@ export default function Login({ onLogin }) {
       {/* Right — login form */}
       <div className="login-right">
         <div className="login-box">
+          {/* Logo shown only on mobile */}
+          <div className="login-mobile-brand">
+            <h1 style={{ fontSize:"2rem", fontWeight:700, letterSpacing:"-0.04em", background:"linear-gradient(125deg,#fff 0%,#c8e4f8 45%,#00b4ff 100%)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text", lineHeight:1 }}>QuantDiver</h1>
+            <span className="login-badge">● MEMBERS ONLY</span>
+          </div>
+
           <div className="login-box-header">
             <p className="login-welcome">Member Access</p>
             <p className="login-sub">Enter your credentials to continue</p>

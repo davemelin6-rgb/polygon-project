@@ -8,52 +8,35 @@
 @media (max-width: 900px) {
   .login-page {
     grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
   }
 
-  /* Left panel: compact header strip, hide the long story content */
   .login-left {
-    padding: 2rem 1.5rem 1.5rem;
-    justify-content: flex-start;
-    overflow: visible;
-  }
-
-  .login-left::after { display: none; }
-
-  .login-brand h1 {
-    font-size: 2rem;
-  }
-
-  .login-badge {
-    font-size: 0.6rem;
-    padding: 0.2rem 0.7rem;
-  }
-
-  .login-tagline {
-    font-size: 1.1rem;
-    margin-bottom: 0;
     display: none;
   }
 
-  /* Hide story text and product cards on mobile — keep it clean */
-  .login-origin,
-  .login-section-label,
-  .login-props,
-  .login-disclaimer {
-    display: none;
-  }
-
-  .login-brand {
-    margin-bottom: 0;
-  }
-
-  /* Right panel fills remaining space */
   .login-right {
-    padding: 1.5rem 1.5rem 2.5rem;
+    min-height: 100vh;
+    padding: 3rem 1.75rem;
     align-items: flex-start;
+    justify-content: flex-start;
   }
 
-  .login-welcome { font-size: 1.4rem; }
+  .login-box {
+    max-width: 100%;
+  }
+
+  .login-mobile-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .login-welcome { font-size: 1.5rem; }
+}
+
+@media (min-width: 901px) {
+  .login-mobile-brand { display: none; }
 }
 
 /* ── Left — story ────────────────────────────────────────── */
