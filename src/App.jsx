@@ -36,7 +36,7 @@ const SECTORS = [
 ];
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
-const PRICE_INTERVAL  = 10_000;  // fast price refresh
+const PRICE_INTERVAL  = 30_000;  // price refresh
 const SCORE_INTERVAL  = 60_000;  // full scores + charts refresh
 
 function fmt(n, decimals = 2) {
