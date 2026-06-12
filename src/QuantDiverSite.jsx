@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import QDLogo from "./QDLogo.jsx";
 
 /* ─── tokens ──────────────────────────────────────────────── */
 const T = {
@@ -579,14 +580,7 @@ export default function QuantDiverSite({ onEnterApp }) {
           <div className="qd-wrap" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
             {/* logo */}
             <div onClick={() => go("home")} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
-              <div style={{
-                width: 30, height: 30, borderRadius: 8, flexShrink: 0,
-                background: `conic-gradient(from 200deg, ${T.cyan}, ${T.blue} 50%, #7C3AED)`,
-                boxShadow: "0 0 16px rgba(59,130,246,.35)",
-                position: "relative",
-              }}>
-                <div style={{ position: "absolute", inset: 3, borderRadius: 5, background: T.bg, backgroundImage: `radial-gradient(circle at 65% 35%, rgba(34,211,238,.55), transparent 55%)` }} />
-              </div>
+              <QDLogo size={38} />
               <span style={{ fontFamily: ff.display, fontWeight: 700, fontSize: "1.1rem", letterSpacing: "-.01em" }}>QuantDiver</span>
             </div>
 
