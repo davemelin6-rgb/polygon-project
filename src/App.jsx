@@ -6,6 +6,31 @@ import Settings from "./Settings.jsx";
 import QDLogo from "./QDLogo.jsx";
 import Sparkline from "./Sparkline.jsx";
 import PriceChart from "./PriceChart.jsx";
+import SectorSection from "./SectorSection.jsx";
+
+const SECTORS = [
+  {
+    id: "quantum",
+    name: "Quantum Stocks",
+    icon: "⚛️",
+    accent: "#8B5CF6",
+    tickers: ["IONQ", "RGTI", "QUBT", "QBTS", "IBM", "GOOGL", "MSFT"],
+  },
+  {
+    id: "ai",
+    name: "AI Stocks",
+    icon: "🧠",
+    accent: "#22D3EE",
+    tickers: ["NVDA", "AMD", "META", "MSFT", "PLTR", "AI", "SOUN", "SMCI"],
+  },
+  {
+    id: "defence",
+    name: "Defence & Space",
+    icon: "🛡️",
+    accent: "#F59E0B",
+    tickers: ["LMT", "RTX", "NOC", "GD", "BA", "RKLB", "ASTS", "KTOS"],
+  },
+];
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
 const PRICE_INTERVAL  = 10_000;  // fast price refresh
@@ -514,6 +539,12 @@ export default function App({ session, onLogout }) {
     setSelected((prev) => prev?.symbol === stock.symbol ? null : stock);
   }
 
+  // Sector stock selected — merge its scores into scoresMap so panels work
+  function handleSectorSelect(stock, sectorScores) {
+    setSelected((prev) => prev?.symbol === stock.symbol ? null : stock);
+    setScoresMap((prev) => ({ ...prev, ...sectorScores }));
+  }
+
   return (
     <div className="app">
       <header className="header">
@@ -566,13 +597,29 @@ export default function App({ session, onLogout }) {
         </div>
       )}
 
-      {stocks.length > 0 && (
+      {(stocks.length > 0 || selected) && (
         <div className="sections">
           {selected && <PriceChart stock={selected} session={session} />}
           <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
           <FinancialIntelligence  stocks={stocks} scoresMap={scoresMap} selected={selected} />
         </div>
       )}
+
+      <div className="sectors-wrap">
+        <h2 className="sectors-heading">Market Sectors</h2>
+        {SECTORS.map(s => (
+          <SectorSection
+            key={s.id}
+            name={s.name}
+            icon={s.icon}
+            tickers={s.tickers}
+            accent={s.accent}
+            session={session}
+            onSelect={handleSectorSelect}
+            selectedSymbol={selected?.symbol}
+          />
+        ))}
+      </div>
 
       {lastUpdated && (
         <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>

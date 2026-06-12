@@ -417,6 +417,22 @@
   margin-top: 1.5rem;
 }
 
+/* ── Sector sections wrapper ────────────────────────────── */
+.sectors-wrap {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.sectors-heading {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #3d5c78;
+  margin-bottom: 0.25rem;
+}
+
 /* ── Panel shared ───────────────────────────────────────── */
 .panel {
   background: rgba(7, 13, 22, 0.92);

@@ -57,17 +57,27 @@ export default async function handler(req, res) {
   }
 
   const { from, to, multiplier, timespan } = rangeParams(range);
-  const url =
+  const baseUrl =
     `${POLYGON_BASE}/v2/aggs/ticker/${ticker}/range/${multiplier}/${timespan}/${from}/${to}` +
-    `?adjusted=true&sort=asc&limit=500&apiKey=${apiKey}`;
+    `?adjusted=true&sort=asc&limit=5000&apiKey=${apiKey}`;
 
   try {
-    const resp = await fetch(url);
-    if (!resp.ok) return res.status(200).json({ bars: [] });
-    const json = await resp.json();
-    const bars = (json.results || []).map(b => ({ t: b.t, o: b.o, h: b.h, l: b.l, c: b.c, v: b.v }));
-    cache.set(cacheKey, { bars, expires: Date.now() + TTL[range] });
-    return res.status(200).json({ bars, cached: false });
+    // Paginate through all results — Polygon caps each response; follow next_url
+    let allBars = [];
+    let nextUrl = baseUrl;
+    let pages   = 0;
+    while (nextUrl && pages < 5) {
+      const resp = await fetch(nextUrl);
+      if (!resp.ok) break;
+      const json = await resp.json();
+      const chunk = (json.results || []).map(b => ({ t: b.t, o: b.o, h: b.h, l: b.l, c: b.c, v: b.v }));
+      allBars = allBars.concat(chunk);
+      // next_url already contains all params except apiKey
+      nextUrl = json.next_url ? `${json.next_url}&apiKey=${apiKey}` : null;
+      pages++;
+    }
+    cache.set(cacheKey, { bars: allBars, expires: Date.now() + TTL[range] });
+    return res.status(200).json({ bars: allBars, cached: false });
   } catch {
     return res.status(200).json({ bars: [] });
   }
