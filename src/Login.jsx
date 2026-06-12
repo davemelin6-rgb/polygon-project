@@ -93,7 +93,7 @@ export default function Login({ onLogin, onBack }) {
     setLoading(true);
     const { data, error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { full_name: name.trim() || null, plan } },
+      options: { data: { full_name: name.trim() || null, plan, trial_ends_at: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString() } },
     });
     setLoading(false);
     if (error) { setError(error.message); return; }
@@ -254,8 +254,8 @@ export default function Login({ onLogin, onBack }) {
         </div>
 
         <div className="login-box-header">
-          <p className="login-welcome">Create your account</p>
-          <p className="login-sub">You'll be charged after your free trial</p>
+          <p className="login-welcome">Start your free trial</p>
+          <p className="login-sub">14 days free — no card required</p>
         </div>
 
         <form className="login-form" onSubmit={handleSignUp}>
@@ -273,7 +273,7 @@ export default function Login({ onLogin, onBack }) {
           </div>
           {error && <p className="login-error">{error}</p>}
           <button className="login-btn" type="submit" disabled={loading}>
-            {loading ? "Creating account…" : "Create account →"}
+            {loading ? "Starting trial…" : "Start 14-day free trial →"}
           </button>
         </form>
 

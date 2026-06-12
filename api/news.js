@@ -10,6 +10,7 @@ const TTL   = 5 * 60_000;
 export default async function handler(req, res) {
   const authed = await verifySession(req);
   if (authed === "rate_limited") return res.status(429).json({ error: "Too many requests — slow down" });
+  if (authed === "trial_expired")  return res.status(402).json({ error: "Trial expired" });
   if (!authed) return res.status(401).json({ error: "Unauthorized" });
 
   const apiKey = process.env.FMP_API_KEY;

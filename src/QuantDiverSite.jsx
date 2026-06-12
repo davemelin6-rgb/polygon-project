@@ -328,10 +328,13 @@ function HomePage({ go, onEnterApp }) {
       {/* PRICING */}
       <section id="pricing" style={{ padding: "96px 0 112px" }}>
         <div className="qd-wrap" style={{ maxWidth: 520, textAlign: "center" }}>
-          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>One plan · Everything included</div>
-          <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.5rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 40px" }}>
-            Start for 99 SEK / month
+          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>14-day free trial · No card required</div>
+          <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.5rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 12px" }}>
+            Try free for 14 days
           </h2>
+          <p style={{ fontFamily: ff.body, color: T.sub, fontSize: "1rem", margin: "0 0 40px" }}>
+            Then 99 SEK / month — cancel anytime
+          </p>
 
           <div style={{
             background: "linear-gradient(160deg, #0F1E3C, #090F1E)",
@@ -357,8 +360,11 @@ function HomePage({ go, onEnterApp }) {
               ))}
             </ul>
             <PrimaryBtn onClick={onEnterApp} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
-              Get started →
+              Start free trial →
             </PrimaryBtn>
+            <p style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 14, marginBottom: 0 }}>
+              No credit card required · Cancel anytime
+            </p>
           </div>
         </div>
       </section>

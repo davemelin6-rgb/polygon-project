@@ -548,8 +548,32 @@ export default function App({ session, onLogout }) {
     setScoresMap((prev) => ({ ...prev, ...sectorScores }));
   }
 
+  // Trial banner
+  const trialMeta = session?.user?.user_metadata?.trial_ends_at;
+  const trialDaysLeft = trialMeta
+    ? Math.ceil((new Date(trialMeta) - new Date()) / (1000 * 60 * 60 * 24))
+    : null;
+  const showTrialBanner = trialDaysLeft !== null && trialDaysLeft >= 0
+    && session?.user?.user_metadata?.subscription_status !== "active";
+
   return (
     <div className="app">
+      {showTrialBanner && (
+        <div style={{
+          background: trialDaysLeft <= 3 ? "rgba(245,158,11,.12)" : "rgba(0,180,255,.08)",
+          borderBottom: `1px solid ${trialDaysLeft <= 3 ? "rgba(245,158,11,.3)" : "rgba(0,180,255,.2)"}`,
+          padding: "10px 20px", textAlign: "center",
+          fontSize: ".82rem", color: trialDaysLeft <= 3 ? "#f59e0b" : "#5a9abf",
+          letterSpacing: ".03em",
+        }}>
+          {trialDaysLeft === 0
+            ? "Your free trial expires today — "
+            : `Free trial — ${trialDaysLeft} day${trialDaysLeft === 1 ? "" : "s"} remaining — `}
+          <span style={{ color: "#00b4ff", cursor: "pointer", textDecoration: "underline" }}>
+            Upgrade to keep access
+          </span>
+        </div>
+      )}
       <header className="header">
         <div className="header-brand">
           <QDLogo size={52} />
