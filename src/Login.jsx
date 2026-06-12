@@ -31,7 +31,7 @@ const PROPS = [
   },
 ];
 
-export default function Login({ onLogin }) {
+export default function Login({ onLogin, onBack }) {
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState(null);
@@ -159,6 +159,19 @@ export default function Login({ onLogin }) {
           </form>
 
           <p className="login-footer">Access by invitation only.</p>
+          {onBack && (
+            <button
+              onClick={onBack}
+              style={{
+                display: "block", width: "100%", marginTop: "0.75rem",
+                background: "transparent", border: "none", color: "#4a6a88",
+                fontSize: "0.82rem", cursor: "pointer", textAlign: "center",
+                padding: "0.4rem",
+              }}
+            >
+              ← Back to QuantDiver
+            </button>
+          )}
         </div>
       </div>
 
