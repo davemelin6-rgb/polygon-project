@@ -18,7 +18,7 @@ Then open http://localhost:5173
 - **Backend**: Node.js serverless functions (built for Vercel deployment)
 - **Data sources**:
   - Polygon.io — live snapshots + 200-day price history (unlimited plan, key in .env)
-  - FMP (Financial Modeling Prep) — fundamentals: income statement, balance sheet, cash flow (free tier 250 req/day, key in .env)
+  - FMP (Financial Modeling Prep) — fundamentals: income statement, balance sheet, cash flow (Starter plan, 300 req/min, key in .env)
 
 ## File Structure
 ```
@@ -65,7 +65,7 @@ Add these same vars to Vercel dashboard when deploying.
 ## FMP API Notes
 - FMP changed their API in August 2025 — v3 is legacy, now use `/stable/` endpoints
 - Example: `GET https://financialmodelingprep.com/stable/income-statement?symbol=AAPL&apikey=...`
-- Free tier: 250 requests/day. 5 tickers × 3 statements = 15 calls per fetch
+- Starter plan: 300 requests/min — no daily cap concern at current scale
 
 ## Caching
 - Scores cache: 60 seconds in-memory Map (price-sensitive)
@@ -90,13 +90,11 @@ Add these same vars to Vercel dashboard when deploying.
 | AMZN  | —        | —    | —          |
 
 ## Known Issues / Next Steps
-1. **Not deployed** — only runs locally, needs Vercel deployment
-2. **No auth** — anyone with the URL can use the Polygon key for free
-3. **No database** — no watchlists, no user accounts, nothing persisted
-4. **FMP rate limit** — 250 req/day free tier will break with real users
-5. **Formula validation** — weights and normalization ranges are first-draft, need back-testing
-6. **Mobile layout** — not tested on small screens
-7. **Score history** — no tracking of scores over time
+1. **No payment gate** — Stripe not yet integrated, sign-up is free
+2. **Formula validation** — weights and normalization ranges are first-draft, need back-testing
+3. **Mobile layout** — not tested on small screens
+4. **Score history** — no tracking of scores over time
+5. **BriefMe emails** — advertised on landing page but not yet sending
 
 ## Business Context
 The scoring formulas in `lib/formulas.js` are the core product/moat. The idea is to sell access to these scores. Users see the numbers, not how they are calculated. The three scores chosen are RISK, TECH VALUE, and MOMENTUM — chosen to give investors a quick signal on any stock.
