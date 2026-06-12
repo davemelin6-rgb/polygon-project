@@ -12,9 +12,8 @@ const STALE_MS = 24 * 60 * 60 * 1000;
 export default async function handler(req, res) {
   // ── Auth guard ───────────────────────────────────────────
   const authed = await verifySession(req);
-  if (!authed) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  if (authed === "rate_limited") return res.status(429).json({ error: "Too many requests — slow down" });
+  if (!authed) return res.status(401).json({ error: "Unauthorized" });
 
   // ── API keys ─────────────────────────────────────────────
   const polygonKey = process.env.POLYGON_API_KEY;

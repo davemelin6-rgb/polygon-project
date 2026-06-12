@@ -12,6 +12,7 @@ function num(v) { return v != null ? +Number(v).toFixed(2) : null; }
 
 export default async function handler(req, res) {
   const authed = await verifySession(req);
+  if (authed === "rate_limited") return res.status(429).json({ error: "Too many requests — slow down" });
   if (!authed) return res.status(401).json({ error: "Unauthorized" });
 
   const apiKey = process.env.FMP_API_KEY;
