@@ -6,7 +6,10 @@ import Settings from "./Settings.jsx";
 import QDLogo from "./QDLogo.jsx";
 import Sparkline from "./Sparkline.jsx";
 import PriceChart from "./PriceChart.jsx";
-import SectorSection from "./SectorSection.jsx";
+import SectorSection      from "./SectorSection.jsx";
+import TechnicalSignals  from "./TechnicalSignals.jsx";
+import NewsFeed          from "./NewsFeed.jsx";
+import KeyRatios         from "./KeyRatios.jsx";
 
 const SECTORS = [
   {
@@ -599,10 +602,20 @@ export default function App({ session, onLogout }) {
 
       {(stocks.length > 0 || selected) && (
         <div className="sections">
-          {selected && <PriceChart stock={selected} session={session} />}
+          {selected && <PriceChart         stock={selected} session={session} />}
+          {selected && <TechnicalSignals   stock={selected} session={session} />}
           <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
           <FinancialIntelligence  stocks={stocks} scoresMap={scoresMap} selected={selected} />
+          {selected && <KeyRatios          stock={selected} session={session} />}
         </div>
+      )}
+
+      {/* News feed — shows selected stock news or full watchlist news */}
+      {stocks.length > 0 && (
+        <NewsFeed
+          tickers={selected ? [selected.symbol] : stocks.map(s => s.symbol).slice(0, 5)}
+          session={session}
+        />
       )}
 
       <div className="sectors-wrap">

@@ -1,0 +1,108 @@
+.kr-panel { }
+
+.kr-loading {
+  display: flex; align-items: center; gap: 10px;
+  padding: 1rem 0; font-size: .82rem; color: #3d5c78; letter-spacing: .06em;
+}
+.kr-spinner {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.06);
+  border-top-color: #00b4ff;
+  border-radius: 50%;
+  animation: kr-spin .75s linear infinite;
+}
+@keyframes kr-spin { to { transform: rotate(360deg); } }
+
+/* ── Company header ─────────────────────────────────────── */
+.kr-company {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  margin-bottom: 1.25rem;
+}
+.kr-company-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #dce8f4;
+  margin-bottom: 4px;
+}
+.kr-company-meta {
+  font-size: .78rem;
+  color: #3d5c78;
+}
+.kr-company-stats {
+  display: flex;
+  gap: 1.25rem;
+  flex-shrink: 0;
+}
+.kr-stat { text-align: right; }
+.kr-stat-label { display: block; font-size: .6rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #2d4a5f; margin-bottom: 3px; }
+.kr-stat-val { font-family: 'Space Mono',monospace; font-size: .9rem; font-weight: 600; color: #8fa0c4; }
+.kr-stat-val.green { color: #00dc82; }
+
+/* ── Section label ──────────────────────────────────────── */
+.kr-section-label {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #3d5c78;
+  margin: 1.1rem 0 0.7rem;
+}
+
+/* ── Ratio grid ─────────────────────────────────────────── */
+.kr-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 0.25rem;
+}
+
+.kr-card {
+  background: rgba(255,255,255,.025);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+  padding: 14px 14px 12px;
+  transition: border-color .2s;
+}
+.kr-card:hover { border-color: rgba(0,180,255,.22); }
+
+.kr-card-label {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #3d5c78;
+  margin-bottom: 6px;
+}
+.kr-card-value {
+  font-family: 'Space Mono',monospace;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #dce8f4;
+  margin-bottom: 4px;
+}
+.kr-card-ctx {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+/* ── Description ────────────────────────────────────────── */
+.kr-description {
+  margin-top: 1.25rem;
+  padding-top: 1.1rem;
+  border-top: 1px solid rgba(255,255,255,.05);
+  font-size: .82rem;
+  color: #3d5c78;
+  line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+  .kr-grid { grid-template-columns: repeat(2, 1fr); }
+  .kr-company { flex-direction: column; }
+  .kr-company-stats { flex-direction: row; justify-content: flex-start; }
+}

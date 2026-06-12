@@ -12,10 +12,13 @@ try {
   }
 } catch {}
 
-const { default: stocksHandler } = await import("./api/stocks.js");
-const { default: scoresHandler } = await import("./api/scores.js");
-const { default: chartsHandler }  = await import("./api/charts.js");
-const { default: historyHandler } = await import("./api/history.js");
+const { default: stocksHandler }     = await import("./api/stocks.js");
+const { default: scoresHandler }     = await import("./api/scores.js");
+const { default: chartsHandler }     = await import("./api/charts.js");
+const { default: historyHandler }    = await import("./api/history.js");
+const { default: techHandler }       = await import("./api/technicals.js");
+const { default: newsHandler }       = await import("./api/news.js");
+const { default: ratiosHandler }     = await import("./api/ratios.js");
 
 const server = http.createServer((req, res) => {
   const url   = new URL(req.url, "http://localhost:3456");
@@ -40,6 +43,12 @@ const server = http.createServer((req, res) => {
     chartsHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/history") {
     historyHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/technicals") {
+    techHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/news") {
+    newsHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/ratios") {
+    ratiosHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else {
     res.writeHead(404);
     res.end("Not found");
