@@ -1,0 +1,145 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#020812"/>
+      <stop offset="100%" style="stop-color:#050d1a"/>
+    </linearGradient>
+    <linearGradient id="glow1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00b4ff;stop-opacity:0.15"/>
+      <stop offset="100%" style="stop-color:#00b4ff;stop-opacity:0"/>
+    </linearGradient>
+    <linearGradient id="bar1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00dc82"/>
+      <stop offset="100%" style="stop-color:#00dc82;stop-opacity:0.6"/>
+    </linearGradient>
+    <linearGradient id="bar2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#f59e0b;stop-opacity:0.6"/>
+    </linearGradient>
+    <linearGradient id="bar3" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#00b4ff"/>
+      <stop offset="100%" style="stop-color:#00b4ff;stop-opacity:0.6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="softglow">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid lines -->
+  <line x1="0" y1="210" x2="1200" y2="210" stroke="#ffffff" stroke-opacity="0.025" stroke-width="1"/>
+  <line x1="0" y1="420" x2="1200" y2="420" stroke="#ffffff" stroke-opacity="0.025" stroke-width="1"/>
+  <line x1="400" y1="0" x2="400" y2="630" stroke="#ffffff" stroke-opacity="0.025" stroke-width="1"/>
+  <line x1="800" y1="0" x2="800" y2="630" stroke="#ffffff" stroke-opacity="0.025" stroke-width="1"/>
+
+  <!-- Glow blob top-left -->
+  <circle cx="160" cy="200" r="280" fill="url(#glow1)" opacity="0.6"/>
+
+  <!-- Logo mark (diamond/hexagon) -->
+  <g transform="translate(90, 260)">
+    <!-- Outer ring -->
+    <circle cx="0" cy="0" r="52" fill="none" stroke="#00b4ff" stroke-width="1.5" stroke-opacity="0.4"/>
+    <!-- Diamond shape -->
+    <polygon points="0,-36 31,0 0,36 -31,0" fill="none" stroke="#00b4ff" stroke-width="2" filter="url(#glow)"/>
+    <!-- Inner cross lines -->
+    <line x1="-31" y1="0" x2="31" y2="0" stroke="#00b4ff" stroke-width="1" stroke-opacity="0.5"/>
+    <line x1="0" y1="-36" x2="0" y2="36" stroke="#00b4ff" stroke-width="1" stroke-opacity="0.5"/>
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="5" fill="#00b4ff" filter="url(#glow)"/>
+  </g>
+
+  <!-- QuantDiver wordmark -->
+  <text x="164" y="240" font-family="'Space Grotesk', Arial, sans-serif" font-size="72" font-weight="700" fill="#f0f6fc" letter-spacing="-2">QuantDiver</text>
+
+  <!-- Tagline -->
+  <text x="164" y="288" font-family="Arial, sans-serif" font-size="26" font-weight="400" fill="#5a7a9a" letter-spacing="1">Real-time quant scores for modern investors</text>
+
+  <!-- Divider line -->
+  <line x1="164" y1="318" x2="680" y2="318" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+
+  <!-- Score cards -->
+  <!-- MOMENTUM card -->
+  <g transform="translate(164, 344)">
+    <rect width="148" height="100" rx="10" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+    <text x="14" y="24" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#3d5c78" letter-spacing="2">MOMENTUM</text>
+    <text x="14" y="58" font-family="'Courier New', monospace" font-size="36" font-weight="700" fill="#00dc82">72</text>
+    <rect x="14" y="72" width="120" height="4" rx="2" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="14" y="72" width="87" height="4" rx="2" fill="url(#bar1)"/>
+  </g>
+
+  <!-- RISK card -->
+  <g transform="translate(328, 344)">
+    <rect width="148" height="100" rx="10" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+    <text x="14" y="24" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#3d5c78" letter-spacing="2">RISK</text>
+    <text x="14" y="58" font-family="'Courier New', monospace" font-size="36" font-weight="700" fill="#f59e0b">38</text>
+    <rect x="14" y="72" width="120" height="4" rx="2" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="14" y="72" width="46" height="4" rx="2" fill="url(#bar2)"/>
+  </g>
+
+  <!-- TECH VALUE card -->
+  <g transform="translate(492, 344)">
+    <rect width="148" height="100" rx="10" fill="#ffffff" fill-opacity="0.04" stroke="#ffffff" stroke-opacity="0.08" stroke-width="1"/>
+    <text x="14" y="24" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#3d5c78" letter-spacing="2">TECH VALUE</text>
+    <text x="14" y="58" font-family="'Courier New', monospace" font-size="36" font-weight="700" fill="#00b4ff">76</text>
+    <rect x="14" y="72" width="120" height="4" rx="2" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="14" y="72" width="91" height="4" rx="2" fill="url(#bar3)"/>
+  </g>
+
+  <!-- Right side — sparkline chart area -->
+  <g transform="translate(740, 80)">
+    <!-- Card border -->
+    <rect width="380" height="470" rx="16" fill="#ffffff" fill-opacity="0.03" stroke="#ffffff" stroke-opacity="0.07" stroke-width="1"/>
+
+    <!-- Chart label -->
+    <text x="24" y="38" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#3d5c78" letter-spacing="2">NVDA · NASDAQ</text>
+    <text x="24" y="70" font-family="'Courier New', monospace" font-size="40" font-weight="700" fill="#f0f6fc">$875.40</text>
+    <text x="24" y="95" font-family="Arial, sans-serif" font-size="16" fill="#00dc82">▲ +3.24%</text>
+
+    <!-- Fake sparkline path -->
+    <polyline
+      points="24,200 60,220 100,195 140,210 175,180 210,165 240,155 270,140 300,120 330,108 356,92"
+      fill="none"
+      stroke="#00b4ff"
+      stroke-width="2.5"
+      stroke-linejoin="round"
+      stroke-linecap="round"
+      filter="url(#glow)"
+    />
+    <!-- Area fill under sparkline -->
+    <polygon
+      points="24,200 60,220 100,195 140,210 175,180 210,165 240,155 270,140 300,120 330,108 356,92 356,260 24,260"
+      fill="#00b4ff"
+      fill-opacity="0.06"
+    />
+
+    <!-- Score bars inside card -->
+    <text x="24" y="300" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#3d5c78" letter-spacing="2">MOM</text>
+    <rect x="80" y="289" width="260" height="4" rx="2" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="80" y="289" width="177" height="4" rx="2" fill="url(#bar3)"/>
+    <text x="352" y="296" font-family="'Courier New', monospace" font-size="10" fill="#8fa0c4" text-anchor="end">68</text>
+
+    <text x="24" y="330" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#3d5c78" letter-spacing="2">RISK</text>
+    <rect x="80" y="319" width="260" height="4" rx="2" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="80" y="319" width="55" height="4" rx="2" fill="url(#bar1)"/>
+    <text x="352" y="326" font-family="'Courier New', monospace" font-size="10" fill="#8fa0c4" text-anchor="end">21</text>
+
+    <text x="24" y="360" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#3d5c78" letter-spacing="2">TECH</text>
+    <rect x="80" y="349" width="260" height="4" rx="2" fill="#ffffff" fill-opacity="0.06"/>
+    <rect x="80" y="349" width="197" height="4" rx="2" fill="url(#bar3)"/>
+    <text x="352" y="356" font-family="'Courier New', monospace" font-size="10" fill="#8fa0c4" text-anchor="end">76</text>
+
+    <!-- Bottom badge -->
+    <rect x="24" y="410" width="130" height="28" rx="6" fill="#00b4ff" fill-opacity="0.12" stroke="#00b4ff" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="89" y="429" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#00b4ff" letter-spacing="1" text-anchor="middle">PREMIUM MEMBER</text>
+  </g>
+
+  <!-- Bottom left domain -->
+  <text x="164" y="580" font-family="Arial, sans-serif" font-size="18" fill="#2d4a5f" letter-spacing="1">quantdiver.com</text>
+</svg>

@@ -627,8 +627,7 @@ export default function QuantDiverSite({ onEnterApp }) {
               border: `1px solid ${T.border}`, borderRadius: 10, padding: "16px 18px",
               background: "rgba(8,14,28,.5)", fontFamily: ff.body,
             }}>
-              <b style={{ color: T.sub }}>Viktig information:</b> QuantDiver och BriefMe tillhandahåller endast allmän finansiell information och analys i utbildningssyfte. Innehållet utgör inte investeringsrådgivning, finansiell rådgivning eller rekommendationer att köpa eller sälja värdepapper. Tjänsten står inte under Finansinspektionens tillsyn. Alla investeringsbeslut fattas på egen risk. Historisk avkastning är ingen garanti för framtida resultat.
-              {" "}QuantDiver and BriefMe provide general financial information for educational purposes only. Nothing constitutes investment advice or a recommendation to buy or sell any security.
+              <b style={{ color: T.sub }}>Important:</b> QuantDiver and BriefMe provide general financial information and analysis for educational purposes only. Nothing on this platform constitutes investment advice, financial advice, or a recommendation to buy or sell any security. All investment decisions are made at your own risk. Past performance is not a guarantee of future results.
             </div>
           </div>
         </footer>
