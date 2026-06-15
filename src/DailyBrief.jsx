@@ -167,17 +167,17 @@ export default function DailyBrief({ session }) {
                 ) : (
                   <div className="db-brief-articles">
                     {sectorNews.map((item, i) => (
-                      <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="db-brief-article">
-                        <p className="db-brief-article-title">{item.title}</p>
+                      <div key={i} className="db-brief-article">
                         <div className="db-brief-article-meta">
+                          <span className="db-brief-article-date">{fmtDate(item.published)}</span>
+                          <span className="db-brief-article-dot">·</span>
                           <span className="db-brief-article-sym" style={{ color: s.accent }}>{item.symbol}</span>
                           <span className="db-brief-article-dot">·</span>
                           <span className="db-brief-article-source">{item.source}</span>
-                          <span className="db-brief-article-dot">·</span>
-                          <span className="db-brief-article-time">{fmtDate(item.published)}</span>
                         </div>
+                        <p className="db-brief-article-title">{item.title}</p>
                         {item.text && <p className="db-brief-article-text">{item.text}</p>}
-                      </a>
+                      </div>
                     ))}
                   </div>
                 )}
