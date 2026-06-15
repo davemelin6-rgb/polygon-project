@@ -1,6 +1,83 @@
 import { useState, useEffect } from "react";
 import "./DailyBrief.css";
 
+// What each macro event means + which sectors it affects
+const MACRO_INFO = {
+  "Business Confidence": {
+    what: "Measures how optimistic businesses feel about economic conditions. Scores above 50 indicate expansion; below 50 signals contraction.",
+    sectors: { ai: "High confidence drives tech capex and AI infrastructure spending — good for NVDA, AMD, MSFT.", quantum: "Corporate R&D budgets expand in confident environments — positive for IBM, IONQ.", defence: "Less direct impact. Defence spending driven by policy, not sentiment." },
+  },
+  "NAHB Housing Market Index": {
+    what: "Gauge of US homebuilder confidence. A reading above 50 means more builders see conditions as good than poor.",
+    sectors: { ai: "Weak housing can signal broader slowdown but has limited direct impact on tech.", quantum: "Minimal direct impact on quantum sector.", defence: "No meaningful connection to defence & space." },
+  },
+  "Industrial Production MoM": {
+    what: "Measures monthly change in output from factories, mines, and utilities. Reflects the health of the real economy.",
+    sectors: { ai: "Strong industrial production increases demand for AI-powered automation and semiconductor chips — bullish for NVDA, AMD, SMCI.", quantum: "Positive for IBM which serves industrial clients. Early signal for quantum computing adoption timelines.", defence: "Strong industrial output supports defence supply chains — positive for LMT, RTX, NOC." },
+  },
+  "NY Empire State Manufacturing Index": {
+    what: "Monthly survey of manufacturers in New York State. Above 0 = expansion, below 0 = contraction. Early leading indicator for US manufacturing.",
+    sectors: { ai: "Weak manufacturing can pull chip demand lower near-term. Watch NVDA and AMD.", quantum: "Limited direct impact but reflects industrial health.", defence: "Supply chain indicator for defence manufacturers." },
+  },
+  "Housing Starts": {
+    what: "Number of new residential construction projects begun. A key indicator of consumer confidence and economic health.",
+    sectors: { ai: "Indirect — strong housing drives mortgage tech, smart home AI.", quantum: "Minimal sector impact.", defence: "No direct connection." },
+  },
+  "Balance of Trade": {
+    what: "Difference between a country's exports and imports. A deficit means more is imported than exported. US trade data moves currency and affects multinational earnings.",
+    sectors: { ai: "Trade tensions can restrict semiconductor exports — watch NVDA China restrictions. A wider deficit can pressure USD and impact foreign revenue.", quantum: "IBM and GOOGL derive significant international revenue — currency effects matter.", defence: "Trade policy often drives defence deals — arms exports are a key component." },
+  },
+  "CPI": {
+    what: "Consumer Price Index — the main inflation gauge. High CPI keeps interest rates elevated, compressing tech valuations.",
+    sectors: { ai: "Rate-sensitive. High CPI = higher rates = lower tech valuations. Critical for NVDA, META, MSFT multiples.", quantum: "Same rate sensitivity. Early-stage quantum companies most exposed.", defence: "Defence stocks are relatively rate-insensitive — government contracts are inflation-adjusted." },
+  },
+  "Core CPI": {
+    what: "CPI excluding food and energy — what the Fed focuses on. The single most important inflation print for equity markets.",
+    sectors: { ai: "Directly drives Fed policy. Lower core CPI = rate cut expectations = tech rally.", quantum: "Same as AI — rate environment is the key variable.", defence: "Defensive positioning benefits from rate uncertainty." },
+  },
+  "Fed Interest Rate Decision": {
+    what: "The Federal Reserve sets the benchmark interest rate. This is the single most market-moving event. Rate cuts boost growth stocks; hikes compress them.",
+    sectors: { ai: "Massive impact. Rate cuts are rocket fuel for high-multiple AI names — NVDA, META, PLTR.", quantum: "Rate cuts benefit speculative plays most — IONQ, RGTI, QUBT would rally hard.", defence: "Less sensitive. Defence is often seen as a safe haven during rate uncertainty." },
+  },
+  "Unemployment Rate": {
+    what: "Percentage of the labour force that is jobless and seeking work. Low unemployment signals economic strength but can fuel inflation.",
+    sectors: { ai: "Strong labour market → consumer spending → cloud/SaaS growth → bullish for META, MSFT.", quantum: "Indirect signal of tech hiring conditions.", defence: "Stable employment supports defence budget appropriations." },
+  },
+  "GDP": {
+    what: "Gross Domestic Product — the broadest measure of economic output. Strong GDP growth is generally bullish across sectors.",
+    sectors: { ai: "Strong GDP drives enterprise tech spending — bullish across the board.", quantum: "GDP growth expands R&D budgets and quantum investment timelines.", defence: "Strong GDP supports higher defence allocations as % of budget." },
+  },
+  "PMI": {
+    what: "Purchasing Managers Index. Above 50 = economic expansion; below 50 = contraction. One of the most timely economic indicators available.",
+    sectors: { ai: "Strong PMI → more enterprise orders → chip demand growth. Critical for NVDA and AMD.", quantum: "Leading indicator for industrial quantum adoption.", defence: "Manufacturing PMI affects defence production capacity." },
+  },
+  "Retail Sales": {
+    what: "Monthly change in total receipts at retail stores. Measures consumer spending — the largest component of the US economy.",
+    sectors: { ai: "Strong retail = consumer confidence = cloud/app spending growth. Positive for META, AMZN.", quantum: "Indirect. Consumer economy strength supports tech investment.", defence: "Limited direct impact." },
+  },
+  "Nonfarm Payrolls": {
+    what: "Monthly count of jobs added outside farming. The headline jobs number — moves markets significantly on release day.",
+    sectors: { ai: "Strong jobs = consumer spending = ad revenue and cloud growth. Positive for META, GOOGL, MSFT.", quantum: "Leading indicator for tech talent availability.", defence: "Strong economy supports defence budget stability." },
+  },
+};
+
+function getMacroInfo(eventName) {
+  for (const [key, val] of Object.entries(MACRO_INFO)) {
+    if (eventName.toLowerCase().includes(key.toLowerCase())) return val;
+  }
+  return null;
+}
+
+function macroInterpretation(e) {
+  if (e.actual == null || e.estimate == null) return null;
+  const beat = e.actual > e.estimate;
+  const miss = e.actual < e.estimate;
+  const diff = Math.abs(((e.actual - e.estimate) / Math.abs(e.estimate || 1)) * 100).toFixed(1);
+  if (beat) return { label: `Beat estimates by ${diff}%`, color: "#00dc82", sign: "▲" };
+  if (miss) return { label: `Missed estimates by ${diff}%`, color: "#ff3c50", sign: "▼" };
+  return { label: "In line with estimates", color: "#f59e0b", sign: "●" };
+}
+
 function timeAgo(str) {
   if (!str) return "";
   const diff = Date.now() - new Date(str).getTime();
@@ -24,9 +101,10 @@ function fmtVal(v, unit) {
 const IMPACT_COLOR = { High: "#ff3c50", Medium: "#f59e0b" };
 
 export default function DailyBrief({ session }) {
-  const [data,    setData]    = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error,   setError]   = useState(null);
+  const [data,        setData]        = useState(null);
+  const [loading,     setLoading]     = useState(true);
+  const [error,       setError]       = useState(null);
+  const [expandedMacro, setExpandedMacro] = useState(null);
 
   useEffect(() => {
     if (!session?.access_token) return;
@@ -115,19 +193,48 @@ export default function DailyBrief({ session }) {
                 <span className="db-brief-sector-name" style={{ color: "#94a3b8" }}>Macro Context</span>
               </div>
               <div className="db-events">
-                {data.events.map((e, i) => (
-                  <div key={i} className="db-event" onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(e.event + " economic indicator")}`, "_blank")} style={{ cursor: "pointer" }}>
-                    <span style={{ color: IMPACT_COLOR[e.impact] ?? "#8fa0c4", fontSize: ".7rem" }}>●</span>
-                    {e.time && <span className="db-event-time">{e.time}</span>}
-                    <span className="db-event-flag">{e.flag}</span>
-                    <span className="db-event-name">{e.event}</span>
-                    <div className="db-event-vals">
-                      {e.estimate != null && <span className="db-val-chip">Est: {fmtVal(e.estimate, e.unit)}</span>}
-                      {e.previous != null && <span className="db-val-chip dim">Prev: {fmtVal(e.previous, e.unit)}</span>}
-                      {e.actual   != null && <span className="db-val-chip actual">Act: {fmtVal(e.actual, e.unit)}</span>}
+                {data.events.map((e, i) => {
+                  const info   = getMacroInfo(e.event);
+                  const interp = macroInterpretation(e);
+                  const open   = expandedMacro === i;
+                  return (
+                    <div key={i}>
+                      <div className="db-event" onClick={() => setExpandedMacro(open ? null : i)} style={{ cursor: "pointer" }}>
+                        <span style={{ color: IMPACT_COLOR[e.impact] ?? "#8fa0c4", fontSize: ".7rem" }}>●</span>
+                        {e.time && <span className="db-event-time">{e.time}</span>}
+                        <span className="db-event-flag">{e.flag}</span>
+                        <span className="db-event-name">{e.event}</span>
+                        <div className="db-event-vals">
+                          {e.estimate != null && <span className="db-val-chip">Est: {fmtVal(e.estimate, e.unit)}</span>}
+                          {e.previous != null && <span className="db-val-chip dim">Prev: {fmtVal(e.previous, e.unit)}</span>}
+                          {e.actual   != null && <span className="db-val-chip actual">Act: {fmtVal(e.actual, e.unit)}</span>}
+                          <span style={{ color: "#2a3f55", fontSize: ".65rem", marginLeft: ".25rem" }}>{open ? "▲" : "▼"}</span>
+                        </div>
+                      </div>
+                      {open && (
+                        <div className="db-macro-detail">
+                          {interp && (
+                            <div className="db-macro-reading" style={{ color: interp.color }}>
+                              {interp.sign} {interp.label}
+                            </div>
+                          )}
+                          {info ? (
+                            <>
+                              <p className="db-macro-what">{info.what}</p>
+                              <div className="db-macro-sectors">
+                                <div className="db-macro-sector"><span style={{ color: "#22D3EE" }}>🧠 AI</span><span>{info.sectors.ai}</span></div>
+                                <div className="db-macro-sector"><span style={{ color: "#8B5CF6" }}>⚛️ Quantum</span><span>{info.sectors.quantum}</span></div>
+                                <div className="db-macro-sector"><span style={{ color: "#F59E0B" }}>🛡️ Defence</span><span>{info.sectors.defence}</span></div>
+                              </div>
+                            </>
+                          ) : (
+                            <p className="db-macro-what">Economic indicator — click the numbers to compare actual vs estimate and previous readings.</p>
+                          )}
+                        </div>
+                      )}
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
