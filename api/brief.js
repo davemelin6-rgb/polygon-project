@@ -44,14 +44,25 @@ export default async function handler(req, res) {
   try {
     const tickerStr = ALL_TICKERS.join(",");
 
-    // Fetch news per sector so each sector is guaranteed coverage
-    const sectorNewsFetches = fmpKey
-      ? SECTORS.map(s =>
-          fetch(`${FMP}/stock_news?tickers=${s.tickers.join(",")}&limit=8&apikey=${fmpKey}`)
+    // Fetch news per sector — one request per ticker to avoid multi-ticker issues
+    const KEY_TICKERS = {
+      quantum: ["IONQ", "IBM", "GOOGL"],
+      ai:      ["NVDA", "AMD", "META"],
+      defence: ["LMT",  "RTX", "RKLB"],
+    };
+
+    const sectorNewsFetches = SECTORS.map(async s => {
+      if (!fmpKey) return [];
+      const picks = KEY_TICKERS[s.id] || s.tickers.slice(0, 3);
+      const results = await Promise.all(
+        picks.map(ticker =>
+          fetch(`${FMP}/stock_news?tickers=${ticker}&limit=4&apikey=${fmpKey}`)
             .then(r => r.ok ? r.json() : [])
             .catch(() => [])
         )
-      : SECTORS.map(() => Promise.resolve([]));
+      );
+      return results.flat();
+    });
 
     const [snapRes, calRes, ...sectorNewsResults] = await Promise.all([
       fetch(`${POLYGON}/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(tickerStr)}&apiKey=${polygonKey}`),
