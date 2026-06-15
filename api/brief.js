@@ -52,16 +52,14 @@ export default async function handler(req, res) {
     };
 
     const sectorNewsFetches = SECTORS.map(async s => {
-      if (!fmpKey) return [];
+      if (!fmpKey) return { items: [], _raw: "no fmp key" };
       const picks = KEY_TICKERS[s.id] || s.tickers.slice(0, 3);
-      const results = await Promise.all(
-        picks.map(ticker =>
-          fetch(`${FMP}/stock_news?tickers=${ticker}&limit=4&apikey=${fmpKey}`)
-            .then(r => r.ok ? r.json() : [])
-            .catch(() => [])
-        )
-      );
-      return results.flat();
+      const firstTicker = picks[0];
+      const r = await fetch(`${FMP}/stock_news?tickers=${firstTicker}&limit=4&apikey=${fmpKey}`).catch(() => null);
+      const body = r ? await r.json().catch(() => ({ _fetchError: true })) : { _noResponse: true };
+      const isArr = Array.isArray(body);
+      const items = isArr ? body : [];
+      return { items, _raw: isArr ? `array[${body.length}]` : JSON.stringify(body).slice(0, 200) };
     });
 
     const [snapRes, calRes, ...sectorNewsResults] = await Promise.all([
@@ -102,8 +100,9 @@ export default async function handler(req, res) {
 
     for (let i = 0; i < SECTORS.length; i++) {
       const s       = SECTORS[i];
-      const raw     = Array.isArray(sectorNewsResults[i]) ? sectorNewsResults[i] : [];
-      _debug[s.id]  = { count: raw.length, sample: raw[0] ?? null };
+      const result  = sectorNewsResults[i] || { items: [], _raw: "undefined" };
+      const raw     = result.items || [];
+      _debug[s.id]  = { count: raw.length, fmpResponse: result._raw };
       const mapped  = raw
         .filter(a => a.url && !seenUrls.has(a.url))
         .slice(0, 5)

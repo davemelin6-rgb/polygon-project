@@ -163,7 +163,7 @@ export default function DailyBrief({ session }) {
 
                 {/* news articles */}
                 {sectorNews.length === 0 ? (
-                  <p className="db-brief-empty">No news today. {data._debug?.[s.id] ? `(FMP returned ${data._debug[s.id].count} items)` : "(no debug)"}</p>
+                  <p className="db-brief-empty">No news today. {data._debug?.[s.id] ? `FMP: ${data._debug[s.id].fmpResponse}` : ""}</p>
                 ) : (
                   <div className="db-brief-articles">
                     {sectorNews.map((item, i) => (
