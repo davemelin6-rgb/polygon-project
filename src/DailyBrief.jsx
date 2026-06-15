@@ -78,14 +78,14 @@ function macroInterpretation(e) {
   return { label: "In line with estimates", color: "#f59e0b", sign: "●" };
 }
 
-function timeAgo(str) {
+function fmtDate(str) {
   if (!str) return "";
-  const diff = Date.now() - new Date(str).getTime();
-  const h = Math.floor(diff / 3_600_000);
-  const m = Math.floor(diff / 60_000);
-  if (h >= 24) return `${Math.floor(h / 24)}d ago`;
-  if (h >= 1)  return `${h}h ago`;
-  return `${m}m ago`;
+  const d = new Date(str);
+  const today = new Date();
+  const isToday = d.toDateString() === today.toDateString();
+  const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  if (isToday) return `Today ${time}`;
+  return d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) + " · " + time;
 }
 
 function fmt(n, d = 2) {
@@ -163,19 +163,19 @@ export default function DailyBrief({ session }) {
 
                 {/* news articles */}
                 {sectorNews.length === 0 ? (
-                  <p className="db-brief-empty">No news today. {data._debug?.[s.id] ? `FMP: ${data._debug[s.id].fmpResponse}` : ""}</p>
+                  <p className="db-brief-empty">No news today.</p>
                 ) : (
                   <div className="db-brief-articles">
                     {sectorNews.map((item, i) => (
                       <a key={i} href={item.url} target="_blank" rel="noopener noreferrer" className="db-brief-article">
+                        <p className="db-brief-article-title">{item.title}</p>
                         <div className="db-brief-article-meta">
                           <span className="db-brief-article-sym" style={{ color: s.accent }}>{item.symbol}</span>
                           <span className="db-brief-article-dot">·</span>
                           <span className="db-brief-article-source">{item.source}</span>
                           <span className="db-brief-article-dot">·</span>
-                          <span className="db-brief-article-time">{timeAgo(item.published)}</span>
+                          <span className="db-brief-article-time">{fmtDate(item.published)}</span>
                         </div>
-                        <p className="db-brief-article-title">{item.title}</p>
                         {item.text && <p className="db-brief-article-text">{item.text}</p>}
                       </a>
                     ))}
