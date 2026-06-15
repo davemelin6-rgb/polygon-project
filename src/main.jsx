@@ -4,13 +4,17 @@ import App from "./App.jsx";
 import Login from "./Login.jsx";
 import SetupPassword from "./SetupPassword.jsx";
 import QuantDiverSite from "./QuantDiverSite.jsx";
+import AdminPanel from "./AdminPanel.jsx";
 import { supabase } from "./supabaseClient.js";
 import "./index.css";
 
 function Root() {
-  const [session,   setSession]   = useState(undefined); // undefined = loading
-  const [isSetup,   setIsSetup]   = useState(false);
-  const [showLogin, setShowLogin] = useState(false);
+  const [session,    setSession]   = useState(undefined); // undefined = loading
+  const [isSetup,    setIsSetup]   = useState(false);
+  const [showLogin,  setShowLogin] = useState(false);
+  const [showAdmin,  setShowAdmin] = useState(false);
+
+  const ADMIN_EMAIL = "davemelin6@gmail.com";
 
   useEffect(() => {
     // Check if this is a password setup link from invite email
@@ -36,7 +40,9 @@ function Root() {
   if (isSetup)    return <SetupPassword onDone={() => setIsSetup(false)} />;
   if (!session && showLogin) return <Login onLogin={setSession} onBack={() => setShowLogin(false)} />;
   if (!session)   return <QuantDiverSite onEnterApp={() => setShowLogin(true)} />;
-  return <App session={session} onLogout={() => { setSession(null); setShowLogin(false); }} />;
+  if (showAdmin && session?.user?.email === ADMIN_EMAIL)
+    return <AdminPanel session={session.user ? session : { ...session, user: session }} onBack={() => setShowAdmin(false)} />;
+  return <App session={session} onLogout={() => { setSession(null); setShowLogin(false); }} onAdmin={session?.user?.email === ADMIN_EMAIL ? () => setShowAdmin(true) : null} />;
 }
 
 createRoot(document.getElementById("root")).render(

@@ -419,7 +419,7 @@ function FinancialIntelligence({ stocks, scoresMap, selected }) {
 }
 
 // ── App ────────────────────────────────────────────────────
-export default function App({ session, onLogout }) {
+export default function App({ session, onLogout, onAdmin }) {
   const [input, setInput]         = useState(DEFAULT_TICKERS);
   const [tickers, setTickers]     = useState(DEFAULT_TICKERS);
   const [stocks, setStocks]       = useState([]);
@@ -585,6 +585,11 @@ export default function App({ session, onLogout }) {
           </div>
         </div>
         <div style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
+          {onAdmin && (
+            <button className="logout-btn" onClick={onAdmin} style={{ background: "rgba(0,180,255,.1)", borderColor: "rgba(0,180,255,.3)", color: "#00b4ff" }}>
+              Admin
+            </button>
+          )}
           <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
             Sign Out
           </button>
