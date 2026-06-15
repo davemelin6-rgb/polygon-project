@@ -580,7 +580,7 @@ export default function App({ session, onLogout, onAdmin }) {
           <QDLogo size={52} />
           <div>
             <h1>QuantDiver</h1>
-            <div className="header-eyebrow">Real-Time Quant Scores</div>
+            <div className="header-eyebrow">Quant Scores · <span style={{ color: "#f59e0b" }}>15-min delayed</span></div>
             {username && <div className="header-welcome">Welcome back, {username}</div>}
           </div>
         </div>
