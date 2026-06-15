@@ -315,9 +315,9 @@
   font-size: .7rem;
 }
 .db-brief-article-sym    { font-weight: 700; font-family: 'Space Mono', monospace; font-size: .65rem; }
-.db-brief-article-source { color: #3d5c78; font-weight: 600; }
-.db-brief-article-time   { color: #2a3f55; font-family: 'Space Mono', monospace; }
-.db-brief-article-dot    { color: #1e2d3d; }
+.db-brief-article-source { color: #4a6a88; font-weight: 600; }
+.db-brief-article-time   { color: #6a8aac; font-family: 'Space Mono', monospace; }
+.db-brief-article-dot    { color: #2a3f55; }
 
 .db-brief-article-title {
   font-size: .92rem;
