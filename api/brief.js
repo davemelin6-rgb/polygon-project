@@ -74,15 +74,32 @@ export default async function handler(req, res) {
         .sort((a, b) => Math.abs(b.changePercent ?? 0) - Math.abs(a.changePercent ?? 0)),
     }));
 
-    // ── News ─────────────────────────────────────────────────
+    // ── News — grouped by sector ──────────────────────────────
     const newsArr = (newsRes && newsRes.ok) ? await newsRes.json() : [];
-    const news = (Array.isArray(newsArr) ? newsArr : []).slice(0, 12).map(a => ({
+    const allNews = (Array.isArray(newsArr) ? newsArr : []).map(a => ({
       symbol:    a.symbol,
       title:     a.title,
+      text:      a.text ? a.text.slice(0, 300).replace(/<[^>]+>/g, "").trim() : null,
       url:       a.url,
       published: a.publishedDate,
       source:    a.site,
     }));
+
+    // Build a ticker → sector lookup
+    const tickerSector = {};
+    for (const s of SECTORS) for (const t of s.tickers) tickerSector[t] = s.id;
+
+    // Group news by sector, up to 4 per sector
+    const newsBySector = {};
+    for (const item of allNews) {
+      const sid = tickerSector[item.symbol];
+      if (!sid) continue;
+      if (!newsBySector[sid]) newsBySector[sid] = [];
+      if (newsBySector[sid].length < 4) newsBySector[sid].push(item);
+    }
+
+    // Flat list for backwards compat (news panel)
+    const news = allNews.slice(0, 12);
 
     // ── Economic calendar ────────────────────────────────────
     const calArr = (calRes && calRes.ok) ? await calRes.json() : [];
@@ -105,7 +122,7 @@ export default async function handler(req, res) {
         unit:     e.unit ?? "",
       }));
 
-    const data = { sectors, news, events, date: today };
+    const data = { sectors, news, newsBySector, events, date: today };
     cache.set(cacheKey, { data, expires: Date.now() + TTL });
     return res.status(200).json(data);
 
