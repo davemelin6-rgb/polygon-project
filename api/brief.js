@@ -37,7 +37,7 @@ export default async function handler(req, res) {
   if (!polygonKey)  return res.status(500).json({ error: "No Polygon key" });
 
   const today    = new Date().toISOString().slice(0, 10);
-  const cacheKey = today + "-" + new Date().getUTCHours();
+  const cacheKey = today + "-" + new Date().getUTCHours() + "-v2"; // bust old cache
   const hit      = cache.get(cacheKey);
   if (hit && hit.expires > Date.now()) return res.status(200).json(hit.data);
 
