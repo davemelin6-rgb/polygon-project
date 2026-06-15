@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     // Fetch news per sector so each sector is guaranteed coverage
     const sectorNewsFetches = fmpKey
       ? SECTORS.map(s =>
-          fetch(`${FMP}/stock_news?symbol=${s.tickers.join(",")}&limit=8&apikey=${fmpKey}`)
+          fetch(`${FMP}/stock_news?tickers=${s.tickers.join(",")}&limit=8&apikey=${fmpKey}`)
             .then(r => r.ok ? r.json() : [])
             .catch(() => [])
         )
