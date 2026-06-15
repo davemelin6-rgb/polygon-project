@@ -120,8 +120,8 @@ export default async function handler(req, res) {
             title:     a.title,
             text:      a.text ? a.text.slice(0, 300).replace(/<[^>]+>/g, "").trim() : null,
             url:       a.url,
-            published: a.publishedDate,
-            source:    a.site,
+            published: a.published,
+            source:    a.source,
           };
         });
       newsBySector[s.id] = mapped;
