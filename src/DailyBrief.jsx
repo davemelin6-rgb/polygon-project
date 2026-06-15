@@ -70,40 +70,8 @@ export default function DailyBrief({ session }) {
 
       {data && !loading && (
         <>
-          {/* ── Macro Events ──────────────────────────────── */}
-          {data.events?.length > 0 && (
-            <div className="db-macro">
-              <div className="db-section-label">📅 Macro Events Today</div>
-              <div className="db-events">
-                {data.events.map((e, i) => (
-                  <div key={i} className="db-event" onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(e.event + " economic indicator")}`, "_blank")} style={{ cursor: "pointer" }}>
-                    <span className="db-event-impact" style={{ color: IMPACT_COLOR[e.impact] ?? "#8fa0c4" }}>
-                      ●
-                    </span>
-                    {e.time && <span className="db-event-time">{e.time}</span>}
-                    <span className="db-event-flag">{e.flag}</span>
-                    <span className="db-event-name">{e.event}</span>
-                    <div className="db-event-vals">
-                      {e.estimate != null && (
-                        <span className="db-val-chip">Est: {fmtVal(e.estimate, e.unit)}</span>
-                      )}
-                      {e.previous != null && (
-                        <span className="db-val-chip dim">Prev: {fmtVal(e.previous, e.unit)}</span>
-                      )}
-                      {e.actual != null && (
-                        <span className="db-val-chip actual">Act: {fmtVal(e.actual, e.unit)}</span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* ── Sector Movers ─────────────────────────────── */}
-          <div className="db-section-label" style={{ marginTop: data.events?.length ? "1.5rem" : 0 }}>
-            📊 Sector Movers
-          </div>
+          <div className="db-section-label">📊 Sector Movers</div>
           <div className="db-sectors">
             {data.sectors?.map(s => {
               const [top, ...rest] = s.stocks || [];
@@ -150,7 +118,7 @@ export default function DailyBrief({ session }) {
           {/* ── News ──────────────────────────────────────── */}
           {data.news?.length > 0 && (
             <>
-              <div className="db-section-label" style={{ marginTop: "1.5rem" }}>📰 Top News</div>
+              <div className="db-section-label" style={{ marginTop: "1.5rem" }}>📰 Sector News</div>
               <div className="db-news">
                 {data.news.map((item, i) => {
                   const sectorId = SECTOR_MAP[item.symbol];
@@ -177,6 +145,28 @@ export default function DailyBrief({ session }) {
                 })}
               </div>
             </>
+          )}
+
+          {/* ── Macro Context ─────────────────────────────── */}
+          {data.events?.length > 0 && (
+            <div className="db-macro" style={{ marginTop: "1.5rem" }}>
+              <div className="db-section-label">📅 Market Context — Macro Events Today</div>
+              <div className="db-events">
+                {data.events.map((e, i) => (
+                  <div key={i} className="db-event" onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(e.event + " economic indicator")}`, "_blank")} style={{ cursor: "pointer" }}>
+                    <span className="db-event-impact" style={{ color: IMPACT_COLOR[e.impact] ?? "#8fa0c4" }}>●</span>
+                    {e.time && <span className="db-event-time">{e.time}</span>}
+                    <span className="db-event-flag">{e.flag}</span>
+                    <span className="db-event-name">{e.event}</span>
+                    <div className="db-event-vals">
+                      {e.estimate != null && <span className="db-val-chip">Est: {fmtVal(e.estimate, e.unit)}</span>}
+                      {e.previous != null && <span className="db-val-chip dim">Prev: {fmtVal(e.previous, e.unit)}</span>}
+                      {e.actual   != null && <span className="db-val-chip actual">Act: {fmtVal(e.actual, e.unit)}</span>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </>
       )}
