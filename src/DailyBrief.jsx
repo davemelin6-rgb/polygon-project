@@ -76,7 +76,7 @@ export default function DailyBrief({ session }) {
               <div className="db-section-label">📅 Macro Events Today</div>
               <div className="db-events">
                 {data.events.map((e, i) => (
-                  <div key={i} className="db-event">
+                  <div key={i} className="db-event" onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(e.event + " economic indicator")}`, "_blank")} style={{ cursor: "pointer" }}>
                     <span className="db-event-impact" style={{ color: IMPACT_COLOR[e.impact] ?? "#8fa0c4" }}>
                       ●
                     </span>
