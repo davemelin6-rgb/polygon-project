@@ -19,6 +19,7 @@ const { default: historyHandler }    = await import("./api/history.js");
 const { default: techHandler }       = await import("./api/technicals.js");
 const { default: newsHandler }       = await import("./api/news.js");
 const { default: ratiosHandler }     = await import("./api/ratios.js");
+const { default: briefHandler }      = await import("./api/brief.js");
 
 const server = http.createServer((req, res) => {
   const url   = new URL(req.url, "http://localhost:3456");
@@ -49,6 +50,8 @@ const server = http.createServer((req, res) => {
     newsHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/ratios") {
     ratiosHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/brief") {
+    briefHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else {
     res.writeHead(404);
     res.end("Not found");

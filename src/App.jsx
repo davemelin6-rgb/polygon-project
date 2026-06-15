@@ -10,6 +10,7 @@ import SectorSection      from "./SectorSection.jsx";
 import TechnicalSignals  from "./TechnicalSignals.jsx";
 import NewsFeed          from "./NewsFeed.jsx";
 import KeyRatios         from "./KeyRatios.jsx";
+import DailyBrief        from "./DailyBrief.jsx";
 
 const SECTORS = [
   {
@@ -623,6 +624,8 @@ export default function App({ session, onLogout }) {
           ))}
         </div>
       )}
+
+      <DailyBrief session={session} />
 
       {(stocks.length > 0 || selected) && (
         <div className="sections">
