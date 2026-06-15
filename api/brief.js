@@ -87,10 +87,12 @@ export default async function handler(req, res) {
     const seenUrls = new Set();
     const newsBySector = {};
     const news = [];
+    const _debug = {};
 
     for (let i = 0; i < SECTORS.length; i++) {
       const s       = SECTORS[i];
       const raw     = Array.isArray(sectorNewsResults[i]) ? sectorNewsResults[i] : [];
+      _debug[s.id]  = { count: raw.length, sample: raw[0] ?? null };
       const mapped  = raw
         .filter(a => a.url && !seenUrls.has(a.url))
         .slice(0, 5)
@@ -131,7 +133,7 @@ export default async function handler(req, res) {
         unit:     e.unit ?? "",
       }));
 
-    const data = { sectors, news, newsBySector, events, date: today };
+    const data = { sectors, news, newsBySector, events, date: today, _debug };
     cache.set(cacheKey, { data, expires: Date.now() + TTL });
     return res.status(200).json(data);
 
