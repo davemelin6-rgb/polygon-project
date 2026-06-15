@@ -44,10 +44,19 @@ export default async function handler(req, res) {
   try {
     const tickerStr = ALL_TICKERS.join(",");
 
-    const [snapRes, newsRes, calRes] = await Promise.all([
+    // Fetch news per sector so each sector is guaranteed coverage
+    const sectorNewsFetches = fmpKey
+      ? SECTORS.map(s =>
+          fetch(`${FMP}/stock_news?tickers=${s.tickers.join(",")}&limit=8&apikey=${fmpKey}`)
+            .then(r => r.ok ? r.json() : [])
+            .catch(() => [])
+        )
+      : SECTORS.map(() => Promise.resolve([]));
+
+    const [snapRes, calRes, ...sectorNewsResults] = await Promise.all([
       fetch(`${POLYGON}/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(tickerStr)}&apiKey=${polygonKey}`),
-      fmpKey ? fetch(`${FMP}/stock_news?tickers=${tickerStr}&limit=15&apikey=${fmpKey}`) : Promise.resolve(null),
       fmpKey ? fetch(`${FMP}/economic-calendar?from=${today}&to=${today}&apikey=${fmpKey}`) : Promise.resolve(null),
+      ...sectorNewsFetches,
     ]);
 
     // ── Prices ──────────────────────────────────────────────
@@ -74,35 +83,35 @@ export default async function handler(req, res) {
         .sort((a, b) => Math.abs(b.changePercent ?? 0) - Math.abs(a.changePercent ?? 0)),
     }));
 
-    // ── News — grouped by sector ──────────────────────────────
-    const newsArr = (newsRes && newsRes.ok) ? await newsRes.json() : [];
-    const allNews = (Array.isArray(newsArr) ? newsArr : []).map(a => ({
-      symbol:    a.symbol,
-      title:     a.title,
-      text:      a.text ? a.text.slice(0, 300).replace(/<[^>]+>/g, "").trim() : null,
-      url:       a.url,
-      published: a.publishedDate,
-      source:    a.site,
-    }));
-
-    // Build a ticker → sector lookup
-    const tickerSector = {};
-    for (const s of SECTORS) for (const t of s.tickers) tickerSector[t] = s.id;
-
-    // Group news by sector, up to 4 per sector
+    // ── News — one fetch per sector, deduplicated by URL ─────
+    const seenUrls = new Set();
     const newsBySector = {};
-    for (const item of allNews) {
-      const sid = tickerSector[item.symbol];
-      if (!sid) continue;
-      if (!newsBySector[sid]) newsBySector[sid] = [];
-      if (newsBySector[sid].length < 4) newsBySector[sid].push(item);
-    }
+    const news = [];
 
-    // Flat list for backwards compat (news panel)
-    const news = allNews.slice(0, 12);
+    for (let i = 0; i < SECTORS.length; i++) {
+      const s       = SECTORS[i];
+      const raw     = Array.isArray(sectorNewsResults[i]) ? sectorNewsResults[i] : [];
+      const mapped  = raw
+        .filter(a => a.url && !seenUrls.has(a.url))
+        .slice(0, 5)
+        .map(a => {
+          seenUrls.add(a.url);
+          return {
+            symbol:    a.symbol,
+            title:     a.title,
+            text:      a.text ? a.text.slice(0, 300).replace(/<[^>]+>/g, "").trim() : null,
+            url:       a.url,
+            published: a.publishedDate,
+            source:    a.site,
+          };
+        });
+      newsBySector[s.id] = mapped;
+      news.push(...mapped);
+    }
 
     // ── Economic calendar ────────────────────────────────────
     const calArr = (calRes && calRes.ok) ? await calRes.json() : [];
+
     const events = (Array.isArray(calArr) ? calArr : [])
       .filter(e => e.impact === "High" || e.impact === "Medium")
       .sort((a, b) => {
