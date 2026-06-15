@@ -44,22 +44,32 @@ export default async function handler(req, res) {
   try {
     const tickerStr = ALL_TICKERS.join(",");
 
-    // Fetch news per sector — one request per ticker to avoid multi-ticker issues
+    // Fetch news per sector via Polygon /v2/reference/news (FMP Starter has no news)
     const KEY_TICKERS = {
-      quantum: ["IONQ", "IBM", "GOOGL"],
-      ai:      ["NVDA", "AMD", "META"],
-      defence: ["LMT",  "RTX", "RKLB"],
+      quantum: ["IONQ", "IBM", "GOOGL", "MSFT"],
+      ai:      ["NVDA", "AMD", "META", "PLTR"],
+      defence: ["LMT",  "RTX", "BA",   "RKLB"],
     };
 
     const sectorNewsFetches = SECTORS.map(async s => {
-      if (!fmpKey) return { items: [], _raw: "no fmp key" };
-      const picks = KEY_TICKERS[s.id] || s.tickers.slice(0, 3);
-      const firstTicker = picks[0];
-      const r = await fetch(`${FMP}/stock_news?tickers=${firstTicker}&limit=4&apikey=${fmpKey}`).catch(() => null);
-      const body = r ? await r.json().catch(() => ({ _fetchError: true })) : { _noResponse: true };
-      const isArr = Array.isArray(body);
-      const items = isArr ? body : [];
-      return { items, _raw: isArr ? `array[${body.length}]` : JSON.stringify(body).slice(0, 200) };
+      const picks = KEY_TICKERS[s.id] || s.tickers.slice(0, 4);
+      const results = await Promise.all(
+        picks.map(ticker =>
+          fetch(`${POLYGON}/v2/reference/news?ticker=${ticker}&limit=3&order=desc&sort=published_utc&apiKey=${polygonKey}`)
+            .then(r => r.ok ? r.json() : { results: [] })
+            .then(j => (j.results || []).map(a => ({
+              symbol:    ticker,
+              title:     a.title,
+              text:      a.description ? a.description.slice(0, 300).trim() : null,
+              url:       a.article_url,
+              published: a.published_utc,
+              source:    a.publisher?.name || "",
+            })))
+            .catch(() => [])
+        )
+      );
+      const items = results.flat();
+      return { items, _raw: `array[${items.length}]` };
     });
 
     const [snapRes, calRes, ...sectorNewsResults] = await Promise.all([
