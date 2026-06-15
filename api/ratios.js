@@ -5,7 +5,7 @@ import { verifySession } from "../lib/apiGuard.js";
 
 const FMP   = "https://financialmodelingprep.com/stable";
 const cache = new Map();
-const TTL   = 24 * 60 * 60_000; // 24h — ratios are quarterly
+const TTL   = 7 * 24 * 60 * 60_000; // 7 days — ratios are annual filings
 
 function pct(v) { return v != null ? +(v * 100).toFixed(2) : null; }
 function num(v) { return v != null ? +Number(v).toFixed(2) : null; }
