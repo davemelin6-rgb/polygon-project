@@ -110,8 +110,9 @@ export default async function handler(req, res) {
     for (let i = 0; i < SECTORS.length; i++) {
       const s   = SECTORS[i];
       const raw = (sectorNewsResults[i]?.items) || [];
+      const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000;
       const mapped  = raw
-        .filter(a => a.url && !seenUrls.has(a.url))
+        .filter(a => a.url && !seenUrls.has(a.url) && a.published && new Date(a.published).getTime() > twoDaysAgo)
         .slice(0, 5)
         .map(a => {
           seenUrls.add(a.url);
