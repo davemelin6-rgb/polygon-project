@@ -50,6 +50,7 @@ export default function Login({ onLogin, onBack }) {
   const [password, setPassword] = useState("");
   const [error,    setError]    = useState(null);
   const [loading,  setLoading]  = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   async function handleSignIn(e) {
     e.preventDefault();
@@ -75,7 +76,19 @@ export default function Login({ onLogin, onBack }) {
     setMode("done");
   }
 
-  const switchMode = (m) => { setError(null); setMode(m); };
+  const switchMode = (m) => { setError(null); setResetSent(false); setMode(m); };
+
+  async function handleForgotPassword() {
+    if (!email) { setError("Enter your email address above first."); return; }
+    setError(null);
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + "/reset-password",
+    });
+    setLoading(false);
+    if (error) { setError(error.message); return; }
+    setResetSent(true);
+  }
 
   const selectedPlan = PLANS.find(p => p.id === plan);
 
@@ -176,8 +189,20 @@ export default function Login({ onLogin, onBack }) {
                 <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
               </div>
               {error && <p className="login-error">{error}</p>}
+              {resetSent && (
+                <p style={{ color: "#00dc82", fontSize: ".85rem", margin: "0 0 0.5rem" }}>
+                  Reset link sent — check your inbox.
+                </p>
+              )}
               <button className="login-btn" type="submit" disabled={loading}>
                 {loading ? "Signing in…" : "Sign In →"}
+              </button>
+              <button type="button" onClick={handleForgotPassword} disabled={loading} style={{
+                display: "block", width: "100%", marginTop: "0.6rem",
+                background: "transparent", border: "none", color: "#3d5c78",
+                fontSize: "0.8rem", cursor: "pointer", textAlign: "center", padding: "0.4rem",
+              }}>
+                Forgot password?
               </button>
             </form>
             {backLink}
