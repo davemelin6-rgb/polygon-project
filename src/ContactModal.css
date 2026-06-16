@@ -1,0 +1,122 @@
+.cm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(6px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.cm-modal {
+  background: #0d1f2d;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 20px;
+  width: 100%;
+  max-width: 480px;
+  padding: 2rem;
+}
+
+.cm-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.75rem;
+}
+
+.cm-eyebrow {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #3d5c78;
+  margin-bottom: .35rem;
+}
+
+.cm-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #dce8f4;
+  margin: 0;
+}
+
+.cm-close {
+  background: none;
+  border: none;
+  color: #3d5c78;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+  transition: color .15s;
+}
+.cm-close:hover { color: #dce8f4; }
+
+.cm-form { display: flex; flex-direction: column; gap: 1.1rem; }
+
+.cm-row { display: flex; flex-direction: column; gap: .4rem; }
+
+.cm-label {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #3d5c78;
+}
+.cm-opt { font-weight: 400; letter-spacing: 0; text-transform: none; }
+
+.cm-input {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  color: #dce8f4;
+  font-family: inherit;
+  font-size: .9rem;
+  padding: .75rem 1rem;
+  outline: none;
+  transition: border-color .15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.cm-input:focus { border-color: rgba(0,180,255,.4); }
+.cm-input::placeholder { color: #2d4a5f; }
+
+.cm-textarea { resize: vertical; min-height: 110px; }
+
+.cm-error {
+  color: #ff3c50;
+  font-size: .82rem;
+  margin: 0;
+}
+
+.cm-btn {
+  background: #1d6fdb;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: .85rem 1.5rem;
+  font-size: .9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, opacity .15s;
+  margin-top: .25rem;
+}
+.cm-btn:hover  { background: #1a63c7; }
+.cm-btn:disabled { opacity: .5; cursor: default; }
+
+.cm-sent {
+  text-align: center;
+  padding: 1.5rem 0;
+}
+.cm-sent-icon {
+  font-size: 2.5rem;
+  color: #00dc82;
+  margin-bottom: .75rem;
+}
+.cm-sent-msg {
+  color: #6a8aac;
+  font-size: .95rem;
+  margin: 0 0 1.5rem;
+}

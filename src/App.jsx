@@ -11,6 +11,7 @@ import TechnicalSignals  from "./TechnicalSignals.jsx";
 import NewsFeed          from "./NewsFeed.jsx";
 import KeyRatios         from "./KeyRatios.jsx";
 import DailyBrief        from "./DailyBrief.jsx";
+import ContactModal      from "./ContactModal.jsx";
 
 const SECTORS = [
   {
@@ -433,6 +434,7 @@ export default function App({ session, onLogout, onAdmin }) {
   const [profile,  setProfile]   = useState(null);
   const [settings, setSettings]  = useState({});
   const [showSettings, setShowSettings] = useState(false);
+  const [showContact,  setShowContact]  = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -590,6 +592,7 @@ export default function App({ session, onLogout, onAdmin }) {
               Admin
             </button>
           )}
+          <button className="logout-btn" onClick={() => setShowContact(true)} title="Contact support">✉</button>
           <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
             Sign Out
           </button>
@@ -678,6 +681,12 @@ export default function App({ session, onLogout, onAdmin }) {
           settings={settings}
           onSave={handleSaveSettings}
           onClose={() => setShowSettings(false)}
+        />
+      )}
+      {showContact && (
+        <ContactModal
+          userEmail={session?.user?.email}
+          onClose={() => setShowContact(false)}
         />
       )}
 

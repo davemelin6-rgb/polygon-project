@@ -21,6 +21,7 @@ const { default: newsHandler }       = await import("./api/news.js");
 const { default: ratiosHandler }     = await import("./api/ratios.js");
 const { default: briefHandler }      = await import("./api/brief.js");
 const { default: adminHandler }      = await import("./api/admin.js");
+const { default: contactHandler }    = await import("./api/contact.js");
 
 const server = http.createServer((req, res) => {
   const url   = new URL(req.url, "http://localhost:3456");
@@ -58,6 +59,10 @@ const server = http.createServer((req, res) => {
     ratiosHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/brief") {
     briefHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/contact") {
+    let raw = "";
+    req.on("data", c => raw += c);
+    req.on("end", () => dispatch(contactHandler, raw));
   } else if (url.pathname === "/api/admin") {
     if (req.method === "POST") {
       let raw = "";
