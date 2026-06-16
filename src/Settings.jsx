@@ -26,6 +26,8 @@ export default function Settings({ session, profile, settings, onSave, onClose }
   const [avatarColor,      setAvatarColor]     = useState(settings.avatarColor     || profile?.avatar_color || "#00b4ff");
   const [defaultTickers,   setDefaultTickers]  = useState(settings.defaultTickers  || "AAPL,MSFT,NVDA,GOOGL,AMZN");
   const [interests,        setInterests]       = useState(profile?.trading_interests || []);
+  const [briefmeMorning,   setBriefmeMorning]  = useState(profile?.briefme_morning  || false);
+  const [briefmeUS,        setBriefmeUS]       = useState(profile?.briefme_us       || false);
   const [saving,           setSaving]          = useState(false);
 
   function toggleInterest(id) {
@@ -36,7 +38,7 @@ export default function Settings({ session, profile, settings, onSave, onClose }
     setSaving(true);
     const newSettings = { brightness, accent, avatarColor, defaultTickers };
     await supabase.from("profiles")
-      .update({ settings: newSettings, avatar_color: avatarColor, trading_interests: interests })
+      .update({ settings: newSettings, avatar_color: avatarColor, trading_interests: interests, briefme_morning: briefmeMorning, briefme_us: briefmeUS })
       .eq("id", session.user.id);
     onSave(newSettings, avatarColor);
     setSaving(false);
@@ -134,6 +136,32 @@ export default function Settings({ session, profile, settings, onSave, onClose }
                   <span className="si-check">✓</span>
                 </button>
               ))}
+            </div>
+          </div>
+
+          {/* BriefMe subscriptions */}
+          <div className="settings-section">
+            <p className="settings-label">BriefMe Email Subscriptions</p>
+            <p className="settings-hint">Receive market intelligence emails directly to your inbox</p>
+
+            <div className="settings-briefme-toggle" onClick={() => setBriefmeMorning(v => !v)}>
+              <div>
+                <div className="sbm-title">☀️ Morning Brief — 08:00 Stockholm</div>
+                <div className="sbm-desc">AI-curated overnight movers, top scores, sector signals</div>
+              </div>
+              <div className={`sbm-toggle ${briefmeMorning ? "on" : ""}`}>
+                <div className="sbm-knob" />
+              </div>
+            </div>
+
+            <div className="settings-briefme-toggle" onClick={() => setBriefmeUS(v => !v)}>
+              <div>
+                <div className="sbm-title">🇺🇸 US Market Preview — 15:00</div>
+                <div className="sbm-desc">Pre-market signals on US tech, semis, biotech, defence</div>
+              </div>
+              <div className={`sbm-toggle ${briefmeUS ? "on" : ""}`}>
+                <div className="sbm-knob" />
+              </div>
             </div>
           </div>
 
