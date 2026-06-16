@@ -640,15 +640,15 @@ export default function App({ session, onLogout, onAdmin }) {
         </div>
       )}
 
-      {selected && <PriceChart stock={selected} session={session} />}
+      {selected && <PriceChart         stock={selected} session={session} />}
+      {selected && <TechnicalSignals   stock={selected} session={session} />}
+      {selected && <FinancialIntelligence stocks={stocks} scoresMap={scoresMap} selected={selected} />}
 
       <DailyBrief session={session} />
 
       {(stocks.length > 0 || selected) && (
         <div className="sections">
-          {selected && <TechnicalSignals   stock={selected} session={session} />}
           <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
-          <FinancialIntelligence  stocks={stocks} scoresMap={scoresMap} selected={selected} />
           {selected && <KeyRatios          stock={selected} session={session} />}
         </div>
       )}
