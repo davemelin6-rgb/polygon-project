@@ -921,16 +921,6 @@ function AboutPage({ onEnterApp }) {
                 display: "block",
               }}
             />
-            {/* caption bar */}
-            <div style={{
-              position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
-              zIndex: 2, background: "rgba(4,8,15,.88)", backdropFilter: "blur(16px)",
-              border: "1px solid rgba(245,158,11,.25)", borderRadius: 12,
-              padding: "12px 28px", whiteSpace: "nowrap", textAlign: "center",
-            }}>
-              <div style={{ fontFamily: ff.display, fontSize: "1rem", fontWeight: 700, color: T.ink, letterSpacing: "-.01em" }}>David & Albin</div>
-              <div style={{ fontFamily: ff.mono, fontSize: ".62rem", letterSpacing: ".16em", textTransform: "uppercase", color: T.amber, marginTop: 3 }}>Co-Founders · QuantDiver</div>
-            </div>
           </div>
         </div>
       </section>
