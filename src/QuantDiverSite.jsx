@@ -372,6 +372,329 @@ function HomePage({ go, onEnterApp }) {
   );
 }
 
+/* ─── scores page ────────────────────────────────────────── */
+const SCORE_DEFS = [
+  {
+    key: "MOMENTUM", icon: "🚀", color: T.cyan,
+    tagline: "Is the stock accelerating?",
+    description: "Momentum measures the strength and direction of a stock's recent price movement. A high score means buyers are in control — the trend is up, and volume confirms it. A low score means the stock is stalling or in decline.",
+    components: [
+      { label: "3-Month Return",  weight: 35, desc: "Medium-term price trend — the primary driver" },
+      { label: "1-Month Return",  weight: 30, desc: "Recent short-term price performance" },
+      { label: "MA Trend",        weight: 20, desc: "50-day vs 200-day moving average crossover" },
+      { label: "Relative Volume", weight: 15, desc: "Current volume vs 20-day average" },
+    ],
+    note: "Score 65+ → strong uptrend. Score below 40 → trend is weakening or reversing.",
+  },
+  {
+    key: "RISK", icon: "🛡️", color: T.green,
+    tagline: "How solid is the balance sheet?",
+    description: "Risk scores the financial strength of the company — not how wild the stock price swings. Higher always means SAFER. A score of 75 means low debt, healthy liquidity, and stable price behavior. A score of 25 means the company is financially fragile.",
+    components: [
+      { label: "Debt Ratio",          weight: 30, desc: "Total liabilities vs total assets" },
+      { label: "Current Ratio",       weight: 25, desc: "Short-term assets vs short-term liabilities" },
+      { label: "Interest Coverage",   weight: 20, desc: "Operating income vs interest expense" },
+      { label: "Price Volatility",    weight: 25, desc: "30-day standard deviation of daily returns" },
+    ],
+    note: "Higher is always SAFER. Score 70+ = strong foundation. Score below 35 = proceed with caution.",
+  },
+  {
+    key: "TECH VALUE", icon: "💡", color: T.amber,
+    tagline: "Is the business built to last?",
+    description: "Tech Value scores the quality and durability of the business model. It focuses on R&D investment, margin quality, and growth — the metrics that separate companies with lasting competitive advantage from those burning cash to stay relevant.",
+    components: [
+      { label: "Gross Margin",    weight: 35, desc: "Revenue minus cost of goods sold — the moat proxy" },
+      { label: "R&D Intensity",   weight: 30, desc: "R&D spend as % of revenue — future investment signal" },
+      { label: "Revenue Growth",  weight: 20, desc: "Year-over-year top-line growth rate" },
+      { label: "FCF Margin",      weight: 15, desc: "Free cash flow as % of revenue" },
+    ],
+    note: "Score 65+ = strong moat. Score 40–65 = average. Score below 40 = limited competitive advantage.",
+  },
+];
+
+function ScoresPage({ onEnterApp }) {
+  return (
+    <div style={{ animation: "qd-fadein .4s ease" }}>
+      {/* Hero */}
+      <section style={{ padding: "100px 0 72px", textAlign: "center" }}>
+        <div className="qd-wrap" style={{ maxWidth: 640, margin: "0 auto" }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 16 }}>Proprietary · 0–100 · Live</div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2.4rem,4.5vw,3.8rem)", fontWeight: 800, letterSpacing: "-.035em", margin: "0 0 20px", lineHeight: 1.05 }}>
+            Three scores.<br/>
+            <span style={{ background: `linear-gradient(100deg, ${T.cyan}, #60A5FA 50%, #818CF8)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One edge.</span>
+          </h1>
+          <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.65, margin: "0 0 36px" }}>
+            Every stock in QuantDiver is scored across three dimensions — Momentum, Risk, and Tech Value — calculated from live market data and real financial statements. No opinions. Just signal.
+          </p>
+          <PrimaryBtn onClick={onEnterApp}>See live scores →</PrimaryBtn>
+        </div>
+      </section>
+
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
+      {/* Score deep-dives */}
+      {SCORE_DEFS.map((s, i) => (
+        <section key={s.key} style={{ padding: "88px 0", background: i % 2 === 1 ? "rgba(255,255,255,.015)" : "transparent" }}>
+          <div className="qd-wrap">
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
+              {/* Left: explanation */}
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+                  <span style={{ fontSize: "2rem" }}>{s.icon}</span>
+                  <div>
+                    <div style={{ fontFamily: ff.mono, fontSize: ".65rem", letterSpacing: ".18em", textTransform: "uppercase", color: s.color, marginBottom: 4 }}>Score {i + 1} of 3</div>
+                    <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.4rem)", fontWeight: 800, letterSpacing: "-.025em", margin: 0, color: T.ink }}>{s.key}</h2>
+                  </div>
+                </div>
+                <p style={{ fontFamily: ff.body, fontSize: "1rem", color: T.sub, lineHeight: 1.7, margin: "0 0 20px" }}>{s.description}</p>
+                <div style={{
+                  background: `${s.color}0d`, border: `1px solid ${s.color}25`,
+                  borderRadius: 10, padding: "12px 16px",
+                  fontFamily: ff.mono, fontSize: ".78rem", color: s.color,
+                }}>
+                  {s.note}
+                </div>
+              </div>
+
+              {/* Right: component breakdown */}
+              <div style={{ background: "linear-gradient(150deg, #0D1A30, #090F1E)", border: `1px solid rgba(90,130,200,.15)`, borderRadius: 18, padding: "28px 28px 24px" }}>
+                <div style={{ fontFamily: ff.mono, fontSize: ".62rem", letterSpacing: ".16em", textTransform: "uppercase", color: T.dim, marginBottom: 20 }}>Score components</div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
+                  {s.components.map(c => (
+                    <div key={c.label}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+                        <div>
+                          <span style={{ fontFamily: ff.mono, fontSize: ".78rem", color: T.ink, fontWeight: 600 }}>{c.label}</span>
+                          <div style={{ fontFamily: ff.body, fontSize: ".7rem", color: T.dim, marginTop: 2 }}>{c.desc}</div>
+                        </div>
+                        <span style={{ fontFamily: ff.mono, fontSize: ".88rem", fontWeight: 700, color: s.color, flexShrink: 0, marginLeft: 12 }}>{c.weight}%</span>
+                      </div>
+                      <div style={{ height: 4, background: "rgba(100,140,200,.1)", borderRadius: 4, overflow: "hidden" }}>
+                        <div style={{ width: `${c.weight * 2.5}%`, height: "100%", background: s.color, borderRadius: 4, opacity: .7 }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.12) 30%, rgba(90,130,200,.12) 70%, transparent)", marginTop: 88 }} />
+        </section>
+      ))}
+
+      {/* CTA */}
+      <section style={{ padding: "96px 0 112px", textAlign: "center" }}>
+        <div className="qd-wrap" style={{ maxWidth: 520, margin: "0 auto" }}>
+          <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.5rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 16px" }}>Ready to see the numbers?</h2>
+          <p style={{ fontFamily: ff.body, color: T.sub, fontSize: "1rem", margin: "0 0 32px" }}>14-day free trial — full access, no card required.</p>
+          <PrimaryBtn onClick={onEnterApp} style={{ padding: "14px 32px", fontSize: "1rem" }}>Start free trial →</PrimaryBtn>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ─── pricing page ────────────────────────────────────────── */
+function PricingPage({ onEnterApp }) {
+  const features = [
+    ["Live stock scores", "Momentum, Risk, and Tech Value — updated every 60 seconds across all tickers"],
+    ["Full score breakdown", "Component-level analysis: what's driving each score and why"],
+    ["Price chart & technicals", "6-month chart, RSI, MACD, Bollinger Bands, moving averages"],
+    ["Analyst consensus", "Wall Street ratings, price targets, and last 4 earnings beats/misses"],
+    ["Insider trading feed", "SEC-sourced buy/sell activity from executives and directors"],
+    ["Key ratios", "P/E, EV/EBITDA, gross margin, debt-to-equity — live fundamentals"],
+    ["News & Daily Brief", "48-hour filtered news per ticker + hourly market intelligence brief"],
+    ["Market sectors", "AI, Quantum, Defence & Space, Biotech — all scored and tracked"],
+    ["Trader Connect", "Match with other QuantDiver members who share your sector interests"],
+    ["14-day free trial", "Full access from day one — no credit card needed to start"],
+  ];
+
+  return (
+    <div style={{ animation: "qd-fadein .4s ease" }}>
+      <section style={{ padding: "100px 0 80px", textAlign: "center" }}>
+        <div className="qd-wrap" style={{ maxWidth: 640, margin: "0 auto" }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 16 }}>Simple pricing · No surprises</div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2.4rem,4.5vw,3.8rem)", fontWeight: 800, letterSpacing: "-.035em", margin: "0 0 16px", lineHeight: 1.05 }}>
+            One plan.<br />Everything included.
+          </h1>
+          <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.65, margin: 0 }}>
+            No tiers. No feature gating. Pay one price, get everything.
+          </p>
+        </div>
+      </section>
+
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
+      <section style={{ padding: "80px 0 112px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 620, margin: "0 auto" }}>
+          {/* Price card */}
+          <div style={{
+            background: "linear-gradient(160deg, #0F1E3C, #090F1E)",
+            border: "1px solid rgba(59,130,246,.35)",
+            borderRadius: 24, padding: "48px 44px",
+            boxShadow: "0 0 100px rgba(59,130,246,.14), 0 40px 80px rgba(0,0,0,.4)",
+            marginBottom: 24,
+          }}>
+            {/* Plan header */}
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
+              <div>
+                <div style={{ fontFamily: ff.mono, fontSize: ".7rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 8 }}>QuantDiver Pro</div>
+                <div style={{ fontFamily: ff.display, fontSize: "3rem", fontWeight: 800, color: T.ink, lineHeight: 1 }}>
+                  99 <span style={{ fontSize: "1.2rem", color: T.sub, fontWeight: 500 }}>SEK / month</span>
+                </div>
+                <div style={{ fontFamily: ff.body, fontSize: ".82rem", color: T.dim, marginTop: 8 }}>~€8.50 / month · Billed monthly</div>
+              </div>
+              <div style={{
+                background: "rgba(52,211,153,.1)", border: "1px solid rgba(52,211,153,.3)",
+                borderRadius: 10, padding: "8px 16px",
+                fontFamily: ff.mono, fontSize: ".72rem", color: T.green, fontWeight: 600,
+              }}>14 days free</div>
+            </div>
+
+            <div style={{ height: 1, background: "rgba(90,130,200,.12)", marginBottom: 28 }} />
+
+            {/* Feature list */}
+            <ul style={{ listStyle: "none", margin: "0 0 36px", padding: 0 }}>
+              {features.map(([title, desc], i) => (
+                <li key={i} style={{
+                  padding: "13px 0",
+                  display: "flex", gap: 14, alignItems: "flex-start",
+                  borderBottom: i < features.length - 1 ? `1px solid rgba(90,130,200,.08)` : "none",
+                }}>
+                  <span style={{ color: T.cyan, fontSize: ".72rem", paddingTop: 3, flexShrink: 0 }}>✓</span>
+                  <div>
+                    <div style={{ fontFamily: ff.body, fontSize: ".9rem", color: T.ink, fontWeight: 600, marginBottom: 2 }}>{title}</div>
+                    <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, lineHeight: 1.45 }}>{desc}</div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+
+            <PrimaryBtn onClick={onEnterApp} style={{ width: "100%", justifyContent: "center", padding: "16px", fontSize: "1.02rem" }}>
+              Start free trial — no card needed →
+            </PrimaryBtn>
+            <p style={{ fontFamily: ff.body, fontSize: ".76rem", color: T.dim, marginTop: 14, marginBottom: 0, textAlign: "center" }}>
+              After 14 days: 99 SEK/month · Cancel anytime · No lock-in
+            </p>
+          </div>
+
+          <p style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim, textAlign: "center", lineHeight: 1.6 }}>
+            Have questions about plans or need a team subscription? <span onClick={onEnterApp} style={{ color: T.cyan, cursor: "pointer" }}>Contact us</span>.
+          </p>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ─── contact page ────────────────────────────────────────── */
+function ContactPage() {
+  const [form,    setForm]    = useState({ name: "", email: "", subject: "", message: "" });
+  const [sending, setSending] = useState(false);
+  const [done,    setDone]    = useState(false);
+  const [error,   setError]   = useState("");
+
+  function update(field, val) { setForm(f => ({ ...f, [field]: val })); }
+
+  async function submit(e) {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.message) return;
+    setSending(true);
+    setError("");
+    try {
+      const r = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (r.ok) { setDone(true); }
+      else { const j = await r.json(); setError(j.error || "Something went wrong."); }
+    } catch { setError("Network error — please try again."); }
+    finally { setSending(false); }
+  }
+
+  const inp = (label, field, type = "text", placeholder = "") => (
+    <div style={{ marginBottom: 18 }}>
+      <label style={{ display: "block", fontFamily: ff.mono, fontSize: ".65rem", letterSpacing: ".14em", textTransform: "uppercase", color: T.dim, marginBottom: 8 }}>{label}</label>
+      <input
+        type={type}
+        value={form[field]}
+        onChange={e => update(field, e.target.value)}
+        placeholder={placeholder}
+        style={{
+          width: "100%", boxSizing: "border-box",
+          background: "rgba(255,255,255,.03)", border: `1px solid rgba(90,130,200,.15)`,
+          borderRadius: 10, color: T.ink, fontFamily: ff.body, fontSize: ".92rem",
+          padding: "12px 16px", outline: "none",
+          transition: "border-color .15s",
+        }}
+        onFocus={e => e.target.style.borderColor = "rgba(34,211,238,.4)"}
+        onBlur={e => e.target.style.borderColor = "rgba(90,130,200,.15)"}
+      />
+    </div>
+  );
+
+  return (
+    <div style={{ animation: "qd-fadein .4s ease" }}>
+      <section style={{ padding: "100px 0 112px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 580, margin: "0 auto" }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 16, textAlign: "center" }}>Support</div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,4vw,3rem)", fontWeight: 800, letterSpacing: "-.03em", margin: "0 0 12px", textAlign: "center" }}>Contact Support</h1>
+          <p style={{ fontFamily: ff.body, fontSize: ".95rem", color: T.sub, lineHeight: 1.65, textAlign: "center", margin: "0 0 48px" }}>
+            We read every message and reply within one business day.
+          </p>
+
+          {done ? (
+            <div style={{
+              background: "rgba(52,211,153,.08)", border: "1px solid rgba(52,211,153,.25)",
+              borderRadius: 16, padding: "40px 36px", textAlign: "center",
+            }}>
+              <div style={{ fontSize: "2.5rem", marginBottom: 16 }}>✓</div>
+              <div style={{ fontFamily: ff.display, fontSize: "1.2rem", fontWeight: 700, color: T.ink, marginBottom: 8 }}>Message sent</div>
+              <div style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub }}>
+                We'll reply to {form.email || "your email"} shortly.
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={submit} style={{
+              background: "linear-gradient(160deg, #0D1A30, #090F1E)",
+              border: "1px solid rgba(90,130,200,.15)", borderRadius: 20, padding: "40px 36px",
+            }}>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 20px" }}>
+                <div>{inp("Your name", "name", "text", "Jane Smith")}</div>
+                <div>{inp("Email address", "email", "email", "you@example.com")}</div>
+              </div>
+              {inp("Subject", "subject", "text", "Question about pricing...")}
+              <div style={{ marginBottom: 24 }}>
+                <label style={{ display: "block", fontFamily: ff.mono, fontSize: ".65rem", letterSpacing: ".14em", textTransform: "uppercase", color: T.dim, marginBottom: 8 }}>Message</label>
+                <textarea
+                  value={form.message}
+                  onChange={e => update("message", e.target.value)}
+                  placeholder="Tell us what you need help with..."
+                  rows={6}
+                  style={{
+                    width: "100%", boxSizing: "border-box",
+                    background: "rgba(255,255,255,.03)", border: "1px solid rgba(90,130,200,.15)",
+                    borderRadius: 10, color: T.ink, fontFamily: ff.body, fontSize: ".92rem",
+                    padding: "12px 16px", outline: "none", resize: "vertical",
+                    transition: "border-color .15s",
+                  }}
+                  onFocus={e => e.target.style.borderColor = "rgba(34,211,238,.4)"}
+                  onBlur={e => e.target.style.borderColor = "rgba(90,130,200,.15)"}
+                />
+              </div>
+              {error && <p style={{ color: T.red, fontFamily: ff.mono, fontSize: ".78rem", marginBottom: 16 }}>{error}</p>}
+              <PrimaryBtn style={{ width: "100%", justifyContent: "center", padding: "14px", fontSize: "1rem", opacity: sending ? .6 : 1 }}>
+                {sending ? "Sending…" : "Send message →"}
+              </PrimaryBtn>
+            </form>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 /* ─── briefme page ────────────────────────────────────────── */
 function BriefMePage({ onEnterApp }) {
   return (
@@ -514,6 +837,154 @@ function BriefMePage({ onEnterApp }) {
   );
 }
 
+/* ─── privacy policy page ─────────────────────────────────── */
+function PrivacyPage() {
+  const sec = (title, children) => (
+    <div style={{ marginBottom: 40 }}>
+      <h2 style={{ fontFamily: ff.display, fontSize: "1.15rem", fontWeight: 700, color: T.ink, margin: "0 0 12px" }}>{title}</h2>
+      <div style={{ fontFamily: ff.body, fontSize: ".9rem", color: T.sub, lineHeight: 1.75 }}>{children}</div>
+    </div>
+  );
+  return (
+    <div style={{ animation: "qd-fadein .4s ease" }}>
+      <section style={{ padding: "80px 0 112px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 720, margin: "0 auto" }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".65rem", letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 12 }}>Legal</div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 800, letterSpacing: "-.03em", margin: "0 0 8px" }}>Privacy Policy</h1>
+          <p style={{ fontFamily: ff.mono, fontSize: ".75rem", color: T.dim, marginBottom: 48 }}>Last updated: June 2026</p>
+          <div style={{ height: 1, background: "rgba(90,130,200,.12)", marginBottom: 48 }} />
+
+          {sec("1. Who we are", <p>QuantDiver ("we", "us", "our") operates the QuantDiver platform at quantdiver.com — a proprietary stock analysis and market intelligence service. For privacy questions, contact us at support@quantdiver.com.</p>)}
+
+          {sec("2. What information we collect", <>
+            <p><strong style={{ color: T.ink }}>Account data:</strong> When you sign up, we collect your email address and a username you choose. We do not collect your full name, address, or payment card details directly (payments are processed by our payment provider).</p>
+            <p style={{ marginTop: 10 }}><strong style={{ color: T.ink }}>Profile data:</strong> Your display settings (theme, accent color, avatar color), default watchlist tickers, and trading interest preferences (e.g., AI, Quantum) that you optionally provide in Settings.</p>
+            <p style={{ marginTop: 10 }}><strong style={{ color: T.ink }}>Usage data:</strong> We log API requests to detect abuse and enforce rate limits. We do not sell or share this data with advertisers.</p>
+            <p style={{ marginTop: 10 }}><strong style={{ color: T.ink }}>Messages:</strong> If you use Trader Connect or the in-app chat, message content is stored in our database to deliver the service. Messages are not read by staff except when required to investigate abuse reports.</p>
+            <p style={{ marginTop: 10 }}><strong style={{ color: T.ink }}>Contact form submissions:</strong> When you submit a support request, your name, email, and message are sent to our support inbox.</p>
+          </>)}
+
+          {sec("3. How we use your data", <>
+            <p>We use your information to: provide and operate the QuantDiver platform; send authentication and security emails; respond to support requests; match you with other users via Trader Connect (using only your chosen topic, never your identity); detect and prevent fraud or abuse; and improve the platform.</p>
+            <p style={{ marginTop: 10 }}>We do not use your data for advertising, sell it to third parties, or use it to train AI models.</p>
+          </>)}
+
+          {sec("4. Third-party services", <>
+            <p>We use the following third-party services to operate the platform:</p>
+            <ul style={{ paddingLeft: 20, marginTop: 8, lineHeight: 2 }}>
+              <li><strong style={{ color: T.ink }}>Supabase</strong> — database and authentication (EU region)</li>
+              <li><strong style={{ color: T.ink }}>Vercel</strong> — hosting and serverless functions</li>
+              <li><strong style={{ color: T.ink }}>Resend</strong> — transactional email delivery</li>
+              <li><strong style={{ color: T.ink }}>Polygon.io</strong> — live market price data</li>
+              <li><strong style={{ color: T.ink }}>Financial Modeling Prep (FMP)</strong> — financial statement data</li>
+            </ul>
+            <p style={{ marginTop: 10 }}>Each of these services has its own privacy policy. We share only the minimum data needed to deliver each service.</p>
+          </>)}
+
+          {sec("5. Data retention", <p>We retain your account data for as long as your account is active. If you delete your account, we will remove your personal data within 30 days, except where we are required to retain it by law (e.g., billing records).</p>)}
+
+          {sec("6. Your rights", <>
+            <p>Depending on your jurisdiction (including under GDPR for EU/EEA residents), you may have the right to: access the personal data we hold about you; correct inaccurate data; request deletion of your data; object to certain processing; and data portability.</p>
+            <p style={{ marginTop: 10 }}>To exercise any of these rights, contact support@quantdiver.com.</p>
+          </>)}
+
+          {sec("7. Cookies", <p>We use only essential session cookies required to keep you logged in. We do not use advertising cookies or tracking pixels. You can clear cookies at any time via your browser settings.</p>)}
+
+          {sec("8. Security", <p>We use industry-standard measures to protect your data, including HTTPS encryption, secure authentication via Supabase Auth, and server-side API key management. No method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.</p>)}
+
+          {sec("9. Changes to this policy", <p>We may update this Privacy Policy from time to time. We will notify you of significant changes by posting the updated policy on this page with a revised date. Continued use of QuantDiver after changes constitutes acceptance of the updated policy.</p>)}
+
+          {sec("10. Contact", <p>For any privacy questions or requests, contact us at: <span style={{ color: T.cyan }}>support@quantdiver.com</span></p>)}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+/* ─── terms of service page ───────────────────────────────── */
+function TermsPage() {
+  const sec = (title, children) => (
+    <div style={{ marginBottom: 40 }}>
+      <h2 style={{ fontFamily: ff.display, fontSize: "1.15rem", fontWeight: 700, color: T.ink, margin: "0 0 12px" }}>{title}</h2>
+      <div style={{ fontFamily: ff.body, fontSize: ".9rem", color: T.sub, lineHeight: 1.75 }}>{children}</div>
+    </div>
+  );
+  return (
+    <div style={{ animation: "qd-fadein .4s ease" }}>
+      <section style={{ padding: "80px 0 112px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 720, margin: "0 auto" }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".65rem", letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 12 }}>Legal</div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 800, letterSpacing: "-.03em", margin: "0 0 8px" }}>Terms of Service</h1>
+          <p style={{ fontFamily: ff.mono, fontSize: ".75rem", color: T.dim, marginBottom: 48 }}>Last updated: June 2026</p>
+          <div style={{ height: 1, background: "rgba(90,130,200,.12)", marginBottom: 48 }} />
+
+          <div style={{ background: "rgba(245,158,11,.07)", border: "1px solid rgba(245,158,11,.25)", borderRadius: 12, padding: "16px 20px", marginBottom: 40, fontFamily: ff.body, fontSize: ".88rem", color: T.amber, lineHeight: 1.6 }}>
+            <strong>Important:</strong> QuantDiver provides financial data and proprietary scoring tools for informational and educational purposes only. Nothing on this platform constitutes financial advice, investment advice, or a recommendation to buy, sell, or hold any security. All investment decisions are made solely at your own risk.
+          </div>
+
+          {sec("1. Acceptance of terms", <p>By accessing or using QuantDiver ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, do not use the Service. These terms apply to all users, including visitors, registered members, and subscribers.</p>)}
+
+          {sec("2. Description of the service", <p>QuantDiver is a proprietary stock analysis platform that provides quantitative scores (Momentum, Risk, Tech Value), market data, news, and analytics tools. The Service is operated by QuantDiver and is available at quantdiver.com and associated domains.</p>)}
+
+          {sec("3. Not financial advice", <>
+            <p>All content, scores, analysis, insights, and information provided by QuantDiver — including but not limited to Momentum scores, Risk scores, Tech Value scores, analyst data, insider trading information, Daily Briefs, and AI assistant responses — are for informational and educational purposes only.</p>
+            <p style={{ marginTop: 10 }}>QuantDiver is not a registered investment adviser, broker-dealer, financial planner, or financial institution. Nothing on the platform should be construed as financial advice, investment advice, trading advice, or any other type of advice. You should consult a qualified financial professional before making any investment decision.</p>
+            <p style={{ marginTop: 10 }}><strong style={{ color: T.ink }}>Past performance of any score, signal, or stock is not indicative of future results.</strong></p>
+          </>)}
+
+          {sec("4. User accounts", <>
+            <p>You must create an account to access certain features. You are responsible for maintaining the confidentiality of your login credentials and for all activity that occurs under your account. You agree to notify us immediately at support@quantdiver.com if you suspect unauthorized access to your account.</p>
+            <p style={{ marginTop: 10 }}>You must be at least 18 years old to create an account. By registering, you confirm that you meet this requirement.</p>
+          </>)}
+
+          {sec("5. Subscription and payment", <>
+            <p>QuantDiver offers a 14-day free trial with full access. After the trial period, continued access requires a paid subscription at the then-current price (currently 99 SEK/month).</p>
+            <p style={{ marginTop: 10 }}>Subscriptions are billed monthly. You may cancel at any time; cancellation takes effect at the end of the current billing period. We do not offer refunds for partial months.</p>
+          </>)}
+
+          {sec("6. Intellectual property", <>
+            <p>All content, features, functionality, scoring methodologies, algorithms, code, design, and branding on QuantDiver are the exclusive property of QuantDiver and are protected by applicable copyright, trademark, and intellectual property laws.</p>
+            <p style={{ marginTop: 10 }}>The proprietary scoring formulas (Momentum, Risk, and Tech Value) are trade secrets of QuantDiver. You may not reverse-engineer, reproduce, distribute, or create derivative works from any part of the Service without express written permission.</p>
+            <p style={{ marginTop: 10 }}>© {new Date().getFullYear()} QuantDiver. All rights reserved.</p>
+          </>)}
+
+          {sec("7. Acceptable use", <>
+            <p>You agree not to: scrape, crawl, or systematically extract data from the platform; reverse-engineer any scoring formula or algorithm; use the Service for any unlawful purpose; share your account credentials with others; attempt to gain unauthorized access to any part of the Service; or interfere with the platform's operation.</p>
+            <p style={{ marginTop: 10 }}>Violations may result in immediate account termination without refund.</p>
+          </>)}
+
+          {sec("8. Trader Connect and user content", <>
+            <p>Trader Connect allows users to communicate directly. You are solely responsible for any content you send through this feature. You agree not to use Trader Connect to harass, deceive, or harm other users, share explicit or illegal content, or solicit financial transactions.</p>
+            <p style={{ marginTop: 10 }}>QuantDiver is not responsible for the content of user-to-user communications and does not endorse any views expressed therein. We reserve the right to remove content and terminate accounts that violate these terms.</p>
+          </>)}
+
+          {sec("9. Market data and third-party content", <p>Market data is sourced from Polygon.io and Financial Modeling Prep. QuantDiver does not warrant the accuracy, completeness, or timeliness of any market data. Data may be delayed, contain errors, or be unavailable due to third-party service issues. QuantDiver is not liable for any losses resulting from reliance on such data.</p>)}
+
+          {sec("10. Limitation of liability", <>
+            <p>To the maximum extent permitted by applicable law, QuantDiver and its operators, employees, and affiliates shall not be liable for any indirect, incidental, special, consequential, or punitive damages, including but not limited to loss of profits, loss of data, or financial losses arising from:</p>
+            <ul style={{ paddingLeft: 20, marginTop: 8, lineHeight: 2 }}>
+              <li>Your use of or inability to use the Service</li>
+              <li>Any investment or trading decision made based on information from the Service</li>
+              <li>Inaccuracies in market data or scores</li>
+              <li>Unauthorized access to your account</li>
+              <li>Any interruption or cessation of the Service</li>
+            </ul>
+            <p style={{ marginTop: 10 }}>In no event shall QuantDiver's total liability exceed the amount you paid for the Service in the 12 months preceding the claim.</p>
+          </>)}
+
+          {sec("11. Disclaimer of warranties", <p>The Service is provided "as is" and "as available" without warranties of any kind, express or implied. QuantDiver does not warrant that the Service will be uninterrupted, error-free, or free of viruses or harmful components.</p>)}
+
+          {sec("12. Governing law", <p>These Terms are governed by the laws of Sweden. Any disputes shall be subject to the exclusive jurisdiction of the courts of Sweden.</p>)}
+
+          {sec("13. Changes to these terms", <p>We reserve the right to modify these Terms at any time. We will notify registered users of material changes via email. Continued use of the Service after changes constitutes acceptance of the updated Terms.</p>)}
+
+          {sec("14. Contact", <p>For questions about these Terms, contact us at: <span style={{ color: T.cyan }}>support@quantdiver.com</span></p>)}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 /* ─── root ────────────────────────────────────────────────── */
 export default function QuantDiverSite({ onEnterApp }) {
   const [page, setPage] = useState("home");
@@ -593,11 +1064,9 @@ export default function QuantDiverSite({ onEnterApp }) {
             {/* nav links */}
             <div className="qd-nav-links" style={{ display: "flex", gap: 28, fontFamily: ff.body, fontSize: ".88rem", color: T.dim }}>
               <a onClick={() => go("home")} style={{ cursor: "pointer", color: page === "home" ? T.sub : "inherit", transition: "color .15s" }}>Home</a>
-              <a onClick={() => go("home")} style={{ cursor: "pointer", transition: "color .15s" }}>Scores</a>
-              <a onClick={() => go("briefme")} style={{
-                cursor: "pointer", color: page === "briefme" ? T.cyan : "inherit", transition: "color .15s",
-              }}>BriefMe</a>
-              <a onClick={() => document.getElementById("pricing")?.scrollIntoView({ behavior: "smooth" }) || go("home")} style={{ cursor: "pointer", transition: "color .15s" }}>Pricing</a>
+              <a onClick={() => go("scores")} style={{ cursor: "pointer", color: page === "scores" ? T.cyan : "inherit", transition: "color .15s" }}>Scores</a>
+              <a onClick={() => go("briefme")} style={{ cursor: "pointer", color: page === "briefme" ? T.cyan : "inherit", transition: "color .15s" }}>BriefMe</a>
+              <a onClick={() => go("pricing")} style={{ cursor: "pointer", color: page === "pricing" ? T.cyan : "inherit", transition: "color .15s" }}>Pricing</a>
             </div>
 
             <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }}>
@@ -607,9 +1076,13 @@ export default function QuantDiverSite({ onEnterApp }) {
         </nav>
 
         {/* page content */}
-        {page === "home"
-          ? <HomePage go={go} onEnterApp={onEnterApp} />
-          : <BriefMePage onEnterApp={onEnterApp} />}
+        {page === "home"    && <HomePage go={go} onEnterApp={onEnterApp} />}
+        {page === "briefme" && <BriefMePage onEnterApp={onEnterApp} />}
+        {page === "scores"  && <ScoresPage onEnterApp={onEnterApp} />}
+        {page === "pricing" && <PricingPage onEnterApp={onEnterApp} />}
+        {page === "contact" && <ContactPage />}
+        {page === "privacy" && <PrivacyPage />}
+        {page === "terms"   && <TermsPage />}
 
         {/* FOOTER */}
         <footer style={{ borderTop: `1px solid ${T.border}`, padding: "48px 0 60px" }}>
@@ -617,8 +1090,12 @@ export default function QuantDiverSite({ onEnterApp }) {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 20, flexWrap: "wrap", marginBottom: 28 }}>
               <span style={{ fontFamily: ff.display, fontWeight: 700, fontSize: "1rem", color: T.sub }}>QuantDiver</span>
               <div style={{ display: "flex", gap: 20, fontSize: ".84rem" }}>
-                {["Privacy Policy", "Terms of Service", "Contact"].map((l, i) => (
-                  <a key={i} href="#" onClick={e => e.preventDefault()} style={{ color: T.dim, textDecoration: "none" }}>{l}</a>
+                {[
+                  ["Privacy Policy", "privacy"],
+                  ["Terms of Service", "terms"],
+                  ["Contact", "contact"],
+                ].map(([label, route]) => (
+                  <a key={route} onClick={() => go(route)} style={{ color: T.dim, textDecoration: "none", cursor: "pointer" }}>{label}</a>
                 ))}
               </div>
             </div>
