@@ -174,7 +174,7 @@ function HomePage({ go, onEnterApp }) {
             </p>
 
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
-              <PrimaryBtn onClick={() => onEnterApp("signup")}>Get started</PrimaryBtn>
+              <PrimaryBtn onClick={() => onEnterApp("plan")}>Get started</PrimaryBtn>
               <GhostBtn onClick={() => go("briefme")}>Explore BriefMe →</GhostBtn>
             </div>
 
@@ -359,7 +359,7 @@ function HomePage({ go, onEnterApp }) {
                 </li>
               ))}
             </ul>
-            <PrimaryBtn onClick={() => onEnterApp("signup")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
+            <PrimaryBtn onClick={() => onEnterApp("plan")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
               Start free trial →
             </PrimaryBtn>
             <p style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 14, marginBottom: 0 }}>
@@ -426,7 +426,7 @@ function ScoresPage({ onEnterApp }) {
           <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.65, margin: "0 0 36px" }}>
             Every stock in QuantDiver is scored across three dimensions — Momentum, Risk, and Tech Value — calculated from live market data and real financial statements. No opinions. Just signal.
           </p>
-          <PrimaryBtn onClick={() => onEnterApp("signup")}>See live scores →</PrimaryBtn>
+          <PrimaryBtn onClick={() => onEnterApp("plan")}>See live scores →</PrimaryBtn>
         </div>
       </section>
 
@@ -487,7 +487,7 @@ function ScoresPage({ onEnterApp }) {
         <div className="qd-wrap" style={{ maxWidth: 520, margin: "0 auto" }}>
           <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.5rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 16px" }}>Ready to see the numbers?</h2>
           <p style={{ fontFamily: ff.body, color: T.sub, fontSize: "1rem", margin: "0 0 32px" }}>14-day free trial — full access, no card required.</p>
-          <PrimaryBtn onClick={() => onEnterApp("signup")} style={{ padding: "14px 32px", fontSize: "1rem" }}>Start free trial →</PrimaryBtn>
+          <PrimaryBtn onClick={() => onEnterApp("plan")} style={{ padding: "14px 32px", fontSize: "1rem" }}>Start free trial →</PrimaryBtn>
         </div>
       </section>
     </div>
@@ -563,7 +563,7 @@ function PricingPage({ onEnterApp, go }) {
                 ))}
               </ul>
 
-              <button onClick={() => onEnterApp("signup", "briefme")} style={{
+              <button onClick={() => onEnterApp("plan", "briefme")} style={{
                 width: "100%", padding: "14px", borderRadius: 12, cursor: "pointer",
                 background: "transparent", border: "1px solid rgba(90,130,200,.3)",
                 color: T.sub, fontFamily: ff.body, fontSize: ".92rem", fontWeight: 700,
@@ -607,7 +607,7 @@ function PricingPage({ onEnterApp, go }) {
                 ))}
               </ul>
 
-              <PrimaryBtn onClick={() => onEnterApp("signup", "pro")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
+              <PrimaryBtn onClick={() => onEnterApp("plan", "pro")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
                 Start free trial — no card needed →
               </PrimaryBtn>
               <p style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 12, marginBottom: 0, textAlign: "center" }}>
@@ -866,7 +866,7 @@ function BriefMePage({ onEnterApp }) {
                 </li>
               ))}
             </ul>
-            <PrimaryBtn onClick={() => onEnterApp("signup", "briefme")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
+            <PrimaryBtn onClick={() => onEnterApp("plan", "briefme")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
               Start your briefings →
             </PrimaryBtn>
           </div>
@@ -1040,7 +1040,7 @@ function AboutPage({ onEnterApp }) {
 
           {/* CTA */}
           <div style={{ textAlign: "center", paddingTop: 24 }}>
-            <PrimaryBtn onClick={() => onEnterApp("signup")} style={{ fontSize: "1.05rem", padding: "18px 44px" }}>
+            <PrimaryBtn onClick={() => onEnterApp("plan")} style={{ fontSize: "1.05rem", padding: "18px 44px" }}>
               Try QuantDiver free for 14 days →
             </PrimaryBtn>
             <p style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim, marginTop: 16 }}>
