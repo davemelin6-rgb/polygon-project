@@ -325,9 +325,22 @@ export default function Forum({ session, onClose }) {
 
       {/* ── Header ───────────────────────────────────────── */}
       <div className="forum-page-header">
-        <div>
-          <div className="forum-eyebrow">QuantDiver Community</div>
-          <h2 className="forum-title">Albin's Community</h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "1.4rem" }}>
+          {/* Albin portrait — cropped from left half of founders.png */}
+          <div style={{
+            width: 72, height: 72, borderRadius: "50%",
+            overflow: "hidden", flexShrink: 0,
+            border: "2px solid rgba(245,158,11,.4)",
+            boxShadow: "0 0 20px rgba(245,158,11,.15)",
+          }}>
+            <img src="/founders.png" alt="Albin"
+              style={{ width: "200%", height: "100%", objectFit: "cover", objectPosition: "left top", display: "block" }}
+            />
+          </div>
+          <div>
+            <div className="forum-eyebrow">QuantDiver Community</div>
+            <h2 className="forum-title">Albin's Community</h2>
+          </div>
         </div>
         <div className="forum-header-actions">
           <button className="forum-new-btn" onClick={() => setShowNew(v => !v)}>
