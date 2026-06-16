@@ -1195,7 +1195,8 @@ function TermsPage() {
 
 /* ─── root ────────────────────────────────────────────────── */
 export default function QuantDiverSite({ onEnterApp }) {
-  const [page, setPage] = useState("home");
+  const [page,        setPage]       = useState("home");
+  const [menuOpen,    setMenuOpen]   = useState(false);
 
   useEffect(() => {
     const link = document.createElement("link");
@@ -1227,11 +1228,34 @@ export default function QuantDiverSite({ onEnterApp }) {
         .qd-lbrow { transition: background .2s; }
         .qd-lbrow:hover { background: rgba(90,130,200,.04); }
 
+        .qd-hamburger { display: none; }
+        .qd-mobile-menu { display: none; }
+
         @media (max-width: 900px) {
           .qd-hero { grid-template-columns: 1fr; }
           .qd-briefme-teaser { grid-template-columns: 1fr; }
           .qd-dims-grid { grid-template-columns: repeat(3, 1fr); }
           .qd-nav-links { display: none !important; }
+          .qd-members-btn { display: none !important; }
+          .qd-hamburger {
+            display: flex; align-items: center; justify-content: center;
+            background: transparent; border: 1px solid rgba(90,130,200,.25);
+            color: #8a9ec0; border-radius: 8px; width: 40px; height: 40px;
+            font-size: 1.2rem; cursor: pointer; flex-shrink: 0;
+          }
+          .qd-mobile-menu {
+            display: flex; flex-direction: column; gap: 4px;
+            padding: 12px 16px 16px;
+            background: rgba(4,8,15,.97);
+            border-bottom: 1px solid rgba(90,130,200,.12);
+          }
+          .qd-mobile-link {
+            padding: 13px 16px; border-radius: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem; font-weight: 600; color: #8a9ec0;
+            cursor: pointer; transition: background .15s, color .15s;
+          }
+          .qd-mobile-link:hover, .qd-mobile-link.active { background: rgba(34,211,238,.07); color: #EDF2FF; }
         }
         @media (max-width: 560px) {
           .qd-dims-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1269,19 +1293,47 @@ export default function QuantDiverSite({ onEnterApp }) {
               <span style={{ fontFamily: ff.display, fontWeight: 700, fontSize: "1.1rem", letterSpacing: "-.01em" }}>QuantDiver</span>
             </div>
 
-            {/* nav links */}
+            {/* nav links — desktop */}
             <div className="qd-nav-links" style={{ display: "flex", gap: 28, fontFamily: ff.body, fontSize: ".88rem", color: T.dim }}>
-              <a onClick={() => go("home")} style={{ cursor: "pointer", color: page === "home" ? T.sub : "inherit", transition: "color .15s" }}>Home</a>
-              <a onClick={() => go("scores")} style={{ cursor: "pointer", color: page === "scores" ? T.cyan : "inherit", transition: "color .15s" }}>Scores</a>
+              <a onClick={() => go("home")}    style={{ cursor: "pointer", color: page === "home"    ? T.sub  : "inherit", transition: "color .15s" }}>Home</a>
+              <a onClick={() => go("scores")}  style={{ cursor: "pointer", color: page === "scores"  ? T.cyan : "inherit", transition: "color .15s" }}>Scores</a>
               <a onClick={() => go("briefme")} style={{ cursor: "pointer", color: page === "briefme" ? T.cyan : "inherit", transition: "color .15s" }}>BriefMe</a>
               <a onClick={() => go("pricing")} style={{ cursor: "pointer", color: page === "pricing" ? T.cyan : "inherit", transition: "color .15s" }}>Pricing</a>
-              <a onClick={() => go("about")} style={{ cursor: "pointer", color: page === "about" ? T.cyan : "inherit", transition: "color .15s" }}>About Us</a>
+              <a onClick={() => go("about")}   style={{ cursor: "pointer", color: page === "about"   ? T.cyan : "inherit", transition: "color .15s" }}>About Us</a>
+              <a onClick={() => go("contact")} style={{ cursor: "pointer", color: page === "contact" ? T.cyan : "inherit", transition: "color .15s" }}>Contact</a>
             </div>
 
-            <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }}>
+            <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }} className="qd-members-btn">
               Members Area →
             </PrimaryBtn>
+
+            {/* hamburger — mobile only */}
+            <button className="qd-hamburger" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">
+              {menuOpen ? "✕" : "☰"}
+            </button>
           </div>
+
+          {/* Mobile dropdown */}
+          {menuOpen && (
+            <div className="qd-mobile-menu">
+              {[
+                ["Home",       "home"],
+                ["Scores",     "scores"],
+                ["BriefMe",    "briefme"],
+                ["Pricing",    "pricing"],
+                ["About Us",   "about"],
+                ["Contact",    "contact"],
+              ].map(([label, route]) => (
+                <a key={route} className={`qd-mobile-link ${page === route ? "active" : ""}`}
+                  onClick={() => { go(route); setMenuOpen(false); }}>
+                  {label}
+                </a>
+              ))}
+              <PrimaryBtn onClick={() => { onEnterApp(); setMenuOpen(false); }} style={{ width: "100%", justifyContent: "center", marginTop: 8 }}>
+                Members Area →
+              </PrimaryBtn>
+            </div>
+          )}
         </nav>
 
         {/* page content */}
