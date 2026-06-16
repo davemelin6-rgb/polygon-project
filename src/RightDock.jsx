@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import Chat        from "./Chat.jsx";
 import TraderMatch from "./TraderMatch.jsx";
+import Forum       from "./Forum.jsx";
 import "./RightDock.css";
 
 // Gordon Gekko chat — inline panel (no floating character)
@@ -185,9 +186,10 @@ function GordonPanel({ onClose }) {
 
 // ── RightDock ───────────────────────────────────────────────
 const TABS = [
-  { id: "match",  icon: "🤝", label: "Trader Connect" },
-  { id: "chat",   icon: "💬", label: "Messages"        },
-  { id: "gordon", icon: "🤖", label: "AI Assistant"    },
+  { id: "community", icon: "🌐", label: "Community"     },
+  { id: "match",     icon: "🤝", label: "Trader Connect" },
+  { id: "chat",      icon: "💬", label: "Messages"       },
+  { id: "gordon",    icon: "🤖", label: "AI Assistant"   },
 ];
 
 export default function RightDock({ session }) {
@@ -199,7 +201,14 @@ export default function RightDock({ session }) {
 
   return (
     <>
-      {/* Active panel — rendered to the left of the dock */}
+      {/* Community — full-screen overlay page */}
+      {active === "community" && (
+        <div className="forum-overlay">
+          <Forum session={session} onClose={() => setActive(null)} />
+        </div>
+      )}
+
+      {/* Side panels — rendered to the left of the dock */}
       {active === "chat"   && <Chat        session={session} dockMode onClose={() => setActive(null)} />}
       {active === "match"  && <TraderMatch session={session} dockMode onClose={() => setActive(null)} />}
       {active === "gordon" && <GordonPanel onClose={() => setActive(null)} />}
