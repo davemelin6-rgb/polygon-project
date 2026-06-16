@@ -8,6 +8,8 @@ import AdminPanel from "./AdminPanel.jsx";
 import { supabase } from "./supabaseClient.js";
 import "./index.css";
 
+const INACTIVITY_MS = 15 * 60 * 1000; // 15 minutes
+
 function Root() {
   const [session,    setSession]   = useState(undefined); // undefined = loading
   const [isSetup,    setIsSetup]   = useState(false);
@@ -34,6 +36,34 @@ function Root() {
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Auto-logout after 15 minutes of inactivity
+  useEffect(() => {
+    if (!session) return;
+
+    let timer = setTimeout(() => {
+      supabase.auth.signOut();
+      setSession(null);
+      setShowLogin(false);
+    }, INACTIVITY_MS);
+
+    const reset = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        supabase.auth.signOut();
+        setSession(null);
+        setShowLogin(false);
+      }, INACTIVITY_MS);
+    };
+
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+    events.forEach(e => window.addEventListener(e, reset, { passive: true }));
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach(e => window.removeEventListener(e, reset));
+    };
+  }, [session]);
 
   if (session === undefined) return null; // loading
 
