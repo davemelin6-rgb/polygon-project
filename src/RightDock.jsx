@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import Chat        from "./Chat.jsx";
 import TraderMatch from "./TraderMatch.jsx";
-import Forum       from "./Forum.jsx";
 import "./RightDock.css";
 
 // Gordon Gekko chat — inline panel (no floating character)
@@ -192,22 +191,16 @@ const TABS = [
   { id: "gordon",    icon: "🤖", label: "AI Assistant"   },
 ];
 
-export default function RightDock({ session }) {
+export default function RightDock({ session, onOpenCommunity }) {
   const [active, setActive] = useState(null);
 
   function toggle(id) {
+    if (id === "community") { onOpenCommunity?.(); return; }
     setActive(prev => prev === id ? null : id);
   }
 
   return (
     <>
-      {/* Community — full-screen overlay page */}
-      {active === "community" && (
-        <div className="forum-overlay">
-          <Forum session={session} onClose={() => setActive(null)} />
-        </div>
-      )}
-
       {/* Side panels — rendered to the left of the dock */}
       {active === "chat"   && <Chat        session={session} dockMode onClose={() => setActive(null)} />}
       {active === "match"  && <TraderMatch session={session} dockMode onClose={() => setActive(null)} />}

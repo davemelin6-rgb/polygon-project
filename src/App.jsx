@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
+import Forum    from "./Forum.jsx";
 import RightDock from "./RightDock.jsx";
 import Settings from "./Settings.jsx";
 import QDLogo from "./QDLogo.jsx";
@@ -528,8 +529,9 @@ export default function App({ session, onLogout, onAdmin }) {
   const [username, setUsername]   = useState(null);
   const [profile,  setProfile]   = useState(null);
   const [settings, setSettings]  = useState({});
-  const [showSettings, setShowSettings] = useState(false);
-  const [showContact,  setShowContact]  = useState(false);
+  const [showSettings,   setShowSettings]   = useState(false);
+  const [showContact,    setShowContact]    = useState(false);
+  const [showCommunity,  setShowCommunity]  = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -654,6 +656,17 @@ export default function App({ session, onLogout, onAdmin }) {
   const showTrialBanner = trialDaysLeft !== null && trialDaysLeft >= 0
     && session?.user?.user_metadata?.subscription_status !== "active";
 
+  // ── Community page (full replace — dashboard not rendered) ──
+  if (showCommunity) {
+    return (
+      <div className="app">
+        <div className="community-page">
+          <Forum session={session} onClose={() => setShowCommunity(false)} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="app">
       {showTrialBanner && (
@@ -704,7 +717,7 @@ export default function App({ session, onLogout, onAdmin }) {
           spellCheck={false}
         />
         <button className="btn" type="submit">Analyze</button>
-      </form>}
+      </form>
 
       {error && <div className="error">{error}</div>}
 
@@ -770,7 +783,7 @@ export default function App({ session, onLogout, onAdmin }) {
       {lastUpdated && (
         <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>
       )}
-      <RightDock session={session} />
+      <RightDock session={session} onOpenCommunity={() => setShowCommunity(true)} />
       {showSettings && (
         <Settings
           session={session}

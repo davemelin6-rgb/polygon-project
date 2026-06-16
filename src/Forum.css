@@ -1,11 +1,9 @@
-/* ── Full-page overlay (launched from RightDock) ───────── */
-.forum-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(4,8,15,.97);
-  z-index: 200;
-  overflow-y: auto;
+/* ── Full-page community layout ────────────────────────── */
+.community-page {
+  max-width: 900px;
+  margin: 0 auto;
   padding: 0 1.5rem;
+  min-height: 100vh;
 }
 
 /* ── Forum wrapper ─────────────────────────────────────── */
