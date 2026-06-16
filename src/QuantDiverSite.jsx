@@ -870,15 +870,7 @@ function PrivacyPage() {
           </>)}
 
           {sec("4. Third-party services", <>
-            <p>We use the following third-party services to operate the platform:</p>
-            <ul style={{ paddingLeft: 20, marginTop: 8, lineHeight: 2 }}>
-              <li><strong style={{ color: T.ink }}>Supabase</strong> — database and authentication (EU region)</li>
-              <li><strong style={{ color: T.ink }}>Vercel</strong> — hosting and serverless functions</li>
-              <li><strong style={{ color: T.ink }}>Resend</strong> — transactional email delivery</li>
-              <li><strong style={{ color: T.ink }}>Polygon.io</strong> — live market price data</li>
-              <li><strong style={{ color: T.ink }}>Financial Modeling Prep (FMP)</strong> — financial statement data</li>
-            </ul>
-            <p style={{ marginTop: 10 }}>Each of these services has its own privacy policy. We share only the minimum data needed to deliver each service.</p>
+            <p>We use third-party services to operate the platform, including infrastructure and hosting providers, authentication services, transactional email delivery, and market data APIs. We share only the minimum data necessary with each provider to deliver the relevant function of the service.</p>
           </>)}
 
           {sec("5. Data retention", <p>We retain your account data for as long as your account is active. If you delete your account, we will remove your personal data within 30 days, except where we are required to retain it by law (e.g., billing records).</p>)}
