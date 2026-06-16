@@ -1287,13 +1287,18 @@ export default function QuantDiverSite({ onEnterApp }) {
           borderBottom: `1px solid ${T.border}`,
         }}>
           <div className="qd-wrap" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", height: 64 }}>
+            {/* hamburger — mobile only, LEFT side */}
+            <button className="qd-hamburger" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">
+              {menuOpen ? "✕" : "☰"}
+            </button>
+
             {/* logo */}
             <div onClick={() => go("home")} style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer" }}>
               <QDLogo size={38} />
               <span style={{ fontFamily: ff.display, fontWeight: 700, fontSize: "1.1rem", letterSpacing: "-.01em" }}>QuantDiver</span>
             </div>
 
-            {/* nav links — desktop */}
+            {/* nav links — desktop only */}
             <div className="qd-nav-links" style={{ display: "flex", gap: 28, fontFamily: ff.body, fontSize: ".88rem", color: T.dim }}>
               <a onClick={() => go("home")}    style={{ cursor: "pointer", color: page === "home"    ? T.sub  : "inherit", transition: "color .15s" }}>Home</a>
               <a onClick={() => go("scores")}  style={{ cursor: "pointer", color: page === "scores"  ? T.cyan : "inherit", transition: "color .15s" }}>Scores</a>
@@ -1306,11 +1311,6 @@ export default function QuantDiverSite({ onEnterApp }) {
             <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }} className="qd-members-btn">
               Members Area →
             </PrimaryBtn>
-
-            {/* hamburger — mobile only */}
-            <button className="qd-hamburger" onClick={() => setMenuOpen(v => !v)} aria-label="Menu">
-              {menuOpen ? "✕" : "☰"}
-            </button>
           </div>
 
           {/* Mobile dropdown */}
