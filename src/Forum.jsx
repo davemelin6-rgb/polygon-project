@@ -329,14 +329,14 @@ export default function Forum({ session, onClose }) {
           {/* Albin portrait — cropped from left half of founders.png */}
           <div style={{ flexShrink: 0, textAlign: "center" }}>
             <div style={{
-              width: 110, height: 110, borderRadius: "50%",
+              width: 150, height: 170, borderRadius: "50%",
               overflow: "hidden",
               border: "2px solid rgba(245,158,11,.4)",
-              boxShadow: "0 0 24px rgba(245,158,11,.18)",
+              boxShadow: "0 0 28px rgba(245,158,11,.18)",
               marginBottom: "0.6rem",
             }}>
               <img src="/founders.png" alt="Albin"
-                style={{ width: "200%", height: "115%", objectFit: "cover", objectPosition: "5% 10%", display: "block" }}
+                style={{ width: "200%", height: "130%", objectFit: "cover", objectPosition: "5% 5%", display: "block" }}
               />
             </div>
             <p style={{ fontFamily: "'Space Mono', monospace", fontSize: ".62rem", color: "#f59e0b", lineHeight: 1.5, maxWidth: 130, margin: "0 auto", fontStyle: "italic" }}>
