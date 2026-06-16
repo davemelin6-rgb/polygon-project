@@ -333,7 +333,7 @@ function HomePage({ go, onEnterApp }) {
             Try free for 14 days
           </h2>
           <p style={{ fontFamily: ff.body, color: T.sub, fontSize: "1rem", margin: "0 0 40px" }}>
-            Then 99 SEK / month — cancel anytime
+            From 49 SEK / month — cancel anytime
           </p>
 
           <div style={{
@@ -496,90 +496,129 @@ function ScoresPage({ onEnterApp }) {
 
 /* ─── pricing page ────────────────────────────────────────── */
 function PricingPage({ onEnterApp, go }) {
-  const features = [
-    ["Live stock scores", "Momentum, Risk, and Tech Value — updated every 60 seconds across all tickers"],
-    ["Full score breakdown", "Component-level analysis: what's driving each score and why"],
-    ["Price chart & technicals", "6-month chart, RSI, MACD, Bollinger Bands, moving averages"],
-    ["Analyst consensus", "Wall Street ratings, price targets, and last 4 earnings beats/misses"],
-    ["Insider trading feed", "SEC-sourced buy/sell activity from executives and directors"],
-    ["Key ratios", "P/E, EV/EBITDA, gross margin, debt-to-equity — live fundamentals"],
-    ["News & Daily Brief", "48-hour filtered news per ticker + hourly market intelligence brief"],
-    ["Market sectors", "AI, Quantum, Defence & Space, Biotech — all scored and tracked"],
-    ["Trader Connect", "Match with other QuantDiver members who share your sector interests"],
-    ["14-day free trial", "Full access from day one — no credit card needed to start"],
+  const briefmeFeatures = [
+    ["Morning brief · 08:00 Stockholm", "AI-curated summary of what moved overnight and why"],
+    ["US market preview · 15:00",        "Pre-market signals on US tech, semis, biotech, defence"],
+    ["QuantDiver Score leaderboard",     "Top movers ranked across MOMENTUM, RISK & TECH VALUE"],
+    ["Sector signals",                   "Weekly digest on AI, Quantum, Defence & Space, Biotech"],
   ];
+
+  const proFeatures = [
+    ["Everything in BriefMe",            "All daily briefs and leaderboard access included"],
+    ["Live MOMENTUM · RISK · TECH VALUE","Three scores per stock, refreshed every 60 seconds"],
+    ["Full score breakdown",             "Component-level analysis: what's driving each score"],
+    ["Price chart & technicals",         "6-month chart, RSI, MACD, Bollinger Bands, MAs"],
+    ["Analyst consensus",                "Wall Street ratings, price targets, last 4 earnings"],
+    ["Insider trading feed",             "SEC-sourced exec buy/sell — last 15 transactions"],
+    ["Key ratios",                       "P/E, EV/EBITDA, margins, debt-to-equity — live"],
+    ["News & sector feed",               "48-hour filtered news per ticker, hourly updated"],
+    ["Trader Connect & community",       "Match with traders who share your sector interests"],
+  ];
+
+  const cardBase = {
+    borderRadius: 24, padding: "44px 40px",
+    display: "flex", flexDirection: "column",
+  };
 
   return (
     <div style={{ animation: "qd-fadein .4s ease" }}>
-      <section style={{ padding: "100px 0 80px", textAlign: "center" }}>
-        <div className="qd-wrap" style={{ maxWidth: 640, margin: "0 auto" }}>
+      <section style={{ padding: "100px 0 72px", textAlign: "center" }}>
+        <div className="qd-wrap" style={{ maxWidth: 680, margin: "0 auto" }}>
           <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 16 }}>Simple pricing · No surprises</div>
           <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2.4rem,4.5vw,3.8rem)", fontWeight: 800, letterSpacing: "-.035em", margin: "0 0 16px", lineHeight: 1.05 }}>
-            One plan.<br />Everything included.
+            Two plans.<br />Pick your edge.
           </h1>
           <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.65, margin: 0 }}>
-            No tiers. No feature gating. Pay one price, get everything.
+            Start free for 14 days — no card required. Upgrade or cancel anytime.
           </p>
         </div>
       </section>
 
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
 
-      <section style={{ padding: "80px 0 112px" }}>
-        <div className="qd-wrap" style={{ maxWidth: 620, margin: "0 auto" }}>
-          {/* Price card */}
-          <div style={{
-            background: "linear-gradient(160deg, #0F1E3C, #090F1E)",
-            border: "1px solid rgba(59,130,246,.35)",
-            borderRadius: 24, padding: "48px 44px",
-            boxShadow: "0 0 100px rgba(59,130,246,.14), 0 40px 80px rgba(0,0,0,.4)",
-            marginBottom: 24,
-          }}>
-            {/* Plan header */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 32, flexWrap: "wrap", gap: 16 }}>
-              <div>
-                <div style={{ fontFamily: ff.mono, fontSize: ".7rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 8 }}>QuantDiver Pro</div>
-                <div style={{ fontFamily: ff.display, fontSize: "3rem", fontWeight: 800, color: T.ink, lineHeight: 1 }}>
-                  99 <span style={{ fontSize: "1.2rem", color: T.sub, fontWeight: 500 }}>SEK / month</span>
-                </div>
-                <div style={{ fontFamily: ff.body, fontSize: ".82rem", color: T.dim, marginTop: 8 }}>~€8.50 / month · Billed monthly</div>
+      <section style={{ padding: "72px 0 112px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 900, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, alignItems: "start" }}>
+
+            {/* ── BriefMe ── */}
+            <div style={{ ...cardBase, background: "linear-gradient(160deg,#0a1422,#060c16)", border: "1px solid rgba(90,130,200,.2)" }}>
+              <div style={{ fontFamily: ff.mono, fontSize: ".66rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.sub, marginBottom: 10 }}>BriefMe</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
+                <span style={{ fontFamily: ff.display, fontSize: "2.8rem", fontWeight: 800, color: T.ink, lineHeight: 1 }}>49</span>
+                <span style={{ fontFamily: ff.body, fontSize: "1rem", color: T.sub, fontWeight: 500 }}>SEK / month</span>
               </div>
-              <div style={{
-                background: "rgba(52,211,153,.1)", border: "1px solid rgba(52,211,153,.3)",
-                borderRadius: 10, padding: "8px 16px",
-                fontFamily: ff.mono, fontSize: ".72rem", color: T.green, fontWeight: 600,
-              }}>14 days free</div>
+              <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginBottom: 28 }}>Daily intelligence briefs</div>
+
+              <div style={{ height: 1, background: "rgba(90,130,200,.1)", marginBottom: 24 }} />
+
+              <ul style={{ listStyle: "none", margin: "0 0 32px", padding: 0, flex: 1 }}>
+                {briefmeFeatures.map(([title, desc], i) => (
+                  <li key={i} style={{ padding: "11px 0", display: "flex", gap: 12, alignItems: "flex-start", borderBottom: i < briefmeFeatures.length - 1 ? "1px solid rgba(90,130,200,.07)" : "none" }}>
+                    <span style={{ color: T.cyan, fontSize: ".7rem", paddingTop: 2, flexShrink: 0 }}>✓</span>
+                    <div>
+                      <div style={{ fontFamily: ff.body, fontSize: ".86rem", color: T.ink, fontWeight: 600, marginBottom: 2 }}>{title}</div>
+                      <div style={{ fontFamily: ff.body, fontSize: ".75rem", color: T.dim, lineHeight: 1.4 }}>{desc}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <button onClick={onEnterApp} style={{
+                width: "100%", padding: "14px", borderRadius: 12, cursor: "pointer",
+                background: "transparent", border: "1px solid rgba(90,130,200,.3)",
+                color: T.sub, fontFamily: ff.body, fontSize: ".92rem", fontWeight: 700,
+                transition: "all .15s",
+              }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(34,211,238,.5)"; e.currentTarget.style.color = T.ink; }}
+                onMouseOut={e => { e.currentTarget.style.borderColor = "rgba(90,130,200,.3)"; e.currentTarget.style.color = T.sub; }}
+              >
+                Start free trial →
+              </button>
+              <p style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 12, marginBottom: 0, textAlign: "center" }}>
+                14 days free · then 49 SEK/month
+              </p>
             </div>
 
-            <div style={{ height: 1, background: "rgba(90,130,200,.12)", marginBottom: 28 }} />
+            {/* ── QuantPRO ── */}
+            <div style={{ ...cardBase, background: "linear-gradient(160deg,#0F1E3C,#090F1E)", border: "1px solid rgba(59,130,246,.4)", boxShadow: "0 0 80px rgba(59,130,246,.12), 0 32px 64px rgba(0,0,0,.4)", position: "relative" }}>
+              {/* Recommended badge */}
+              <div style={{ position: "absolute", top: -13, left: "50%", transform: "translateX(-50%)", background: "linear-gradient(135deg,#00b4ff,#1a6bcc)", color: "#fff", fontFamily: ff.mono, fontSize: ".6rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", padding: "4px 16px", borderRadius: 999, whiteSpace: "nowrap", boxShadow: "0 2px 16px rgba(0,180,255,.35)" }}>
+                Most popular
+              </div>
 
-            {/* Feature list */}
-            <ul style={{ listStyle: "none", margin: "0 0 36px", padding: 0 }}>
-              {features.map(([title, desc], i) => (
-                <li key={i} style={{
-                  padding: "13px 0",
-                  display: "flex", gap: 14, alignItems: "flex-start",
-                  borderBottom: i < features.length - 1 ? `1px solid rgba(90,130,200,.08)` : "none",
-                }}>
-                  <span style={{ color: T.cyan, fontSize: ".72rem", paddingTop: 3, flexShrink: 0 }}>✓</span>
-                  <div>
-                    <div style={{ fontFamily: ff.body, fontSize: ".9rem", color: T.ink, fontWeight: 600, marginBottom: 2 }}>{title}</div>
-                    <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, lineHeight: 1.45 }}>{desc}</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+              <div style={{ fontFamily: ff.mono, fontSize: ".66rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 10 }}>QuantPRO</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
+                <span style={{ fontFamily: ff.display, fontSize: "2.8rem", fontWeight: 800, color: T.ink, lineHeight: 1 }}>99</span>
+                <span style={{ fontFamily: ff.body, fontSize: "1rem", color: T.sub, fontWeight: 500 }}>SEK / month</span>
+              </div>
+              <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginBottom: 28 }}>Full platform access · ~€8.50/mo</div>
 
-            <PrimaryBtn onClick={onEnterApp} style={{ width: "100%", justifyContent: "center", padding: "16px", fontSize: "1.02rem" }}>
-              Start free trial — no card needed →
-            </PrimaryBtn>
-            <p style={{ fontFamily: ff.body, fontSize: ".76rem", color: T.dim, marginTop: 14, marginBottom: 0, textAlign: "center" }}>
-              After 14 days: 99 SEK/month · Cancel anytime · No lock-in
-            </p>
+              <div style={{ height: 1, background: "rgba(90,130,200,.12)", marginBottom: 24 }} />
+
+              <ul style={{ listStyle: "none", margin: "0 0 32px", padding: 0, flex: 1 }}>
+                {proFeatures.map(([title, desc], i) => (
+                  <li key={i} style={{ padding: "11px 0", display: "flex", gap: 12, alignItems: "flex-start", borderBottom: i < proFeatures.length - 1 ? "1px solid rgba(90,130,200,.08)" : "none" }}>
+                    <span style={{ color: T.cyan, fontSize: ".7rem", paddingTop: 2, flexShrink: 0 }}>✓</span>
+                    <div>
+                      <div style={{ fontFamily: ff.body, fontSize: ".86rem", color: T.ink, fontWeight: 600, marginBottom: 2 }}>{title}</div>
+                      <div style={{ fontFamily: ff.body, fontSize: ".75rem", color: T.dim, lineHeight: 1.4 }}>{desc}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <PrimaryBtn onClick={onEnterApp} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
+                Start free trial — no card needed →
+              </PrimaryBtn>
+              <p style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 12, marginBottom: 0, textAlign: "center" }}>
+                14 days free · then 99 SEK/month · cancel anytime
+              </p>
+            </div>
+
           </div>
 
-          <p style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim, textAlign: "center", lineHeight: 1.6 }}>
-            Have questions about plans or need a team subscription? <span onClick={() => go("contact")} style={{ color: T.cyan, cursor: "pointer" }}>Contact us</span>.
+          <p style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim, textAlign: "center", lineHeight: 1.6, marginTop: 32 }}>
+            Need a team subscription or have questions? <span onClick={() => go("contact")} style={{ color: T.cyan, cursor: "pointer" }}>Contact us</span>.
           </p>
         </div>
       </section>
