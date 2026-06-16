@@ -897,7 +897,7 @@ function AboutPage({ onEnterApp }) {
             </span>
           </h1>
           <p style={{ fontFamily: ff.body, fontSize: "1.3rem", color: T.sub, lineHeight: 1.7, margin: "0 auto", maxWidth: 640 }}>
-            Mr. Melin and Mr. Mattsson have spent over a decade in the trenches of the global stock market — reading charts before breakfast, breaking down balance sheets, and hunting for edge where most investors never look.
+            Mr. Melin and Mr. Matsson have spent over a decade in the trenches of the global stock market — reading charts before breakfast, breaking down balance sheets, and hunting for edge where most investors never look.
           </p>
         </div>
       </section>
@@ -912,7 +912,7 @@ function AboutPage({ onEnterApp }) {
             <div style={{ position: "absolute", bottom: -20, left: "50%", transform: "translateX(-50%)", width: "80%", height: 60, background: "rgba(0,180,255,.12)", filter: "blur(24px)", borderRadius: "50%", zIndex: 0 }} />
             <img
               src="/founders.png"
-              alt="Mr. Melin and Mr. Mattsson — QuantDiver Co-Founders"
+              alt="Mr. Melin and Mr. Matsson — QuantDiver Co-Founders"
               style={{
                 position: "relative", zIndex: 1,
                 width: "100%", borderRadius: 24,
@@ -964,7 +964,7 @@ function AboutPage({ onEnterApp }) {
             <p style={{ fontFamily: ff.display, fontSize: "clamp(1.3rem,2.5vw,1.7rem)", fontWeight: 700, color: T.ink, lineHeight: 1.45, margin: "0 0 20px", letterSpacing: "-.02em" }}>
               "We built the tool we always wished existed — one that cuts through the noise and gives you a real signal on any stock in seconds."
             </p>
-            <span style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.amber, letterSpacing: ".14em", textTransform: "uppercase" }}>— Mr. Melin &amp; Mr. Mattsson, Co-Founders</span>
+            <span style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.amber, letterSpacing: ".14em", textTransform: "uppercase" }}>— Mr. Melin &amp; Mr. Matsson, Co-Founders</span>
           </div>
 
           {/* Story sections */}
@@ -972,7 +972,7 @@ function AboutPage({ onEnterApp }) {
             {
               num: "01",
               title: "10 years in the market",
-              body: "Mr. Melin and Mr. Mattsson started trading as teenagers — first on small Swedish stocks, then into US tech, semiconductors, and biotech. They learned what every serious investor eventually discovers: most financial tools are either too complex, too expensive, or too slow. The individual investor is always last in line.",
+              body: "Mr. Melin and Mr. Matsson started trading as teenagers — first on small Swedish stocks, then into US tech, semiconductors, and biotech. They learned what every serious investor eventually discovers: most financial tools are either too complex, too expensive, or too slow. The individual investor is always last in line.",
             },
             {
               num: "02",
@@ -987,7 +987,7 @@ function AboutPage({ onEnterApp }) {
             {
               num: "04",
               title: "A community, not just a platform",
-              body: "Beyond the scores, Mr. Melin and Mr. Mattsson built a place where serious investors can connect. Mr. Mattsson's Community — the forum inside QuantDiver — is where members share theses, debate sectors, and find traders who think like they do. The edge isn't just in the data. It's in the network.",
+              body: "Beyond the scores, Mr. Melin and Mr. Matsson built a place where serious investors can connect. Mr. Matsson's Community — the forum inside QuantDiver — is where members share theses, debate sectors, and find traders who think like they do. The edge isn't just in the data. It's in the network.",
             },
           ].map((s, i) => (
             <div key={i} style={{ display: "flex", gap: 32, marginBottom: 56, alignItems: "flex-start" }}>
