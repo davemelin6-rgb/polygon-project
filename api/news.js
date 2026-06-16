@@ -34,7 +34,7 @@ export default async function handler(req, res) {
           .then(j => (j.results || []).map(a => ({
             symbol:    ticker,
             title:     a.title,
-            snippet:   a.description ? a.description.slice(0, 500).trimEnd() : "",
+            snippet:   (() => { const d = (a.description || "").replace(/<[^>]+>/g, "").trim(); if (d.length <= 500) return d; const cut = d.slice(0, 500); const last = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? ")); return last > 150 ? cut.slice(0, last + 1) : cut.slice(0, cut.lastIndexOf(" ")) + "…"; })(),
             url:       a.article_url,
             published: a.published_utc,
             source:    a.publisher?.name || "",

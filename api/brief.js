@@ -105,24 +105,43 @@ export default async function handler(req, res) {
         .sort((a, b) => Math.abs(b.changePercent ?? 0) - Math.abs(a.changePercent ?? 0)),
     }));
 
-    // ── News — one fetch per sector, deduplicated by URL ─────
-    const seenUrls = new Set();
+    // ── News — one fetch per sector, deduplicated by URL + title ─────
+    const seenUrls   = new Set();
+    const seenTitles = new Set();
     const newsBySector = {};
     const news = [];
+
+    function cleanText(str) {
+      if (!str) return null;
+      const cleaned = str.replace(/<[^>]+>/g, "").trim();
+      // cut at last complete sentence within ~500 chars
+      if (cleaned.length <= 500) return cleaned;
+      const cut = cleaned.slice(0, 500);
+      const lastPeriod = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
+      return lastPeriod > 200 ? cut.slice(0, lastPeriod + 1) : cut.slice(0, cut.lastIndexOf(" ")) + "…";
+    }
 
     for (let i = 0; i < SECTORS.length; i++) {
       const s   = SECTORS[i];
       const raw = (sectorNewsResults[i]?.items) || [];
       const twoDaysAgo = Date.now() - 2 * 24 * 60 * 60 * 1000;
+      const normalTitle = t => t?.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 60);
       const mapped  = raw
-        .filter(a => a.url && !seenUrls.has(a.url) && a.published && new Date(a.published).getTime() > twoDaysAgo)
+        .filter(a => {
+          if (!a.url || !a.published) return false;
+          if (new Date(a.published).getTime() <= twoDaysAgo) return false;
+          if (seenUrls.has(a.url)) return false;
+          if (seenTitles.has(normalTitle(a.title))) return false;
+          return true;
+        })
         .slice(0, 5)
         .map(a => {
           seenUrls.add(a.url);
+          seenTitles.add(normalTitle(a.title));
           return {
             symbol:    a.symbol,
             title:     a.title,
-            text:      a.text ? a.text.slice(0, 300).replace(/<[^>]+>/g, "").trim() : null,
+            text:      cleanText(a.text),
             url:       a.url,
             published: a.published,
             source:    a.source,
