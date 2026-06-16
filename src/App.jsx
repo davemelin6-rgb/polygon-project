@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import "./App.css";
 import RightDock from "./RightDock.jsx";
 import Settings from "./Settings.jsx";
+import Forum    from "./Forum.jsx";
 import QDLogo from "./QDLogo.jsx";
 import Sparkline from "./Sparkline.jsx";
 import PriceChart from "./PriceChart.jsx";
@@ -530,6 +531,7 @@ export default function App({ session, onLogout, onAdmin }) {
   const [settings, setSettings]  = useState({});
   const [showSettings, setShowSettings] = useState(false);
   const [showContact,  setShowContact]  = useState(false);
+  const [showForum,    setShowForum]    = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -688,6 +690,9 @@ export default function App({ session, onLogout, onAdmin }) {
             </button>
           )}
           <button className="logout-btn" onClick={() => setShowContact(true)}>Contact Support</button>
+          <button className="community-btn" onClick={() => setShowForum(v => !v)} title="Community">
+            {showForum ? "✕ Community" : "💬 Community"}
+          </button>
           <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
             Sign Out
           </button>
@@ -695,7 +700,13 @@ export default function App({ session, onLogout, onAdmin }) {
         </div>
       </header>
 
-      <form className="search-form" onSubmit={handleSubmit}>
+      {showForum && (
+        <div className="forum-container">
+          <Forum session={session} onClose={() => setShowForum(false)} />
+        </div>
+      )}
+
+      {!showForum && <form className="search-form" onSubmit={handleSubmit}>
         <input
           className="ticker-input"
           value={input}
@@ -704,11 +715,11 @@ export default function App({ session, onLogout, onAdmin }) {
           spellCheck={false}
         />
         <button className="btn" type="submit">Analyze</button>
-      </form>
+      </form>}
 
-      {error && <div className="error">{error}</div>}
+      {!showForum && error && <div className="error">{error}</div>}
 
-      {loading && stocks.length === 0 ? (
+      {!showForum && loading && stocks.length === 0 ? (
         <div className="loading">
           <div className="loading-spinner" />
           Fetching market data
@@ -767,7 +778,7 @@ export default function App({ session, onLogout, onAdmin }) {
         ))}
       </div>
 
-      {lastUpdated && (
+      {!showForum && lastUpdated && (
         <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>
       )}
       <RightDock session={session} />
