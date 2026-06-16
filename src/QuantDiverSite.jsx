@@ -879,113 +879,144 @@ function BriefMePage({ onEnterApp }) {
 /* ─── about us page ───────────────────────────────────────── */
 function AboutPage({ onEnterApp }) {
   return (
-    <div style={{ animation: "qd-fadein .4s ease" }}>
+    <div style={{ animation: "qd-fadein .5s ease" }}>
 
-      {/* Hero */}
-      <section style={{ padding: "100px 0 72px", textAlign: "center" }}>
-        <div className="qd-wrap" style={{ maxWidth: 680, margin: "0 auto" }}>
-          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 16 }}>The team behind QuantDiver</div>
-          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2.4rem,4.5vw,3.8rem)", fontWeight: 800, letterSpacing: "-.035em", margin: "0 0 20px", lineHeight: 1.05 }}>
-            Two Swedes.<br />One obsession.
+      {/* ── HERO ─────────────────────────────────────────────── */}
+      <section style={{ padding: "120px 0 96px", textAlign: "center", position: "relative", overflow: "hidden" }}>
+        {/* background glow */}
+        <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 700, height: 400, background: "radial-gradient(ellipse, rgba(245,158,11,.07) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+        <div className="qd-wrap" style={{ maxWidth: 820, margin: "0 auto", position: "relative" }}>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, fontFamily: ff.mono, fontSize: ".7rem", letterSpacing: ".22em", textTransform: "uppercase", color: T.amber, marginBottom: 28, border: "1px solid rgba(245,158,11,.2)", borderRadius: 999, padding: "7px 18px", background: "rgba(245,158,11,.05)" }}>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.amber, display: "inline-block" }} />
+            The team behind QuantDiver
+          </div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(3.2rem,7vw,6rem)", fontWeight: 900, letterSpacing: "-.04em", margin: "0 0 28px", lineHeight: .96, color: T.ink }}>
+            Two stock sharks<br />
+            <span style={{ background: "linear-gradient(135deg,#f59e0b,#fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+              from Sweden.
+            </span>
           </h1>
-          <p style={{ fontFamily: ff.body, fontSize: "1.1rem", color: T.sub, lineHeight: 1.7, margin: 0 }}>
-            David and Albin have spent over a decade in the trenches of the stock market — reading charts, breaking down balance sheets, and hunting for edge in places most investors never look.
+          <p style={{ fontFamily: ff.body, fontSize: "1.25rem", color: T.sub, lineHeight: 1.7, margin: "0 auto", maxWidth: 620 }}>
+            David and Albin have spent over a decade in the trenches of the global stock market — reading charts before breakfast, breaking down balance sheets, and hunting for edge where most investors never look.
           </p>
         </div>
       </section>
 
-      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
-
-      {/* Founders photo — center stage */}
-      <section style={{ padding: "72px 0" }}>
+      {/* ── FOUNDERS PHOTO ───────────────────────────────────── */}
+      <section style={{ padding: "0 0 96px" }}>
         <div className="qd-wrap" style={{ display: "flex", justifyContent: "center" }}>
-          <div style={{ position: "relative", maxWidth: 520, width: "100%" }}>
-            {/* glow effect */}
-            <div style={{ position: "absolute", inset: -2, borderRadius: 24, background: "linear-gradient(135deg, rgba(0,180,255,.25), rgba(245,158,11,.15))", filter: "blur(20px)", zIndex: 0 }} />
+          <div style={{ position: "relative", maxWidth: 640, width: "100%" }}>
+            {/* outer gold glow */}
+            <div style={{ position: "absolute", inset: -40, borderRadius: 32, background: "radial-gradient(ellipse, rgba(245,158,11,.18) 0%, transparent 70%)", filter: "blur(30px)", zIndex: 0, pointerEvents: "none" }} />
+            {/* subtle blue accent */}
+            <div style={{ position: "absolute", bottom: -20, left: "50%", transform: "translateX(-50%)", width: "80%", height: 60, background: "rgba(0,180,255,.12)", filter: "blur(24px)", borderRadius: "50%", zIndex: 0 }} />
             <img
               src="/founders.png"
-              alt="David and Albin — QuantDivers Co-Founders"
+              alt="David and Albin — QuantDiver Co-Founders"
               style={{
                 position: "relative", zIndex: 1,
-                width: "100%", borderRadius: 20,
-                border: "1px solid rgba(245,158,11,.25)",
-                boxShadow: "0 32px 80px rgba(0,0,0,.6)",
+                width: "100%", borderRadius: 24,
+                border: "1px solid rgba(245,158,11,.35)",
+                boxShadow: "0 48px 120px rgba(0,0,0,.7), 0 0 0 1px rgba(245,158,11,.1)",
                 display: "block",
               }}
             />
+            {/* caption bar */}
+            <div style={{
+              position: "absolute", bottom: 24, left: "50%", transform: "translateX(-50%)",
+              zIndex: 2, background: "rgba(4,8,15,.88)", backdropFilter: "blur(16px)",
+              border: "1px solid rgba(245,158,11,.25)", borderRadius: 12,
+              padding: "12px 28px", whiteSpace: "nowrap", textAlign: "center",
+            }}>
+              <div style={{ fontFamily: ff.display, fontSize: "1rem", fontWeight: 700, color: T.ink, letterSpacing: "-.01em" }}>David & Albin</div>
+              <div style={{ fontFamily: ff.mono, fontSize: ".62rem", letterSpacing: ".16em", textTransform: "uppercase", color: T.amber, marginTop: 3 }}>Co-Founders · QuantDiver</div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Story */}
-      <section style={{ padding: "0 0 80px" }}>
-        <div className="qd-wrap" style={{ maxWidth: 720, margin: "0 auto" }}>
+      {/* ── STATS STRIP ──────────────────────────────────────── */}
+      <section style={{ padding: "0 0 96px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 860, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 1, background: "rgba(245,158,11,.08)", borderRadius: 20, overflow: "hidden", border: "1px solid rgba(245,158,11,.12)" }}>
+            {[
+              ["10+",        "Years in the market"],
+              ["Sweden",     "Stockholm-based"],
+              ["3",          "Proprietary scores"],
+              ["24/7",       "Live market data"],
+            ].map(([val, label]) => (
+              <div key={label} style={{ background: "rgba(4,8,15,.95)", padding: "36px 24px", textAlign: "center" }}>
+                <div style={{ fontFamily: ff.display, fontSize: "2.6rem", fontWeight: 900, lineHeight: 1, marginBottom: 8, background: "linear-gradient(135deg,#f59e0b,#fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{val}</div>
+                <div style={{ fontFamily: ff.mono, fontSize: ".62rem", letterSpacing: ".14em", textTransform: "uppercase", color: T.dim }}>{label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-          {/* Quote */}
-          <blockquote style={{
-            margin: "0 0 56px",
-            padding: "28px 32px",
-            background: "rgba(245,158,11,.04)",
+      {/* ── STORY ────────────────────────────────────────────── */}
+      <section style={{ padding: "0 0 80px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 760, margin: "0 auto" }}>
+
+          {/* Pull quote */}
+          <div style={{
+            margin: "0 0 72px",
+            padding: "40px 44px",
+            background: "linear-gradient(135deg, rgba(245,158,11,.06), rgba(245,158,11,.02))",
             border: "1px solid rgba(245,158,11,.2)",
-            borderLeft: "3px solid #f59e0b",
-            borderRadius: 12,
+            borderLeft: "4px solid #f59e0b",
+            borderRadius: 16,
           }}>
-            <p style={{ fontFamily: ff.body, fontSize: "1.1rem", color: T.ink, lineHeight: 1.7, margin: "0 0 12px", fontStyle: "italic" }}>
+            <p style={{ fontFamily: ff.display, fontSize: "clamp(1.3rem,2.5vw,1.7rem)", fontWeight: 700, color: T.ink, lineHeight: 1.45, margin: "0 0 20px", letterSpacing: "-.02em" }}>
               "We built the tool we always wished existed — one that cuts through the noise and gives you a real signal on any stock in seconds."
             </p>
-            <span style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.amber, letterSpacing: ".1em", textTransform: "uppercase" }}>— David & Albin, Co-Founders</span>
-          </blockquote>
+            <span style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.amber, letterSpacing: ".14em", textTransform: "uppercase" }}>— David &amp; Albin, Co-Founders</span>
+          </div>
 
           {/* Story sections */}
           {[
             {
+              num: "01",
               title: "10 years in the market",
-              body: "David and Albin started trading as teenagers — first on small Swedish stocks, then gradually into US tech, semiconductors, and biotech. They learned the hard way what every serious investor eventually discovers: most financial data tools are either too complex, too expensive, or too slow to be useful for the individual investor.",
+              body: "David and Albin started trading as teenagers — first on small Swedish stocks, then into US tech, semiconductors, and biotech. They learned what every serious investor eventually discovers: most financial tools are either too complex, too expensive, or too slow. The individual investor is always last in line.",
             },
             {
+              num: "02",
               title: "The problem they set out to solve",
-              body: "After years of manually pulling balance sheets, calculating ratios, and cross-referencing news feeds — they decided to systematize it. The QuantDiver scoring engine was born out of a simple question: what if you could score any stock across momentum, risk, and technological value in one clean number?",
+              body: "After years of manually pulling balance sheets, calculating ratios, and cross-referencing news feeds — they decided to systematize it. The QuantDiver scoring engine was born from one question: what if you could score any stock across momentum, risk, and technology value in one clean number?",
             },
             {
+              num: "03",
               title: "Built for the serious investor",
-              body: "QuantDiver isn't built for people who want tips. It's built for investors who want to do their own thinking — but want the raw analytical firepower to do it faster. The platform combines live Polygon.io market data with FMP fundamentals and three proprietary scores that took years of back-testing to calibrate.",
+              body: "QuantDiver isn't for people who want tips. It's for investors who want to do their own thinking — but with the analytical firepower to do it faster. Three proprietary scores. Live data. No noise. The edge institutional desks have, at a fraction of the cost.",
             },
             {
+              num: "04",
               title: "A community, not just a platform",
-              body: "Beyond the scores, David and Albin wanted to build a place where serious investors could connect. Albin's Community — the forum inside QuantDiver — is where members share theses, debate sectors, and find traders who think like they do. The edge isn't just in the data. It's in the network.",
+              body: "Beyond the scores, David and Albin built a place where serious investors can connect. Albin's Community — the forum inside QuantDiver — is where members share theses, debate sectors, and find traders who think like they do. The edge isn't just in the data. It's in the network.",
             },
           ].map((s, i) => (
-            <div key={i} style={{ marginBottom: 44 }}>
-              <h2 style={{ fontFamily: ff.display, fontSize: "1.3rem", fontWeight: 700, color: T.ink, margin: "0 0 12px", letterSpacing: "-.01em" }}>
-                {s.title}
-              </h2>
-              <p style={{ fontFamily: ff.body, fontSize: ".97rem", color: T.sub, lineHeight: 1.75, margin: 0 }}>
-                {s.body}
-              </p>
+            <div key={i} style={{ display: "flex", gap: 32, marginBottom: 56, alignItems: "flex-start" }}>
+              <div style={{ fontFamily: ff.mono, fontSize: "2.2rem", fontWeight: 900, color: "rgba(245,158,11,.15)", lineHeight: 1, flexShrink: 0, marginTop: 4, minWidth: 48 }}>{s.num}</div>
+              <div>
+                <h2 style={{ fontFamily: ff.display, fontSize: "1.5rem", fontWeight: 800, color: T.ink, margin: "0 0 14px", letterSpacing: "-.02em", lineHeight: 1.2 }}>
+                  {s.title}
+                </h2>
+                <p style={{ fontFamily: ff.body, fontSize: "1rem", color: T.sub, lineHeight: 1.8, margin: 0 }}>
+                  {s.body}
+                </p>
+              </div>
             </div>
           ))}
 
-          {/* Stats strip */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, background: "rgba(90,130,200,.1)", borderRadius: 16, overflow: "hidden", marginBottom: 56 }}>
-            {[
-              ["10+", "Years trading"],
-              ["3",   "Proprietary scores"],
-              ["Sweden", "Stockholm-based"],
-            ].map(([val, label]) => (
-              <div key={label} style={{ background: "rgba(4,8,15,.9)", padding: "28px 20px", textAlign: "center" }}>
-                <div style={{ fontFamily: ff.display, fontSize: "2rem", fontWeight: 800, color: T.ink, lineHeight: 1, marginBottom: 6 }}>{val}</div>
-                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", letterSpacing: ".12em", textTransform: "uppercase", color: T.dim }}>{label}</div>
-              </div>
-            ))}
-          </div>
-
           {/* CTA */}
-          <div style={{ textAlign: "center" }}>
-            <PrimaryBtn onClick={onEnterApp} style={{ fontSize: "1rem", padding: "16px 36px" }}>
+          <div style={{ textAlign: "center", paddingTop: 24 }}>
+            <PrimaryBtn onClick={onEnterApp} style={{ fontSize: "1.05rem", padding: "18px 44px" }}>
               Try QuantDiver free for 14 days →
             </PrimaryBtn>
-            <p style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 14 }}>
-              No credit card required · Cancel anytime
+            <p style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim, marginTop: 16 }}>
+              No credit card required · Cancel anytime · From 49 SEK/month
             </p>
           </div>
         </div>
