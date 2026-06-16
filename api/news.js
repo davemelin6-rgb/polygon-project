@@ -34,7 +34,7 @@ export default async function handler(req, res) {
           .then(j => (j.results || []).map(a => ({
             symbol:    ticker,
             title:     a.title,
-            snippet:   a.description ? a.description.slice(0, 180).trimEnd() : "",
+            snippet:   a.description ? a.description.slice(0, 500).trimEnd() : "",
             url:       a.article_url,
             published: a.published_utc,
             source:    a.publisher?.name || "",

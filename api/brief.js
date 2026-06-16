@@ -60,7 +60,7 @@ export default async function handler(req, res) {
             .then(j => (j.results || []).map(a => ({
               symbol:    ticker,
               title:     a.title,
-              text:      a.description ? a.description.slice(0, 300).trim() : null,
+              text:      a.description ? a.description.slice(0, 600).trim() : null,
               url:       a.article_url,
               published: a.published_utc,
               source:    a.publisher?.name || "",
