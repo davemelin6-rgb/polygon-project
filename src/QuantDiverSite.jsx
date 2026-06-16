@@ -888,12 +888,12 @@ function AboutPage({ onEnterApp }) {
 
         <div className="qd-wrap" style={{ maxWidth: 820, margin: "0 auto", position: "relative" }}>
           <div style={{ fontFamily: ff.mono, fontSize: "1rem", letterSpacing: ".28em", textTransform: "uppercase", color: T.amber, marginBottom: 36 }}>
-            — The team behind QuantDiver —
+            — Our Motto —
           </div>
-          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(4rem,9vw,7.5rem)", fontWeight: 900, letterSpacing: "-.05em", margin: "0 0 36px", lineHeight: .92, color: T.ink }}>
-            Two stock sharks<br />
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(3.6rem,8vw,6.8rem)", fontWeight: 900, letterSpacing: "-.05em", margin: "0 0 36px", lineHeight: .96, color: T.ink }}>
+            Success can only come from<br />
             <span style={{ background: "linear-gradient(135deg,#f59e0b,#fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
-              from Sweden.
+              experience &amp; persistence.
             </span>
           </h1>
           <p style={{ fontFamily: ff.body, fontSize: "1.3rem", color: T.sub, lineHeight: 1.7, margin: "0 auto", maxWidth: 640 }}>
