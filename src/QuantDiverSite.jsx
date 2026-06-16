@@ -876,6 +876,124 @@ function BriefMePage({ onEnterApp }) {
   );
 }
 
+/* ─── about us page ───────────────────────────────────────── */
+function AboutPage({ onEnterApp }) {
+  return (
+    <div style={{ animation: "qd-fadein .4s ease" }}>
+
+      {/* Hero */}
+      <section style={{ padding: "100px 0 72px", textAlign: "center" }}>
+        <div className="qd-wrap" style={{ maxWidth: 680, margin: "0 auto" }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 16 }}>The team behind QuantDiver</div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2.4rem,4.5vw,3.8rem)", fontWeight: 800, letterSpacing: "-.035em", margin: "0 0 20px", lineHeight: 1.05 }}>
+            Two Swedes.<br />One obsession.
+          </h1>
+          <p style={{ fontFamily: ff.body, fontSize: "1.1rem", color: T.sub, lineHeight: 1.7, margin: 0 }}>
+            David and Albin have spent over a decade in the trenches of the stock market — reading charts, breaking down balance sheets, and hunting for edge in places most investors never look.
+          </p>
+        </div>
+      </section>
+
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
+      {/* Founders photo — center stage */}
+      <section style={{ padding: "72px 0" }}>
+        <div className="qd-wrap" style={{ display: "flex", justifyContent: "center" }}>
+          <div style={{ position: "relative", maxWidth: 520, width: "100%" }}>
+            {/* glow effect */}
+            <div style={{ position: "absolute", inset: -2, borderRadius: 24, background: "linear-gradient(135deg, rgba(0,180,255,.25), rgba(245,158,11,.15))", filter: "blur(20px)", zIndex: 0 }} />
+            <img
+              src="/founders.png"
+              alt="David and Albin — QuantDivers Co-Founders"
+              style={{
+                position: "relative", zIndex: 1,
+                width: "100%", borderRadius: 20,
+                border: "1px solid rgba(245,158,11,.25)",
+                boxShadow: "0 32px 80px rgba(0,0,0,.6)",
+                display: "block",
+              }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Story */}
+      <section style={{ padding: "0 0 80px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 720, margin: "0 auto" }}>
+
+          {/* Quote */}
+          <blockquote style={{
+            margin: "0 0 56px",
+            padding: "28px 32px",
+            background: "rgba(245,158,11,.04)",
+            border: "1px solid rgba(245,158,11,.2)",
+            borderLeft: "3px solid #f59e0b",
+            borderRadius: 12,
+          }}>
+            <p style={{ fontFamily: ff.body, fontSize: "1.1rem", color: T.ink, lineHeight: 1.7, margin: "0 0 12px", fontStyle: "italic" }}>
+              "We built the tool we always wished existed — one that cuts through the noise and gives you a real signal on any stock in seconds."
+            </p>
+            <span style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.amber, letterSpacing: ".1em", textTransform: "uppercase" }}>— David & Albin, Co-Founders</span>
+          </blockquote>
+
+          {/* Story sections */}
+          {[
+            {
+              title: "10 years in the market",
+              body: "David and Albin started trading as teenagers — first on small Swedish stocks, then gradually into US tech, semiconductors, and biotech. They learned the hard way what every serious investor eventually discovers: most financial data tools are either too complex, too expensive, or too slow to be useful for the individual investor.",
+            },
+            {
+              title: "The problem they set out to solve",
+              body: "After years of manually pulling balance sheets, calculating ratios, and cross-referencing news feeds — they decided to systematize it. The QuantDiver scoring engine was born out of a simple question: what if you could score any stock across momentum, risk, and technological value in one clean number?",
+            },
+            {
+              title: "Built for the serious investor",
+              body: "QuantDiver isn't built for people who want tips. It's built for investors who want to do their own thinking — but want the raw analytical firepower to do it faster. The platform combines live Polygon.io market data with FMP fundamentals and three proprietary scores that took years of back-testing to calibrate.",
+            },
+            {
+              title: "A community, not just a platform",
+              body: "Beyond the scores, David and Albin wanted to build a place where serious investors could connect. Albin's Community — the forum inside QuantDiver — is where members share theses, debate sectors, and find traders who think like they do. The edge isn't just in the data. It's in the network.",
+            },
+          ].map((s, i) => (
+            <div key={i} style={{ marginBottom: 44 }}>
+              <h2 style={{ fontFamily: ff.display, fontSize: "1.3rem", fontWeight: 700, color: T.ink, margin: "0 0 12px", letterSpacing: "-.01em" }}>
+                {s.title}
+              </h2>
+              <p style={{ fontFamily: ff.body, fontSize: ".97rem", color: T.sub, lineHeight: 1.75, margin: 0 }}>
+                {s.body}
+              </p>
+            </div>
+          ))}
+
+          {/* Stats strip */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, background: "rgba(90,130,200,.1)", borderRadius: 16, overflow: "hidden", marginBottom: 56 }}>
+            {[
+              ["10+", "Years trading"],
+              ["3",   "Proprietary scores"],
+              ["Sweden", "Stockholm-based"],
+            ].map(([val, label]) => (
+              <div key={label} style={{ background: "rgba(4,8,15,.9)", padding: "28px 20px", textAlign: "center" }}>
+                <div style={{ fontFamily: ff.display, fontSize: "2rem", fontWeight: 800, color: T.ink, lineHeight: 1, marginBottom: 6 }}>{val}</div>
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", letterSpacing: ".12em", textTransform: "uppercase", color: T.dim }}>{label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div style={{ textAlign: "center" }}>
+            <PrimaryBtn onClick={onEnterApp} style={{ fontSize: "1rem", padding: "16px 36px" }}>
+              Try QuantDiver free for 14 days →
+            </PrimaryBtn>
+            <p style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 14 }}>
+              No credit card required · Cancel anytime
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 /* ─── privacy policy page ─────────────────────────────────── */
 function PrivacyPage() {
   const sec = (title, children) => (
@@ -1098,6 +1216,7 @@ export default function QuantDiverSite({ onEnterApp }) {
               <a onClick={() => go("scores")} style={{ cursor: "pointer", color: page === "scores" ? T.cyan : "inherit", transition: "color .15s" }}>Scores</a>
               <a onClick={() => go("briefme")} style={{ cursor: "pointer", color: page === "briefme" ? T.cyan : "inherit", transition: "color .15s" }}>BriefMe</a>
               <a onClick={() => go("pricing")} style={{ cursor: "pointer", color: page === "pricing" ? T.cyan : "inherit", transition: "color .15s" }}>Pricing</a>
+              <a onClick={() => go("about")} style={{ cursor: "pointer", color: page === "about" ? T.cyan : "inherit", transition: "color .15s" }}>About Us</a>
             </div>
 
             <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }}>
@@ -1111,6 +1230,7 @@ export default function QuantDiverSite({ onEnterApp }) {
         {page === "briefme" && <BriefMePage onEnterApp={onEnterApp} />}
         {page === "scores"  && <ScoresPage onEnterApp={onEnterApp} />}
         {page === "pricing" && <PricingPage onEnterApp={onEnterApp} go={go} />}
+        {page === "about"   && <AboutPage onEnterApp={onEnterApp} />}
         {page === "contact" && <ContactPage />}
         {page === "privacy" && <PrivacyPage />}
         {page === "terms"   && <TermsPage />}
