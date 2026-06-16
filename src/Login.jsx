@@ -42,9 +42,9 @@ const PROPS = [
   { icon: "💬", title: "Talk to Real Traders, Live", text: "Connect directly with experienced traders on the platform in real time. Ask questions, share what you're seeing, trade ideas — with people who actually know the market." },
 ];
 
-export default function Login({ onLogin, onBack, initialMode = "signin" }) {
+export default function Login({ onLogin, onBack, initialMode = "signin", initialPlan = "pro" }) {
   const [mode,     setMode]     = useState(initialMode);
-  const [plan,     setPlan]     = useState("pro");
+  const [plan,     setPlan]     = useState(initialPlan);
   const [name,     setName]     = useState("");
   const [email,    setEmail]    = useState("");
   const [password, setPassword] = useState("");

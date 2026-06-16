@@ -15,6 +15,7 @@ function Root() {
   const [isSetup,    setIsSetup]   = useState(false);
   const [showLogin,  setShowLogin] = useState(false);
   const [loginMode,  setLoginMode] = useState("signin");
+  const [loginPlan,  setLoginPlan] = useState("pro");
   const [showAdmin,  setShowAdmin] = useState(false);
 
   const ADMIN_EMAIL = "davemelin6@gmail.com";
@@ -69,8 +70,8 @@ function Root() {
   if (session === undefined) return null; // loading
 
   if (isSetup)    return <SetupPassword onDone={() => setIsSetup(false)} />;
-  if (!session && showLogin) return <Login initialMode={loginMode} onLogin={setSession} onBack={() => setShowLogin(false)} />;
-  if (!session)   return <QuantDiverSite onEnterApp={(mode) => { setLoginMode(mode || "signin"); setShowLogin(true); }} />;
+  if (!session && showLogin) return <Login initialMode={loginMode} initialPlan={loginPlan} onLogin={setSession} onBack={() => setShowLogin(false)} />;
+  if (!session)   return <QuantDiverSite onEnterApp={(mode, plan) => { setLoginMode(mode || "signin"); setLoginPlan(plan || "pro"); setShowLogin(true); }} />;
   if (showAdmin && session?.user?.email === ADMIN_EMAIL)
     return <AdminPanel session={session.user ? session : { ...session, user: session }} onBack={() => setShowAdmin(false)} />;
   return <App session={session} onLogout={() => { setSession(null); setShowLogin(false); }} onAdmin={session?.user?.email === ADMIN_EMAIL ? () => setShowAdmin(true) : null} />;

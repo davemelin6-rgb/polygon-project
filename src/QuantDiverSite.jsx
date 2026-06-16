@@ -563,7 +563,7 @@ function PricingPage({ onEnterApp, go }) {
                 ))}
               </ul>
 
-              <button onClick={() => onEnterApp("signup")} style={{
+              <button onClick={() => onEnterApp("signup", "briefme")} style={{
                 width: "100%", padding: "14px", borderRadius: 12, cursor: "pointer",
                 background: "transparent", border: "1px solid rgba(90,130,200,.3)",
                 color: T.sub, fontFamily: ff.body, fontSize: ".92rem", fontWeight: 700,
@@ -607,7 +607,7 @@ function PricingPage({ onEnterApp, go }) {
                 ))}
               </ul>
 
-              <PrimaryBtn onClick={() => onEnterApp("signup")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
+              <PrimaryBtn onClick={() => onEnterApp("signup", "pro")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
                 Start free trial — no card needed →
               </PrimaryBtn>
               <p style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 12, marginBottom: 0, textAlign: "center" }}>
@@ -866,7 +866,7 @@ function BriefMePage({ onEnterApp }) {
                 </li>
               ))}
             </ul>
-            <PrimaryBtn onClick={() => onEnterApp("signup")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
+            <PrimaryBtn onClick={() => onEnterApp("signup", "briefme")} style={{ width: "100%", justifyContent: "center", padding: "15px", fontSize: "1rem" }}>
               Start your briefings →
             </PrimaryBtn>
           </div>
