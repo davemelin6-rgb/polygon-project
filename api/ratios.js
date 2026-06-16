@@ -3,12 +3,14 @@
 
 import { verifySession } from "../lib/apiGuard.js";
 
-const FMP   = "https://financialmodelingprep.com/stable";
-const cache = new Map();
-const TTL   = 7 * 24 * 60 * 60_000; // 7 days — ratios are annual filings
+const FMP     = "https://financialmodelingprep.com/stable";
+const POLYGON = "https://api.polygon.io";
+const cache   = new Map();
+const TTL     = 7 * 24 * 60 * 60_000;
 
-function pct(v) { return v != null ? +(v * 100).toFixed(2) : null; }
-function num(v) { return v != null ? +Number(v).toFixed(2) : null; }
+function pct(v) { return v != null && isFinite(v) ? +(v * 100).toFixed(2) : null; }
+function num(v) { return v != null && isFinite(v) ? +Number(v).toFixed(2)  : null; }
+function first(...vals) { for (const v of vals) { if (v != null && isFinite(v) && v !== 0) return v; } return null; }
 
 export default async function handler(req, res) {
   const authed = await verifySession(req);
@@ -16,8 +18,9 @@ export default async function handler(req, res) {
   if (authed === "trial_expired")  return res.status(402).json({ error: "Trial expired" });
   if (!authed) return res.status(401).json({ error: "Unauthorized" });
 
-  const apiKey = process.env.FMP_API_KEY;
-  if (!apiKey) return res.status(500).json({ error: "No FMP key" });
+  const fmpKey     = process.env.FMP_API_KEY;
+  const polygonKey = process.env.POLYGON_API_KEY;
+  if (!fmpKey) return res.status(500).json({ error: "No FMP key" });
 
   const ticker = (req.query.ticker || "").toString().trim().toUpperCase();
   if (!ticker || !/^[A-Z]{1,10}$/.test(ticker))
@@ -27,48 +30,64 @@ export default async function handler(req, res) {
   if (hit && hit.expires > Date.now()) return res.status(200).json(hit.data);
 
   try {
-    const [rRes, pRes, kRes, ttmRes] = await Promise.all([
-      fetch(`${FMP}/ratios?symbol=${ticker}&limit=2&apikey=${apiKey}`),
-      fetch(`${FMP}/profile?symbol=${ticker}&apikey=${apiKey}`),
-      fetch(`${FMP}/key-metrics?symbol=${ticker}&limit=1&apikey=${apiKey}`),
-      fetch(`${FMP}/ratios-ttm?symbol=${ticker}&apikey=${apiKey}`),
+    const [rRes, pRes, kRes, incRes, snapRes] = await Promise.all([
+      fetch(`${FMP}/ratios?symbol=${ticker}&limit=1&apikey=${fmpKey}`),
+      fetch(`${FMP}/profile?symbol=${ticker}&apikey=${fmpKey}`),
+      fetch(`${FMP}/key-metrics?symbol=${ticker}&limit=1&apikey=${fmpKey}`),
+      fetch(`${FMP}/income-statement?symbol=${ticker}&limit=1&apikey=${fmpKey}`),
+      polygonKey
+        ? fetch(`${POLYGON}/v2/snapshot/locale/us/markets/stocks/tickers/${ticker}?apiKey=${polygonKey}`)
+        : Promise.resolve(null),
     ]);
 
     const ratioArr   = rRes.ok   ? await rRes.json()   : [];
     const profileArr = pRes.ok   ? await pRes.json()   : [];
     const keyArr     = kRes.ok   ? await kRes.json()   : [];
-    const ttmArr     = ttmRes.ok ? await ttmRes.json() : [];
+    const incArr     = incRes.ok ? await incRes.json() : [];
+    const snapJson   = snapRes?.ok ? await snapRes.json() : null;
 
     const r   = (Array.isArray(ratioArr)   ? ratioArr[0]   : null) || {};
     const p   = (Array.isArray(profileArr) ? profileArr[0] : null) || {};
     const k   = (Array.isArray(keyArr)     ? keyArr[0]     : null) || {};
-    const ttm = (Array.isArray(ttmArr)     ? ttmArr[0]     : ttmArr) || {};
+    const inc = (Array.isArray(incArr)     ? incArr[0]     : null) || {};
+
+    // Current price from Polygon snapshot
+    const snap  = snapJson?.ticker || {};
+    const price = snap.lastTrade?.p ?? snap.day?.c ?? null;
+
+    // Calculate P/E ourselves: price / EPS (most reliable)
+    const eps        = inc.eps || inc.epsDiluted || null;
+    const calcPE     = price && eps && eps > 0 ? price / eps : null;
+
+    // Market cap: profile field or calculate from price × shares
+    const shares     = inc.weightedAverageShsOut || inc.weightedAverageShsOutDil || null;
+    const calcMktCap = price && shares ? price * shares : null;
 
     const data = {
       ticker,
       // Identity
-      name:        p.companyName   ?? ticker,
-      sector:      p.sector        ?? null,
-      industry:    p.industry      ?? null,
+      name:        p.companyName ?? ticker,
+      sector:      p.sector      ?? null,
+      industry:    p.industry    ?? null,
       description: (p.description || "").slice(0, 400),
-      // Valuation — annual first, TTM as fallback
-      pe:          num(r.priceEarningsRatio  ?? ttm.peRatioTTM          ?? ttm.priceEarningsRatioTTM),
-      pb:          num(r.priceToBookRatio    ?? ttm.priceToBookRatioTTM),
-      ps:          num(r.priceToSalesRatio   ?? ttm.priceToSalesRatioTTM),
-      evEbitda:    num(r.enterpriseValueMultiple ?? ttm.enterpriseValueMultipleTTM),
+      // Valuation — FMP ratio, then key-metrics, then calculated
+      pe:          num(first(r.priceEarningsRatio, k.peRatio, calcPE)),
+      pb:          num(first(r.priceToBookRatio,   k.pbRatio)),
+      ps:          num(first(r.priceToSalesRatio,  k.priceToSalesRatio)),
+      evEbitda:    num(first(r.enterpriseValueMultiple, k.evToEbitda, k.enterpriseValueOverEBITDA)),
       // Profitability
-      roe:         pct(r.returnOnEquity   ?? ttm.returnOnEquityTTM),
-      roa:         pct(r.returnOnAssets   ?? ttm.returnOnAssetsTTM),
-      grossMargin: pct(r.grossProfitMargin ?? ttm.grossProfitMarginTTM),
-      netMargin:   pct(r.netProfitMargin   ?? ttm.netProfitMarginTTM),
+      roe:         pct(first(r.returnOnEquity,    k.roe, k.returnOnEquity)),
+      roa:         pct(first(r.returnOnAssets,    k.roa, k.returnOnAssets)),
+      grossMargin: pct(first(r.grossProfitMargin, k.grossProfitMargin)),
+      netMargin:   pct(first(r.netProfitMargin,   k.netIncomePerShare && price ? k.netIncomePerShare / price : null)),
       // Growth / Health
-      debtToEquity:  num(r.debtEquityRatio ?? ttm.debtEquityRatioTTM),
-      currentRatio:  num(r.currentRatio    ?? ttm.currentRatioTTM),
-      revenueGrowth: pct(k.revenueGrowth   ?? null),
+      debtToEquity:  num(first(r.debtEquityRatio, k.debtToEquity)),
+      currentRatio:  num(first(r.currentRatio,    k.currentRatio)),
+      revenueGrowth: pct(k.revenueGrowth ?? null),
       // Market
-      marketCap:   p.mktCap ?? p.marketCap ?? null,
+      marketCap:   p.mktCap ?? p.marketCap ?? calcMktCap ?? null,
       beta:        num(p.beta),
-      divYield:    pct(r.dividendYield ?? ttm.dividendYieldTTM),
+      divYield:    pct(first(r.dividendYield, k.dividendYield)),
     };
 
     cache.set(ticker, { data, expires: Date.now() + TTL });
