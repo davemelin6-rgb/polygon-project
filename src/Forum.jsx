@@ -269,11 +269,18 @@ function PostRow({ post, onClick }) {
   );
 }
 
+const SORTS = [
+  { id: "top",  icon: "🔥", label: "Top Posts"    },
+  { id: "new",  icon: "✨", label: "Newest"        },
+  { id: "most", icon: "💬", label: "Most Replied"  },
+];
+
 // ── Main Forum ─────────────────────────────────────────────
 export default function Forum({ session, onClose }) {
   const [profile,    setProfile]    = useState(null);
   const [posts,      setPosts]      = useState([]);
   const [cat,        setCat]        = useState("all");
+  const [sort,       setSort]       = useState("top");
   const [activePost, setActivePost] = useState(null);
   const [showNew,    setShowNew]    = useState(false);
   const [loading,    setLoading]    = useState(true);
@@ -286,35 +293,39 @@ export default function Forum({ session, onClose }) {
       .then(({ data }) => setProfile(data));
   }, [session]);
 
-  useEffect(() => {
-    loadPosts();
-  }, [cat]);
+  useEffect(() => { loadPosts(); }, [cat, sort]);
 
   async function loadPosts() {
     setLoading(true);
-    let q = supabase.from("forum_posts").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false });
-    if (cat !== "all") q = q.eq("category", cat);
-    const { data } = await q.limit(50);
+    let q = supabase.from("forum_posts").select("*").order("pinned", { ascending: false });
+    if (sort === "top")  q = q.order("upvotes",       { ascending: false });
+    if (sort === "new")  q = q.order("created_at",    { ascending: false });
+    if (sort === "most") q = q.order("comment_count", { ascending: false });
+    if (cat !== "all")   q = q.eq("category", cat);
+    const { data } = await q.limit(60);
     setPosts(data || []);
     setLoading(false);
   }
 
   if (activePost) return (
-    <PostDetail
-      post={activePost}
-      session={session}
-      profile={profile}
-      isMod={isMod}
-      onBack={() => { setActivePost(null); loadPosts(); }}
-      onDeleted={() => { setActivePost(null); loadPosts(); }}
-    />
+    <div className="forum-overlay-inner">
+      <PostDetail
+        post={activePost}
+        session={session}
+        profile={profile}
+        isMod={isMod}
+        onBack={() => { setActivePost(null); loadPosts(); }}
+        onDeleted={() => { setActivePost(null); loadPosts(); }}
+      />
+    </div>
   );
 
   return (
-    <div className="forum-wrap">
-      {/* Header */}
-      <div className="forum-header">
-        <div className="forum-header-left">
+    <div className="forum-page">
+
+      {/* ── Header ───────────────────────────────────────── */}
+      <div className="forum-page-header">
+        <div>
           <div className="forum-eyebrow">QuantDiver Community</div>
           <h2 className="forum-title">Albin's Community</h2>
         </div>
@@ -322,11 +333,11 @@ export default function Forum({ session, onClose }) {
           <button className="forum-new-btn" onClick={() => setShowNew(v => !v)}>
             {showNew ? "✕ Cancel" : "+ New Post"}
           </button>
-          <button className="forum-close" onClick={onClose}>✕</button>
+          <button className="forum-close" onClick={onClose}>✕ Close</button>
         </div>
       </div>
 
-      {/* New post form */}
+      {/* ── New post form ─────────────────────────────── */}
       {showNew && profile && (
         <NewPostForm
           session={session}
@@ -336,32 +347,58 @@ export default function Forum({ session, onClose }) {
         />
       )}
 
-      {/* Category tabs */}
-      <div className="forum-cats">
-        {CATEGORIES.map(c => (
-          <button key={c.id}
-            className={`forum-cat-tab ${cat === c.id ? "active" : ""}`}
-            style={cat === c.id && c.color ? { color: c.color, borderBottomColor: c.color } : {}}
-            onClick={() => setCat(c.id)}
-          >
-            {c.icon} {c.label}
-          </button>
-        ))}
-      </div>
+      {/* ── Two-column layout ────────────────────────── */}
+      <div className="forum-layout">
 
-      {/* Post list */}
-      <div className="forum-list">
-        {loading && <div className="forum-loading">Loading…</div>}
-        {!loading && posts.length === 0 && (
-          <div className="forum-empty">
-            <div className="forum-empty-icon">💬</div>
-            <p>No posts yet in this category.</p>
-            <button className="forum-new-btn" onClick={() => setShowNew(true)}>Be the first to post →</button>
+        {/* Sidebar */}
+        <aside className="forum-sidebar">
+
+          <div className="fsb-section">
+            <div className="fsb-label">Sort by</div>
+            {SORTS.map(s => (
+              <button key={s.id}
+                className={`fsb-item ${sort === s.id ? "active" : ""}`}
+                onClick={() => setSort(s.id)}
+              >
+                <span className="fsb-item-icon">{s.icon}</span>
+                {s.label}
+              </button>
+            ))}
           </div>
-        )}
-        {posts.map(p => (
-          <PostRow key={p.id} post={p} onClick={() => setActivePost(p)} />
-        ))}
+
+          <div className="fsb-section">
+            <div className="fsb-label">Category</div>
+            {CATEGORIES.map(c => (
+              <button key={c.id}
+                className={`fsb-item ${cat === c.id ? "active" : ""}`}
+                style={cat === c.id && c.color ? { color: c.color, borderColor: c.color + "40", background: c.color + "12" } : {}}
+                onClick={() => setCat(c.id)}
+              >
+                <span className="fsb-item-icon">{c.icon}</span>
+                {c.label}
+              </button>
+            ))}
+          </div>
+
+        </aside>
+
+        {/* Post list */}
+        <main className="forum-main">
+          <div className="forum-list">
+            {loading && <div className="forum-loading">Loading…</div>}
+            {!loading && posts.length === 0 && (
+              <div className="forum-empty">
+                <div className="forum-empty-icon">💬</div>
+                <p>No posts yet in this category.</p>
+                <button className="forum-new-btn" onClick={() => setShowNew(true)}>Be the first to post →</button>
+              </div>
+            )}
+            {posts.map(p => (
+              <PostRow key={p.id} post={p} onClick={() => setActivePost(p)} />
+            ))}
+          </div>
+        </main>
+
       </div>
     </div>
   );

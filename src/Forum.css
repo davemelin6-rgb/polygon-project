@@ -1,12 +1,85 @@
 /* ── Full-page community layout ────────────────────────── */
 .community-page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
   min-height: 100vh;
 }
 
-/* ── Forum wrapper ─────────────────────────────────────── */
+/* ── New page-level container ──────────────────────────── */
+.forum-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 80px;
+}
+
+.forum-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 2rem 0 1.6rem;
+  border-bottom: 1px solid rgba(90,130,200,.1);
+  margin-bottom: 1.8rem;
+  gap: 1rem;
+}
+
+/* ── Two-column layout ─────────────────────────────────── */
+.forum-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+/* ── Sidebar ────────────────────────────────────────────── */
+.forum-sidebar {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.fsb-section {
+  background: rgba(8,14,28,.6);
+  border: 1px solid rgba(90,130,200,.09);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.fsb-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #445268;
+  margin-bottom: .75rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid rgba(90,130,200,.08);
+}
+
+.fsb-item {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #445268;
+  font-size: .84rem;
+  font-weight: 600;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all .15s;
+  margin-bottom: 2px;
+}
+.fsb-item:hover { color: #8a9ec0; background: rgba(255,255,255,.03); }
+.fsb-item.active { color: #EDF2FF; background: rgba(34,211,238,.08); border-color: rgba(34,211,238,.2); }
+.fsb-item-icon { font-size: 1rem; flex-shrink: 0; }
+
+/* ── Main post area ─────────────────────────────────────── */
+.forum-main { min-width: 0; }
+
+/* ── Forum wrapper (legacy, keep for PostDetail) ────────── */
 .forum-wrap {
   max-width: 860px;
   margin: 0 auto;
