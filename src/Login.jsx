@@ -7,7 +7,7 @@ const PLANS = [
   {
     id: "briefme",
     name: "BriefMe",
-    price: "99",
+    price: "49",
     currency: "SEK",
     tagline: "Daily intelligence briefs",
     features: [
@@ -20,7 +20,7 @@ const PLANS = [
   {
     id: "pro",
     name: "Pro",
-    price: "249",
+    price: "99",
     currency: "SEK",
     tagline: "Full platform access",
     recommended: true,
