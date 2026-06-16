@@ -185,6 +185,30 @@ export default function DailyBrief({ session }) {
             );
           })}
 
+          {/* ── Upcoming Earnings ───────────────────────────── */}
+          {data.earnings?.length > 0 && (
+            <div className="db-brief-sector">
+              <div className="db-brief-sector-head" style={{ borderColor: "rgba(255,255,255,.08)" }}>
+                <span className="db-brief-sector-icon">📊</span>
+                <span className="db-brief-sector-name" style={{ color: "#f59e0b" }}>Upcoming Earnings · Next 7 Days</span>
+              </div>
+              <div className="db-earnings">
+                {data.earnings.map((e, i) => {
+                  const d = new Date(e.date + "T12:00:00");
+                  const dateStr = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+                  return (
+                    <div key={i} className="db-earnings-row">
+                      <span className="db-earnings-sym">{e.symbol}</span>
+                      <span className="db-earnings-date">{dateStr}</span>
+                      {e.time && <span className="db-earnings-time">{e.time === "bmo" ? "Pre-market" : e.time === "amc" ? "After close" : e.time}</span>}
+                      {e.epsEst != null && <span className="db-earnings-est">EPS est. {Number(e.epsEst).toFixed(2)}</span>}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           {/* ── Macro Context ───────────────────────────────── */}
           {data.events?.length > 0 && (
             <div className="db-brief-sector">

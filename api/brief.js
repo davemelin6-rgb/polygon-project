@@ -75,9 +75,12 @@ export default async function handler(req, res) {
       return { items, _raw: `array[${items.length}]` };
     });
 
-    const [snapRes, calRes, ...sectorNewsResults] = await Promise.all([
+    const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
+    const [snapRes, calRes, earningsRes, ...sectorNewsResults] = await Promise.all([
       fetch(`${POLYGON}/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${encodeURIComponent(tickerStr)}&apiKey=${polygonKey}`),
       fmpKey ? fetch(`${FMP}/economic-calendar?from=${today}&to=${today}&apikey=${fmpKey}`) : Promise.resolve(null),
+      fmpKey ? fetch(`${FMP}/earnings-calendar?from=${today}&to=${nextWeek}&apikey=${fmpKey}`) : Promise.resolve(null),
       ...sectorNewsFetches,
     ]);
 
@@ -173,7 +176,21 @@ export default async function handler(req, res) {
         unit:     e.unit ?? "",
       }));
 
-    const data = { sectors, news, newsBySector, events, date: today };
+    // ── Earnings calendar (next 7 days, tracked tickers only) ──
+    const earningsArr = (earningsRes && earningsRes.ok) ? await earningsRes.json() : [];
+    const trackedSet  = new Set(ALL_TICKERS);
+    const earnings = (Array.isArray(earningsArr) ? earningsArr : [])
+      .filter(e => trackedSet.has(e.symbol))
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .map(e => ({
+        symbol:   e.symbol,
+        date:     e.date,
+        epsEst:   e.epsEstimated ?? null,
+        revEst:   e.revenueEstimated ?? null,
+        time:     e.time ?? null,
+      }));
+
+    const data = { sectors, news, newsBySector, events, earnings, date: today };
     cache.set(cacheKey, { data, expires: Date.now() + TTL });
     return res.status(200).json(data);
 

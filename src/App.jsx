@@ -12,6 +12,8 @@ import NewsFeed          from "./NewsFeed.jsx";
 import KeyRatios         from "./KeyRatios.jsx";
 import DailyBrief        from "./DailyBrief.jsx";
 import ContactModal      from "./ContactModal.jsx";
+import AnalystPanel      from "./AnalystPanel.jsx";
+import InsiderFeed       from "./InsiderFeed.jsx";
 
 const SECTORS = [
   {
@@ -640,9 +642,11 @@ export default function App({ session, onLogout, onAdmin }) {
         </div>
       )}
 
-      {selected && <PriceChart         stock={selected} session={session} />}
-      {selected && <TechnicalSignals   stock={selected} session={session} />}
+      {selected && <PriceChart            stock={selected} session={session} />}
+      {selected && <TechnicalSignals      stock={selected} session={session} />}
       {selected && <FinancialIntelligence stocks={stocks} scoresMap={scoresMap} selected={selected} />}
+      {selected && <AnalystPanel          stock={selected} session={session} />}
+      {selected && <InsiderFeed           stock={selected} session={session} />}
 
       <DailyBrief session={session} />
 

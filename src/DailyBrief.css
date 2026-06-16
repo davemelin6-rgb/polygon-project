@@ -331,6 +331,23 @@
   margin: 0;
 }
 
+/* ── Earnings calendar ──────────────────────────────────── */
+.db-earnings { display: flex; flex-direction: column; gap: .3rem; }
+.db-earnings-row {
+  display: grid;
+  grid-template-columns: 70px 120px 100px 1fr;
+  align-items: center;
+  gap: .75rem;
+  padding: .5rem .6rem;
+  background: rgba(255,255,255,.02);
+  border-radius: 8px;
+  font-size: .78rem;
+}
+.db-earnings-sym  { font-family: 'Space Mono', monospace; font-weight: 700; color: #dce8f4; font-size: .8rem; }
+.db-earnings-date { color: #f59e0b; font-family: 'Space Mono', monospace; font-size: .7rem; }
+.db-earnings-time { color: #4a6a88; font-size: .7rem; }
+.db-earnings-est  { color: #3d5c78; font-size: .7rem; text-align: right; }
+
 /* ── Mobile ─────────────────────────────────────────────── */
 @media (max-width: 700px) {
   .db-sectors { grid-template-columns: 1fr; }

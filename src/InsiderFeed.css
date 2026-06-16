@@ -1,0 +1,73 @@
+.if-panel {}
+.if-loading { color: #3d5c78; font-size: .82rem; padding: .5rem 0; }
+.if-empty   { color: #3d5c78; font-size: .82rem; padding: .25rem 0; }
+
+.if-list { display: flex; flex-direction: column; gap: 0; }
+
+.if-row {
+  display: grid;
+  grid-template-columns: 52px 1fr auto 100px;
+  align-items: center;
+  gap: .85rem;
+  padding: .75rem .25rem;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.if-row:last-child { border-bottom: none; }
+.if-row:hover { background: rgba(255,255,255,.015); border-radius: 8px; }
+
+.if-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .58rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  padding: 3px 7px;
+  border-radius: 5px;
+  text-align: center;
+}
+.if-buy     { background: rgba(0,220,130,.12); color: #00dc82; border: 1px solid rgba(0,220,130,.25); }
+.if-sell    { background: rgba(255,60,80,.1);  color: #ff3c50; border: 1px solid rgba(255,60,80,.25); }
+.if-neutral { background: rgba(255,255,255,.05); color: #8fa0c4; border: 1px solid rgba(255,255,255,.08); }
+
+.if-person {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.if-name {
+  font-size: .85rem;
+  font-weight: 600;
+  color: #dce8f4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.if-title {
+  font-size: .68rem;
+  color: #3d5c78;
+  letter-spacing: .04em;
+}
+
+.if-amounts {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.if-value {
+  font-family: 'Space Mono', monospace;
+  font-size: .88rem;
+  font-weight: 700;
+}
+.if-shares {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem;
+  color: #3d5c78;
+}
+
+.if-date {
+  font-family: 'Space Mono', monospace;
+  font-size: .68rem;
+  color: #3d5c78;
+  text-align: right;
+}
