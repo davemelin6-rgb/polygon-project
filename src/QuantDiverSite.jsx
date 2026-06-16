@@ -1003,6 +1003,41 @@ function AboutPage({ onEnterApp }) {
             </div>
           ))}
 
+          {/* Our Ambition */}
+          <div style={{
+            margin: "16px 0 56px",
+            padding: "48px 44px",
+            background: "linear-gradient(135deg, rgba(0,180,255,.06), rgba(139,92,246,.04))",
+            border: "1px solid rgba(0,180,255,.2)",
+            borderRadius: 20,
+            position: "relative",
+            overflow: "hidden",
+          }}>
+            {/* background accent */}
+            <div style={{ position: "absolute", top: -60, right: -60, width: 240, height: 240, background: "radial-gradient(circle, rgba(0,180,255,.08) 0%, transparent 70%)", pointerEvents: "none" }} />
+
+            <div style={{ fontFamily: ff.mono, fontSize: ".72rem", letterSpacing: ".2em", textTransform: "uppercase", color: T.cyan, marginBottom: 18 }}>Our ambition</div>
+
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.6rem,3vw,2.4rem)", fontWeight: 900, color: T.ink, margin: "0 0 20px", letterSpacing: "-.03em", lineHeight: 1.15 }}>
+              To build the world's biggest quant community for cutting-edge technology.
+            </h2>
+
+            <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.8, margin: "0 0 28px" }}>
+              Quantum computing. Artificial intelligence. Biotech. Defence & Space. These are the sectors defining the next 20 years — and right now, there is no single place where serious investors in these fields can gather, share research, and get real analytical tools to back their convictions.
+            </p>
+            <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.8, margin: 0 }}>
+              That is what QuantDiver is building. Not another finance dashboard. The world's premier quant community for investors who believe the future is being built right now — and want the edge to act on it.
+            </p>
+
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 32 }}>
+              {["⚛️ Quantum Computing", "🧠 Artificial Intelligence", "🧬 Biotech", "🛡️ Defence & Space", "🚀 Emerging Tech"].map(tag => (
+                <span key={tag} style={{ fontFamily: ff.mono, fontSize: ".72rem", color: T.cyan, background: "rgba(34,211,238,.08)", border: "1px solid rgba(34,211,238,.18)", borderRadius: 999, padding: "5px 14px" }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+
           {/* CTA */}
           <div style={{ textAlign: "center", paddingTop: 24 }}>
             <PrimaryBtn onClick={onEnterApp} style={{ fontSize: "1.05rem", padding: "18px 44px" }}>
