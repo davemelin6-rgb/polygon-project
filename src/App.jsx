@@ -35,6 +35,13 @@ const SECTORS = [
     accent: "#F59E0B",
     tickers: ["LMT", "RTX", "NOC", "GD", "BA", "RKLB", "ASTS", "KTOS"],
   },
+  {
+    id: "biotech",
+    name: "Biotech & MedTech",
+    icon: "🧬",
+    accent: "#10B981",
+    tickers: ["LLY", "NVO", "MRNA", "REGN", "VRTX", "GILD", "ISRG", "DXCM"],
+  },
 ];
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";

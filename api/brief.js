@@ -13,6 +13,8 @@ const SECTORS = [
     tickers: ["NVDA","AMD","META","MSFT","PLTR","AI","SOUN","SMCI"] },
   { id: "defence",  name: "Defence & Space",   icon: "🛡️",  accent: "#F59E0B",
     tickers: ["LMT","RTX","NOC","GD","BA","RKLB","ASTS","KTOS"] },
+  { id: "biotech",  name: "Biotech & MedTech", icon: "🧬",  accent: "#10B981",
+    tickers: ["LLY","NVO","MRNA","REGN","VRTX","GILD","ISRG","DXCM"] },
 ];
 
 const ALL_TICKERS = [...new Set(SECTORS.flatMap(s => s.tickers))];
@@ -49,6 +51,7 @@ export default async function handler(req, res) {
       quantum: ["IONQ", "IBM", "GOOGL", "MSFT"],
       ai:      ["NVDA", "AMD", "META", "PLTR"],
       defence: ["LMT",  "RTX", "BA",   "RKLB"],
+      biotech: ["LLY",  "NVO", "MRNA", "REGN"],
     };
 
     const sectorNewsFetches = SECTORS.map(async s => {
