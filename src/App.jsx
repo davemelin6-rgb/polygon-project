@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
-import Hugo from "./Hugo.jsx";
-import Chat from "./Chat.jsx";
+import RightDock from "./RightDock.jsx";
 import Settings from "./Settings.jsx";
 import QDLogo from "./QDLogo.jsx";
 import Sparkline from "./Sparkline.jsx";
@@ -685,9 +684,7 @@ export default function App({ session, onLogout, onAdmin }) {
       {lastUpdated && (
         <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>
       )}
-      <Hugo />
-      <Chat session={session} />
-      <TraderMatch session={session} />
+      <RightDock session={session} />
       {showSettings && (
         <Settings
           session={session}

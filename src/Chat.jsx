@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "./supabaseClient";
 import "./Chat.css";
 
-export default function Chat({ session }) {
+export default function Chat({ session, dockMode = false, onClose }) {
   const [profile, setProfile]   = useState(null);
   const [online, setOnline]     = useState([]);   // other online users (presence)
   const [activeDM, setActiveDM] = useState(null); // { id, username, avatar_color } from DB
@@ -143,8 +143,13 @@ export default function Chat({ session }) {
     return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   }
 
+  function handleMinimize() {
+    if (dockMode) onClose?.();
+    else setOpen(false);
+  }
+
   // ── Minimized bubble ───────────────────────────────────────
-  if (!open) return (
+  if (!open && !dockMode) return (
     <button className="chat-toggle" onClick={() => setOpen(true)}>
       <span>💬</span>
       {online.length > 0 && <span className="chat-toggle-badge">{online.length}</span>}
@@ -153,7 +158,7 @@ export default function Chat({ session }) {
 
   // ── DM conversation ────────────────────────────────────────
   if (activeDM) return (
-    <div className="chat-panel">
+    <div className={`chat-panel${dockMode ? " chat-panel--dock" : ""}`}>
       <div className="chat-header">
         <button className="chat-back-btn" onClick={() => { setActiveDM(null); setMessages([]); }}>
           ← Back
@@ -165,7 +170,7 @@ export default function Chat({ session }) {
           <span>{activeDM.username}</span>
           <span className="chat-dm-online-dot" />
         </div>
-        <button className="chat-minimize" onClick={() => setOpen(false)}>−</button>
+        <button className="chat-minimize" onClick={handleMinimize}>−</button>
       </div>
 
       <div className="chat-messages">
@@ -209,10 +214,10 @@ export default function Chat({ session }) {
 
   // ── Member picker ──────────────────────────────────────────
   return (
-    <div className="chat-panel">
+    <div className={`chat-panel${dockMode ? " chat-panel--dock" : ""}`}>
       <div className="chat-header">
         <span className="chat-title">Messages</span>
-        <button className="chat-minimize" onClick={() => setOpen(false)}>−</button>
+        <button className="chat-minimize" onClick={handleMinimize}>−</button>
       </div>
 
       <div className="chat-member-picker">

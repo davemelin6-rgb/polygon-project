@@ -25,7 +25,7 @@ function avatarColor(name) {
   return AVATAR_COLORS[h % AVATAR_COLORS.length];
 }
 
-export default function TraderMatch({ session }) {
+export default function TraderMatch({ session, dockMode = false, onClose }) {
   const [open,      setOpen]      = useState(false);
   const [state,     setState]     = useState("idle");   // idle | queued | matched | ended
   const [topic,     setTopic]     = useState(null);     // selected topic id while picking
@@ -278,8 +278,13 @@ export default function TraderMatch({ session }) {
 
   const currentTopic = topicInfo(matchSession?.topic || topic || "ai");
 
+  function handleClose() {
+    if (dockMode) onClose?.();
+    else setOpen(false);
+  }
+
   // ── Minimized toggle button ───────────────────────────────
-  if (!open) return (
+  if (!open && !dockMode) return (
     <button className="tm-toggle" onClick={() => setOpen(true)}>
       🤝
       {state === "queued" && <span className="tm-toggle-badge tm-badge-searching" />}
@@ -289,10 +294,10 @@ export default function TraderMatch({ session }) {
 
   // ── Ended state ───────────────────────────────────────────
   if (state === "ended") return (
-    <div className="tm-panel">
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
       <div className="tm-header">
         <span className="tm-title">Trader Connect</span>
-        <button className="tm-close" onClick={() => setOpen(false)}>−</button>
+        <button className="tm-close" onClick={handleClose}>−</button>
       </div>
       <div className="tm-ended">
         <div className="tm-ended-icon">👋</div>
@@ -307,7 +312,7 @@ export default function TraderMatch({ session }) {
 
   // ── Active chat ───────────────────────────────────────────
   if (state === "matched" && matchSession) return (
-    <div className="tm-panel">
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
       <div className="tm-header">
         <div className="tm-header-left">
           <div className="tm-partner-avatar" style={{ background: avatarColor(partnerName) }}>
@@ -322,7 +327,7 @@ export default function TraderMatch({ session }) {
         </div>
         <div style={{ display: "flex", gap: "0.4rem", alignItems: "center" }}>
           <button className="tm-end-btn" onClick={endSession} title="End session">✕ End</button>
-          <button className="tm-close" onClick={() => setOpen(false)}>−</button>
+          <button className="tm-close" onClick={handleClose}>−</button>
         </div>
       </div>
 
@@ -366,10 +371,10 @@ export default function TraderMatch({ session }) {
 
   // ── Queue waiting ─────────────────────────────────────────
   if (state === "queued") return (
-    <div className="tm-panel">
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
       <div className="tm-header">
         <span className="tm-title">Trader Connect</span>
-        <button className="tm-close" onClick={() => setOpen(false)}>−</button>
+        <button className="tm-close" onClick={handleClose}>−</button>
       </div>
       <div className="tm-searching">
         <div className="tm-spinner" />
@@ -384,13 +389,13 @@ export default function TraderMatch({ session }) {
 
   // ── Topic picker (idle) ───────────────────────────────────
   return (
-    <div className="tm-panel">
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
       <div className="tm-header">
         <div>
           <span className="tm-title">Trader Connect</span>
           <div className="tm-subtitle">Match with a real trader</div>
         </div>
-        <button className="tm-close" onClick={() => setOpen(false)}>−</button>
+        <button className="tm-close" onClick={handleClose}>−</button>
       </div>
 
       <div className="tm-body">
