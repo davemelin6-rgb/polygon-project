@@ -887,17 +887,16 @@ function AboutPage({ onEnterApp }) {
         <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 700, height: 400, background: "radial-gradient(ellipse, rgba(245,158,11,.07) 0%, transparent 70%)", pointerEvents: "none" }} />
 
         <div className="qd-wrap" style={{ maxWidth: 820, margin: "0 auto", position: "relative" }}>
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 10, fontFamily: ff.mono, fontSize: ".7rem", letterSpacing: ".22em", textTransform: "uppercase", color: T.amber, marginBottom: 28, border: "1px solid rgba(245,158,11,.2)", borderRadius: 999, padding: "7px 18px", background: "rgba(245,158,11,.05)" }}>
-            <span style={{ width: 6, height: 6, borderRadius: "50%", background: T.amber, display: "inline-block" }} />
-            The team behind QuantDiver
+          <div style={{ fontFamily: ff.mono, fontSize: "1rem", letterSpacing: ".28em", textTransform: "uppercase", color: T.amber, marginBottom: 36 }}>
+            — The team behind QuantDiver —
           </div>
-          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(3.2rem,7vw,6rem)", fontWeight: 900, letterSpacing: "-.04em", margin: "0 0 28px", lineHeight: .96, color: T.ink }}>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(4rem,9vw,7.5rem)", fontWeight: 900, letterSpacing: "-.05em", margin: "0 0 36px", lineHeight: .92, color: T.ink }}>
             Two stock sharks<br />
             <span style={{ background: "linear-gradient(135deg,#f59e0b,#fbbf24)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
               from Sweden.
             </span>
           </h1>
-          <p style={{ fontFamily: ff.body, fontSize: "1.25rem", color: T.sub, lineHeight: 1.7, margin: "0 auto", maxWidth: 620 }}>
+          <p style={{ fontFamily: ff.body, fontSize: "1.3rem", color: T.sub, lineHeight: 1.7, margin: "0 auto", maxWidth: 640 }}>
             David and Albin have spent over a decade in the trenches of the global stock market — reading charts before breakfast, breaking down balance sheets, and hunting for edge where most investors never look.
           </p>
         </div>
