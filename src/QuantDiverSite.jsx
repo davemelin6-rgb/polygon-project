@@ -495,7 +495,7 @@ function ScoresPage({ onEnterApp }) {
 }
 
 /* ─── pricing page ────────────────────────────────────────── */
-function PricingPage({ onEnterApp }) {
+function PricingPage({ onEnterApp, go }) {
   const features = [
     ["Live stock scores", "Momentum, Risk, and Tech Value — updated every 60 seconds across all tickers"],
     ["Full score breakdown", "Component-level analysis: what's driving each score and why"],
@@ -579,7 +579,7 @@ function PricingPage({ onEnterApp }) {
           </div>
 
           <p style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim, textAlign: "center", lineHeight: 1.6 }}>
-            Have questions about plans or need a team subscription? <span onClick={onEnterApp} style={{ color: T.cyan, cursor: "pointer" }}>Contact us</span>.
+            Have questions about plans or need a team subscription? <span onClick={() => go("contact")} style={{ color: T.cyan, cursor: "pointer" }}>Contact us</span>.
           </p>
         </div>
       </section>
@@ -1079,7 +1079,7 @@ export default function QuantDiverSite({ onEnterApp }) {
         {page === "home"    && <HomePage go={go} onEnterApp={onEnterApp} />}
         {page === "briefme" && <BriefMePage onEnterApp={onEnterApp} />}
         {page === "scores"  && <ScoresPage onEnterApp={onEnterApp} />}
-        {page === "pricing" && <PricingPage onEnterApp={onEnterApp} />}
+        {page === "pricing" && <PricingPage onEnterApp={onEnterApp} go={go} />}
         {page === "contact" && <ContactPage />}
         {page === "privacy" && <PrivacyPage />}
         {page === "terms"   && <TermsPage />}
