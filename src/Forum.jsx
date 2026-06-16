@@ -338,7 +338,7 @@ export default function Forum({ session, onClose }) {
               backgroundPosition: "12% 8%",
               backgroundRepeat: "no-repeat",
             }} />
-            <p style={{ fontFamily: "'Space Mono', monospace", fontSize: ".62rem", color: "#f59e0b", lineHeight: 1.5, maxWidth: 130, margin: "0 auto", fontStyle: "italic" }}>
+            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: ".82rem", color: "#f59e0b", lineHeight: 1.5, maxWidth: 150, margin: "0 auto", fontStyle: "italic" }}>
               "Not talking about money is the first step to losing money."
             </p>
           </div>
