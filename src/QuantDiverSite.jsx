@@ -1308,9 +1308,11 @@ export default function QuantDiverSite({ onEnterApp }) {
               <a onClick={() => go("contact")} style={{ cursor: "pointer", color: page === "contact" ? T.cyan : "inherit", transition: "color .15s" }}>Contact</a>
             </div>
 
-            <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }} className="qd-members-btn">
-              Members Area →
-            </PrimaryBtn>
+            <div className="qd-members-btn">
+              <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }}>
+                Members Area →
+              </PrimaryBtn>
+            </div>
           </div>
 
           {/* Mobile dropdown */}
