@@ -640,11 +640,12 @@ export default function App({ session, onLogout, onAdmin }) {
         </div>
       )}
 
+      {selected && <PriceChart stock={selected} session={session} />}
+
       <DailyBrief session={session} />
 
       {(stocks.length > 0 || selected) && (
         <div className="sections">
-          {selected && <PriceChart         stock={selected} session={session} />}
           {selected && <TechnicalSignals   stock={selected} session={session} />}
           <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
           <FinancialIntelligence  stocks={stocks} scoresMap={scoresMap} selected={selected} />
