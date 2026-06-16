@@ -42,7 +42,7 @@ export default async function handler(req, res) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from:     "QuantDiver Support <onboarding@resend.dev>",
+        from:     "QuantDiver Support <support@quantdiver.com>",
         to:       [TO_EMAIL],
         reply_to: email,
         subject:  `[QuantDiver Support] ${safeSubject || "New message"}`,
