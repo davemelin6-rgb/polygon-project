@@ -130,7 +130,8 @@ export default function Settings({ session, profile, settings, onSave, onClose }
                   className={`settings-interest-btn ${interests.includes(opt.id) ? "active" : ""}`}
                   onClick={() => toggleInterest(opt.id)}
                 >
-                  {opt.icon} {opt.label}
+                  <span>{opt.icon} {opt.label}</span>
+                  <span className="si-check">✓</span>
                 </button>
               ))}
             </div>

@@ -178,28 +178,46 @@
 .settings-interests {
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.5rem;
   margin-top: 0.25rem;
 }
 
 .settings-interest-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 10px;
-  color: #2d4a5f;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 12px;
+  color: #3d5c78;
   cursor: pointer;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
-  padding: 0.55rem 0.85rem;
+  padding: 0.65rem 0.9rem;
   text-align: left;
   transition: all 0.15s;
+  width: 100%;
 }
-.settings-interest-btn:hover { border-color: rgba(139,92,246,0.2); color: #6a8aaa; }
+.settings-interest-btn:hover {
+  border-color: rgba(139,92,246,0.25);
+  color: #8aaec8;
+}
 .settings-interest-btn.active {
-  background: rgba(139,92,246,0.1);
-  border-color: rgba(139,92,246,0.35);
+  background: rgba(139,92,246,0.15);
+  border-color: rgba(139,92,246,0.5);
+  border-width: 2px;
+  color: #c4b5fd;
+  font-weight: 700;
+}
+.settings-interest-btn .si-check {
+  display: none;
   color: #a78bfa;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.settings-interest-btn.active .si-check {
+  display: inline;
 }
 
 /* ── Footer ──────────────────────────────────────────────── */
