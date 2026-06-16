@@ -922,8 +922,8 @@ function AboutPage({ onEnterApp }) {
               }}
             />
             {/* Cover Gemini watermark in bottom-right */}
-            <div style={{ position: "absolute", bottom: "3%", right: "3%", zIndex: 2 }}>
-              <QDLogo size={52} />
+            <div style={{ position: "absolute", bottom: "4%", right: "2.5%", zIndex: 2, background: "#050d18", borderRadius: "50%", padding: 6, lineHeight: 0 }}>
+              <QDLogo size={64} />
             </div>
           </div>
         </div>
