@@ -27,19 +27,22 @@ export default async function handler(req, res) {
   if (hit && hit.expires > Date.now()) return res.status(200).json(hit.data);
 
   try {
-    const [rRes, pRes, kRes] = await Promise.all([
+    const [rRes, pRes, kRes, ttmRes] = await Promise.all([
       fetch(`${FMP}/ratios?symbol=${ticker}&limit=2&apikey=${apiKey}`),
       fetch(`${FMP}/profile?symbol=${ticker}&apikey=${apiKey}`),
       fetch(`${FMP}/key-metrics?symbol=${ticker}&limit=1&apikey=${apiKey}`),
+      fetch(`${FMP}/ratios-ttm?symbol=${ticker}&apikey=${apiKey}`),
     ]);
 
-    const ratioArr   = rRes.ok ? await rRes.json() : [];
-    const profileArr = pRes.ok ? await pRes.json() : [];
-    const keyArr     = kRes.ok ? await kRes.json() : [];
+    const ratioArr   = rRes.ok   ? await rRes.json()   : [];
+    const profileArr = pRes.ok   ? await pRes.json()   : [];
+    const keyArr     = kRes.ok   ? await kRes.json()   : [];
+    const ttmArr     = ttmRes.ok ? await ttmRes.json() : [];
 
-    const r = (Array.isArray(ratioArr)   ? ratioArr[0]   : null) || {};
-    const p = (Array.isArray(profileArr) ? profileArr[0] : null) || {};
-    const k = (Array.isArray(keyArr)     ? keyArr[0]     : null) || {};
+    const r   = (Array.isArray(ratioArr)   ? ratioArr[0]   : null) || {};
+    const p   = (Array.isArray(profileArr) ? profileArr[0] : null) || {};
+    const k   = (Array.isArray(keyArr)     ? keyArr[0]     : null) || {};
+    const ttm = (Array.isArray(ttmArr)     ? ttmArr[0]     : ttmArr) || {};
 
     const data = {
       ticker,
@@ -48,24 +51,24 @@ export default async function handler(req, res) {
       sector:      p.sector        ?? null,
       industry:    p.industry      ?? null,
       description: (p.description || "").slice(0, 400),
-      // Valuation
-      pe:          num(r.priceEarningsRatio),
-      pb:          num(r.priceToBookRatio),
-      ps:          num(r.priceToSalesRatio),
-      evEbitda:    num(r.enterpriseValueMultiple),
+      // Valuation — annual first, TTM as fallback
+      pe:          num(r.priceEarningsRatio  ?? ttm.peRatioTTM          ?? ttm.priceEarningsRatioTTM),
+      pb:          num(r.priceToBookRatio    ?? ttm.priceToBookRatioTTM),
+      ps:          num(r.priceToSalesRatio   ?? ttm.priceToSalesRatioTTM),
+      evEbitda:    num(r.enterpriseValueMultiple ?? ttm.enterpriseValueMultipleTTM),
       // Profitability
-      roe:         pct(r.returnOnEquity),
-      roa:         pct(r.returnOnAssets),
-      grossMargin: pct(r.grossProfitMargin),
-      netMargin:   pct(r.netProfitMargin),
+      roe:         pct(r.returnOnEquity   ?? ttm.returnOnEquityTTM),
+      roa:         pct(r.returnOnAssets   ?? ttm.returnOnAssetsTTM),
+      grossMargin: pct(r.grossProfitMargin ?? ttm.grossProfitMarginTTM),
+      netMargin:   pct(r.netProfitMargin   ?? ttm.netProfitMarginTTM),
       // Growth / Health
-      debtToEquity: num(r.debtEquityRatio),
-      currentRatio: num(r.currentRatio),
-      revenueGrowth: pct(k.revenueGrowth ?? null),
+      debtToEquity:  num(r.debtEquityRatio ?? ttm.debtEquityRatioTTM),
+      currentRatio:  num(r.currentRatio    ?? ttm.currentRatioTTM),
+      revenueGrowth: pct(k.revenueGrowth   ?? null),
       // Market
-      marketCap:   p.mktCap  ?? null,
+      marketCap:   p.mktCap ?? p.marketCap ?? null,
       beta:        num(p.beta),
-      divYield:    pct(r.dividendYield),
+      divYield:    pct(r.dividendYield ?? ttm.dividendYieldTTM),
     };
 
     cache.set(ticker, { data, expires: Date.now() + TTL });
