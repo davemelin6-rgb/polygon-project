@@ -921,8 +921,10 @@ function AboutPage({ onEnterApp }) {
                 display: "block",
               }}
             />
-            {/* Vignette to fade bottom-right Gemini watermark naturally */}
-            <div style={{ position: "absolute", inset: 0, zIndex: 2, borderRadius: 24, background: "radial-gradient(ellipse 40% 30% at 98% 98%, rgba(4,8,15,.95) 0%, transparent 70%)", pointerEvents: "none" }} />
+            {/* QD logo over Gemini watermark */}
+            <div style={{ position: "absolute", bottom: "3%", right: "2%", zIndex: 2 }}>
+              <QDLogo size={110} />
+            </div>
           </div>
         </div>
       </section>
