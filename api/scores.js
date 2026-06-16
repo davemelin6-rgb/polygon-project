@@ -3,11 +3,11 @@
 
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
-import { calcMomentum, calcRisk, calcTechValue } from "../lib/formulas.js";
+import { calcMomentum, calcRisk, calcTechValue, calcSignal } from "../lib/formulas.js";
 import { getSupabase } from "../lib/supabase.js";
 import { verifySession, parseTickers } from "../lib/apiGuard.js";
 
-const STALE_MS = 24 * 60 * 60 * 1000;
+const STALE_MS = 60 * 60 * 1000; // 1 hour — scores refresh hourly
 
 export default async function handler(req, res) {
   // ── Auth guard ───────────────────────────────────────────
@@ -58,12 +58,17 @@ export default async function handler(req, res) {
           fetchAggregates(ticker, polygonKey),
           fetchFundamentals(ticker, fmpKey),
         ]);
-        const price = aggs?.at(-1)?.c ?? null;
+        const price      = aggs?.at(-1)?.c ?? null;
+        const momentum   = calcMomentum({ price, aggs });
+        const risk       = calcRisk({ aggs, fundamentals });
+        const tech_value = calcTechValue({ fundamentals });
+        const signal     = calcSignal({ momentum, risk, techValue: tech_value });
         return {
           symbol:           ticker,
-          momentum:         calcMomentum({ price, aggs }),
-          risk:             calcRisk({ aggs, fundamentals }),
-          tech_value:       calcTechValue({ fundamentals }),
+          momentum,
+          risk,
+          tech_value,
+          signal,
           has_fundamentals: !!fundamentals,
           calculated_at:    new Date().toISOString(),
         };
@@ -86,12 +91,13 @@ export default async function handler(req, res) {
 
   const scores = tickers.map(ticker => {
     const row = existingMap[ticker];
-    if (!row) return { symbol: ticker, momentum: null, risk: null, techValue: null, hasFundamentals: false };
+    if (!row) return { symbol: ticker, momentum: null, risk: null, techValue: null, signal: null, hasFundamentals: false };
     return {
       symbol:          row.symbol,
       momentum:        row.momentum,
       risk:            row.risk,
       techValue:       row.tech_value,
+      signal:          row.signal ?? null,
       hasFundamentals: row.has_fundamentals,
     };
   });
