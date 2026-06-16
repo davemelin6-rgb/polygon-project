@@ -3,7 +3,7 @@ import "./ContactModal.css";
 
 export default function ContactModal({ onClose, userEmail }) {
   const [name,    setName]    = useState("");
-  const [email,   setEmail]   = useState(userEmail || "");
+  const [email,   setEmail]   = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);

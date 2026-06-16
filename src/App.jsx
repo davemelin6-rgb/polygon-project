@@ -592,7 +592,7 @@ export default function App({ session, onLogout, onAdmin }) {
               Admin
             </button>
           )}
-          <button className="logout-btn" onClick={() => setShowContact(true)} title="Contact support">✉</button>
+          <button className="logout-btn" onClick={() => setShowContact(true)}>Contact Support</button>
           <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
             Sign Out
           </button>
