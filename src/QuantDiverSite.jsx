@@ -887,8 +887,8 @@ function AboutPage({ onEnterApp }) {
         <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", width: 700, height: 400, background: "radial-gradient(ellipse, rgba(245,158,11,.07) 0%, transparent 70%)", pointerEvents: "none" }} />
 
         <div className="qd-wrap" style={{ maxWidth: 820, margin: "0 auto", position: "relative" }}>
-          <div style={{ fontFamily: ff.mono, fontSize: "1rem", letterSpacing: ".28em", textTransform: "uppercase", color: T.amber, marginBottom: 36 }}>
-            — Our Motto —
+          <div style={{ fontFamily: ff.display, fontSize: "1.1rem", fontWeight: 800, letterSpacing: ".22em", textTransform: "uppercase", color: T.amber, marginBottom: 36 }}>
+            — The Team Behind QuantDiver —
           </div>
           <h1 style={{ fontFamily: ff.display, fontSize: "clamp(3.6rem,8vw,6.8rem)", fontWeight: 900, letterSpacing: "-.05em", margin: "0 0 36px", lineHeight: .96, color: T.ink }}>
             Success can only come from<br />
