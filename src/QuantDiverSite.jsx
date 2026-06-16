@@ -921,9 +921,9 @@ function AboutPage({ onEnterApp }) {
                 display: "block",
               }}
             />
-            {/* QD logo over Gemini watermark */}
-            <div style={{ position: "absolute", bottom: "3%", right: "2%", zIndex: 2 }}>
-              <QDLogo size={110} />
+            {/* QD logo + solid bg to kill Gemini watermark in corner */}
+            <div style={{ position: "absolute", bottom: "-18px", right: "-18px", zIndex: 2, background: "#06101f", borderRadius: "50%", padding: 12, lineHeight: 0 }}>
+              <QDLogo size={120} />
             </div>
           </div>
         </div>
