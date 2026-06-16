@@ -571,6 +571,91 @@
   text-align: right;
 }
 
+/* ── Verdict badge on stock card ────────────────────────── */
+.card-verdict {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid;
+  margin-bottom: 0.6rem;
+}
+.card-verdict-grade {
+  font-family: 'Space Mono', monospace;
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 18px;
+}
+.card-verdict-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  flex: 1;
+}
+.card-verdict-sig {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+/* ── Verdict block in Financial Intelligence ─────────────── */
+.fi-verdict {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  padding: 1.2rem 1.4rem;
+  border-radius: 12px;
+  border: 1px solid;
+  margin-bottom: 1.5rem;
+}
+.fi-verdict-left {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-shrink: 0;
+}
+.fi-verdict-grade {
+  font-family: 'Space Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  border: 2px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.fi-verdict-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+.fi-verdict-sig {
+  font-size: 0.72rem;
+  color: #3d5c78;
+}
+.fi-verdict-summary {
+  font-size: 0.88rem;
+  color: #8a9ec0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.fi-stat-sub {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
 /* ── Financial Intelligence ─────────────────────────────── */
 .fi-grid {
   display: grid;

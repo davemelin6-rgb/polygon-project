@@ -66,16 +66,77 @@ function fmtVol(n) {
 }
 
 // ── Score helpers ──────────────────────────────────────────
-function scoreColor(value, invert = false) {
+function scoreColor(value) {
   if (value == null) return "#2d4a5f";
-  const v = invert ? 100 - value : value;
-  if (v >= 65) return "#00dc82";
-  if (v >= 40) return "#f59e0b";
+  if (value >= 65) return "#00dc82";
+  if (value >= 40) return "#f59e0b";
   return "#ff3c50";
 }
 
-function ScoreBar({ label, value, invert = false }) {
-  const color = scoreColor(value, invert);
+function momLabel(v)  {
+  if (v == null) return "—";
+  if (v >= 70) return "Accelerating";
+  if (v >= 55) return "Steady";
+  if (v >= 40) return "Stalling";
+  return "Declining";
+}
+function riskLabel(v) {
+  if (v == null) return "—";
+  if (v >= 70) return "Low Risk";
+  if (v >= 50) return "Moderate";
+  if (v >= 35) return "Elevated";
+  return "High Risk";
+}
+function techLabel(v) {
+  if (v == null) return "—";
+  if (v >= 70) return "Strong Moat";
+  if (v >= 50) return "Solid";
+  if (v >= 35) return "Average";
+  return "Weak";
+}
+
+function getVerdict(sc) {
+  const { momentum, risk, techValue, signal } = sc || {};
+  if (momentum == null) return { label: "NO DATA", color: "#2d4a5f", grade: "—", summary: "Not enough data to generate a verdict for this stock." };
+
+  const sig = signal ?? Math.round(momentum * 0.55 + (risk ?? 50) * 0.45);
+
+  const momHigh  = momentum  >= 65;
+  const momLow   = momentum  <  40;
+  const riskSafe = (risk ?? 50) >= 65;
+  const riskBad  = (risk ?? 50) <  40;
+  const techHigh = techValue != null && techValue >= 65;
+  const techLow  = techValue != null && techValue <  40;
+
+  let summary;
+  if (sig >= 70) {
+    if (riskSafe && techHigh)  summary = "All signals align — strong momentum, clean balance sheet, and a durable business model. High-conviction setup.";
+    else if (riskSafe)         summary = "Strong momentum with a solid balance sheet. Business quality data is unavailable but the trend and risk profile are attractive.";
+    else if (techHigh)         summary = "Accelerating price trend backed by strong fundamentals. Balance sheet warrants monitoring but the setup is positive.";
+    else                       summary = "Strong momentum across all timeframes. Keep an eye on the balance sheet before sizing up.";
+  } else if (sig >= 55) {
+    if (momHigh && riskBad)    summary = "Price is moving well but the balance sheet carries elevated risk. Consider a smaller position until fundamentals improve.";
+    else if (momLow && riskSafe) summary = "Solid financial foundation but price momentum is weak. Worth watching — not yet a buy signal.";
+    else if (techLow)          summary = "Decent momentum but limited competitive moat. Good for a short-term trade, not a long-term hold.";
+    else                       summary = "Mixed signals — some positives but no clear conviction across all three dimensions. Watch for confirmation.";
+  } else if (sig >= 40) {
+    if (momLow && riskBad)     summary = "Weak trend and elevated balance sheet risk. No signal here — stay on the sidelines.";
+    else if (techLow)          summary = "Low margins and limited R&D suggest no durable advantage. Price trend offers no confirmation either.";
+    else                       summary = "Neutral territory across the board. No edge in either direction — wait for a clearer setup.";
+  } else {
+    if (riskBad && momLow)     summary = "Declining momentum combined with a weak balance sheet. This is a high-risk situation — risk-reward does not favour entry.";
+    else if (momLow)           summary = "Price is in a clear downtrend. Fundamental data does not provide enough justification to fight the trend.";
+    else                       summary = "Scores are below threshold across multiple dimensions. Avoid until there is meaningful improvement.";
+  }
+
+  if (sig >= 70) return { label: "STRONG SIGNAL", color: "#00dc82", grade: "A", sig, summary };
+  if (sig >= 55) return { label: "WATCH",         color: "#22D3EE", grade: "B", sig, summary };
+  if (sig >= 40) return { label: "MIXED",         color: "#f59e0b", grade: "C", sig, summary };
+  return              { label: "AVOID",           color: "#ff3c50", grade: "D", sig, summary };
+}
+
+function ScoreBar({ label, value }) {
+  const color = scoreColor(value);
   return (
     <div className="score-row">
       <span className="score-label">{label}</span>
@@ -105,6 +166,7 @@ function ChangeChip({ value }) {
 
 function StockCard({ stock, scores, chart, selected, onClick }) {
   const positive = (stock.change ?? 0) >= 0;
+  const verdict  = getVerdict(scores);
   return (
     <div
       className={`card ${positive ? "positive" : "negative"} ${selected ? "selected" : ""}`}
@@ -119,6 +181,18 @@ function StockCard({ stock, scores, chart, selected, onClick }) {
         <ChangeChip value={stock.changePercent} />
       </div>
       <div className="price">{stock.price ? `$${fmt(stock.price)}` : "—"}</div>
+
+      {/* Signal verdict badge */}
+      <div className="card-verdict" style={{ borderColor: verdict.color + "40", background: verdict.color + "12" }}>
+        <span className="card-verdict-grade" style={{ color: verdict.color }}>{verdict.grade}</span>
+        <span className="card-verdict-label" style={{ color: verdict.color }}>{verdict.label}</span>
+        {scores?.signal != null && (
+          <span className="card-verdict-sig" style={{ color: verdict.color }}>
+            {scores.signal}<span style={{ fontSize: "0.7em", opacity: 0.6 }}>/100</span>
+          </span>
+        )}
+      </div>
+
       <div className="sparkline-wrap">
         <Sparkline bars={chart} ticker={stock.symbol} />
       </div>
@@ -140,9 +214,9 @@ function StockCard({ stock, scores, chart, selected, onClick }) {
       </div>
 
       <div className="score-section">
-        <ScoreBar label="MOM"  value={scores?.momentum}  invert={false} />
-        <ScoreBar label="RISK" value={scores?.risk}       invert={true}  />
-        <ScoreBar label="TECH" value={scores?.techValue}  invert={false} />
+        <ScoreBar label="MOM"  value={scores?.momentum} />
+        <ScoreBar label="RISK" value={scores?.risk}      />
+        <ScoreBar label="TECH" value={scores?.techValue} />
       </div>
     </div>
   );
@@ -155,8 +229,8 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
   if (selected) {
     const s      = scoresMap[selected.symbol] || {};
     const risk   = s.risk ?? null;
-    const rColor = scoreColor(risk, true);
-    const rLabel = risk == null ? "—" : risk >= 65 ? "HIGH" : risk >= 40 ? "ELEVATED" : "LOW";
+    const rColor = scoreColor(risk);
+    const rLabel = riskLabel(risk);
 
     return (
       <section className="panel">
@@ -173,7 +247,7 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
             </span>
           </div>
           <div className="risk-stat">
-            <span className="risk-stat-label">Rating</span>
+            <span className="risk-stat-label">Safety Rating</span>
             <span className="risk-stat-value" style={{ color: rColor }}>{rLabel}</span>
           </div>
           <div className="risk-stat">
@@ -185,15 +259,15 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
           <div className="risk-stat">
             <span className="risk-stat-label">Tech Value</span>
             <span className="risk-stat-value" style={{ color: scoreColor(s.techValue) }}>
-              {s.techValue ?? (s.hasFundamentals === false ? "No FMP" : "—")}
+              {s.techValue ?? (s.hasFundamentals === false ? "—" : "—")}
             </span>
           </div>
         </div>
 
         <div className="risk-bars">
-          <ScoreBar label="Risk Score"   value={risk}          invert={true}  />
-          <ScoreBar label="Momentum"     value={s.momentum}    invert={false} />
-          <ScoreBar label="Tech Value"   value={s.techValue}   invert={false} />
+          <ScoreBar label="Risk Score"   value={risk}       />
+          <ScoreBar label="Momentum"     value={s.momentum} />
+          <ScoreBar label="Tech Value"   value={s.techValue}/>
         </div>
 
       </section>
@@ -206,8 +280,8 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
     .sort((a, b) => (b.risk ?? 0) - (a.risk ?? 0));
 
   const avgRisk  = rows.filter((r) => r.risk != null).reduce((s, r) => s + r.risk, 0) / (rows.filter((r) => r.risk != null).length || 1);
-  const highRisk = rows.filter((r) => (r.risk ?? 0) >= 65).length;
-  const rColor   = scoreColor(Math.round(avgRisk), true);
+  const highRisk = rows.filter((r) => (r.risk ?? 100) < 40).length; // count genuinely risky (low score) stocks
+  const rColor   = scoreColor(Math.round(avgRisk));
 
   return (
     <section className="panel">
@@ -222,7 +296,7 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
           <span className="risk-stat-value" style={{ color: rColor }}>{Math.round(avgRisk)}</span>
         </div>
         <div className="risk-stat">
-          <span className="risk-stat-label">High-Risk Assets</span>
+          <span className="risk-stat-label">Risky Assets</span>
           <span className="risk-stat-value" style={{ color: highRisk > 0 ? "#ff3c50" : "#00dc82" }}>
             {highRisk} / {rows.length}
           </span>
@@ -255,8 +329,8 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
                 }}
               />
             </div>
-            <span className="risk-level" style={{ color: scoreColor(r.risk, true) }}>
-              {r.risk != null ? (r.risk >= 65 ? "HIGH" : r.risk >= 40 ? "ELEV" : "LOW") : "—"}
+            <span className="risk-level" style={{ color: scoreColor(r.risk) }}>
+              {r.risk != null ? (r.risk >= 65 ? "SAFE" : r.risk >= 40 ? "MOD" : "RISK") : "—"}
             </span>
             <span className="risk-pct">{r.risk ?? "—"}</span>
           </div>
@@ -275,50 +349,62 @@ function FinancialIntelligence({ stocks, scoresMap, selected }) {
     const sc  = scoresMap[s.symbol] || {};
     const positive = (s.change ?? 0) >= 0;
 
-    const momLabel  = sc.momentum  != null ? (sc.momentum  >= 65 ? "STRONG" : sc.momentum  >= 40 ? "MODERATE" : "WEAK") : null;
-    const techLabel = sc.techValue != null ? (sc.techValue >= 65 ? "STRONG" : sc.techValue >= 40 ? "FAIR"     : "WEAK") : null;
-    const pctAbs    = Math.abs(s.changePercent ?? 0);
+    const verdict  = getVerdict(sc);
+    const pctAbs   = Math.abs(s.changePercent ?? 0);
 
     const insights = [
-      sc.momentum  != null && `Momentum score of ${sc.momentum}/100 — ${momLabel} signal. ${sc.momentum >= 65 ? "Price trend and volume confirm bullish continuation." : sc.momentum >= 40 ? "Mixed signals — no clear directional conviction." : "Weak trend — price below key moving averages."}`,
-      sc.risk      != null && `Risk score of ${sc.risk}/100 — ${sc.risk >= 65 ? "elevated exposure, consider position sizing carefully." : sc.risk >= 40 ? "moderate risk profile, within normal range." : "low risk profile, strong balance sheet fundamentals."}`,
-      sc.techValue != null && `Tech Value score of ${sc.techValue}/100 — ${techLabel} moat. ${sc.techValue >= 65 ? "High R&D intensity and gross margins signal durable competitive advantage." : sc.techValue >= 40 ? "Average innovation profile relative to sector." : "Limited R&D investment and margin compression detected."}`,
-      !sc.hasFundamentals && `Full fundamental scores unavailable — add FMP_API_KEY to unlock Risk and Tech Value depth.`,
-      `${s.symbol} ${positive ? "gained" : "lost"} ${fmt(pctAbs)}% this session from a previous close of $${fmt(s.prevClose)}.`,
+      sc.momentum  != null && `Momentum ${sc.momentum}/100 — ${momLabel(sc.momentum)}. ${sc.momentum >= 65 ? "Price trend and volume confirm bullish continuation." : sc.momentum >= 40 ? "Mixed signals — no clear directional conviction yet." : "Weak trend — price is below key moving averages."}`,
+      sc.risk      != null && `Risk ${sc.risk}/100 — ${riskLabel(sc.risk)}. ${sc.risk >= 65 ? "Strong balance sheet with manageable debt and healthy liquidity." : sc.risk >= 40 ? "Moderate risk profile — within normal range for this sector." : "Elevated balance sheet risk — high debt or low liquidity detected."}`,
+      sc.techValue != null && `Tech Value ${sc.techValue}/100 — ${techLabel(sc.techValue)}. ${sc.techValue >= 65 ? "High R&D intensity and gross margins signal durable competitive advantage." : sc.techValue >= 40 ? "Average innovation profile relative to sector peers." : "Limited R&D investment and margin compression detected."}`,
+      `${s.symbol} ${positive ? "gained" : "lost"} ${fmt(pctAbs)}% today from a previous close of $${fmt(s.prevClose)}.`,
     ].filter(Boolean);
 
     return (
       <section className="panel">
         <div className="panel-header">
-          <div className="panel-eyebrow">AI-Powered Insights · {s.symbol}</div>
+          <div className="panel-eyebrow">Signal · {s.symbol}</div>
           <h2 className="panel-title">Financial Intelligence</h2>
+        </div>
+
+        {/* Verdict block */}
+        <div className="fi-verdict" style={{ borderColor: verdict.color + "35", background: verdict.color + "0e" }}>
+          <div className="fi-verdict-left">
+            <div className="fi-verdict-grade" style={{ color: verdict.color, borderColor: verdict.color + "50" }}>
+              {verdict.grade}
+            </div>
+            <div>
+              <div className="fi-verdict-label" style={{ color: verdict.color }}>{verdict.label}</div>
+              {sc.signal != null && (
+                <div className="fi-verdict-sig" style={{ color: verdict.color }}>
+                  Signal score: <strong>{sc.signal}</strong>/100
+                </div>
+              )}
+            </div>
+          </div>
+          <p className="fi-verdict-summary">{verdict.summary}</p>
         </div>
 
         <div className="fi-grid">
           <div className="fi-stat-group">
             <div className="fi-stat">
               <span className="fi-stat-label">Momentum</span>
-              <span className="fi-stat-value" style={{ color: scoreColor(sc.momentum) }}>
-                {sc.momentum ?? "—"}
-              </span>
+              <span className="fi-stat-value" style={{ color: scoreColor(sc.momentum) }}>{sc.momentum ?? "—"}</span>
+              <span className="fi-stat-sub" style={{ color: scoreColor(sc.momentum) }}>{momLabel(sc.momentum)}</span>
             </div>
             <div className="fi-stat">
               <span className="fi-stat-label">Risk</span>
-              <span className="fi-stat-value" style={{ color: scoreColor(sc.risk, true) }}>
-                {sc.risk ?? "—"}
-              </span>
+              <span className="fi-stat-value" style={{ color: scoreColor(sc.risk) }}>{sc.risk ?? "—"}</span>
+              <span className="fi-stat-sub" style={{ color: scoreColor(sc.risk) }}>{riskLabel(sc.risk)}</span>
             </div>
             <div className="fi-stat">
               <span className="fi-stat-label">Tech Value</span>
-              <span className="fi-stat-value" style={{ color: scoreColor(sc.techValue) }}>
-                {sc.techValue ?? "—"}
-              </span>
+              <span className="fi-stat-value" style={{ color: scoreColor(sc.techValue) }}>{sc.techValue ?? "—"}</span>
+              <span className="fi-stat-sub" style={{ color: scoreColor(sc.techValue) }}>{techLabel(sc.techValue)}</span>
             </div>
             <div className="fi-stat">
               <span className="fi-stat-label">Direction</span>
-              <span className="fi-stat-value" style={{ color: positive ? "#00dc82" : "#ff3c50" }}>
-                {positive ? "BULLISH" : "BEARISH"}
-              </span>
+              <span className="fi-stat-value" style={{ color: positive ? "#00dc82" : "#ff3c50" }}>{positive ? "BULLISH" : "BEARISH"}</span>
+              <span className="fi-stat-sub">{positive ? "▲" : "▼"} {fmt(pctAbs)}%</span>
             </div>
           </div>
 
