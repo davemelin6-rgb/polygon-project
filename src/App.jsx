@@ -14,6 +14,7 @@ import DailyBrief        from "./DailyBrief.jsx";
 import ContactModal      from "./ContactModal.jsx";
 import AnalystPanel      from "./AnalystPanel.jsx";
 import InsiderFeed       from "./InsiderFeed.jsx";
+import TraderMatch       from "./TraderMatch.jsx";
 
 const SECTORS = [
   {
@@ -686,6 +687,7 @@ export default function App({ session, onLogout, onAdmin }) {
       )}
       <Hugo />
       <Chat session={session} />
+      <TraderMatch session={session} />
       {showSettings && (
         <Settings
           session={session}

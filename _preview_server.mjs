@@ -24,6 +24,7 @@ const { default: adminHandler }      = await import("./api/admin.js");
 const { default: contactHandler }    = await import("./api/contact.js");
 const { default: analystHandler }    = await import("./api/analyst.js");
 const { default: insiderHandler }    = await import("./api/insider.js");
+const { default: matchHandler }      = await import("./api/match.js");
 
 const server = http.createServer((req, res) => {
   const url   = new URL(req.url, "http://localhost:3456");
@@ -65,6 +66,14 @@ const server = http.createServer((req, res) => {
     analystHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/insider") {
     insiderHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/match") {
+    if (req.method === "POST") {
+      let raw = "";
+      req.on("data", c => raw += c);
+      req.on("end", () => dispatch(matchHandler, raw));
+    } else {
+      matchHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
+    }
   } else if (url.pathname === "/api/contact") {
     let raw = "";
     req.on("data", c => raw += c);

@@ -13,18 +13,30 @@ const AVATAR_COLORS = [
   "#ff3c50", "#e67e22", "#e91e8c", "#06b6d4",
 ];
 
+const TRADING_INTEREST_OPTIONS = [
+  { id: "ai",       label: "AI & Machine Learning", icon: "🧠" },
+  { id: "quantum",  label: "Quantum Computing",      icon: "⚛️" },
+  { id: "defence",  label: "Defence & Space",        icon: "🛡️" },
+  { id: "biotech",  label: "Biotech & MedTech",      icon: "🧬" },
+];
+
 export default function Settings({ session, profile, settings, onSave, onClose }) {
-  const [brightness,      setBrightness]      = useState(settings.brightness      || "dark");
-  const [accent,          setAccent]          = useState(settings.accent          || "blue");
-  const [avatarColor,     setAvatarColor]     = useState(settings.avatarColor     || profile?.avatar_color || "#00b4ff");
-  const [defaultTickers,  setDefaultTickers]  = useState(settings.defaultTickers  || "AAPL,MSFT,NVDA,GOOGL,AMZN");
-  const [saving,          setSaving]          = useState(false);
+  const [brightness,       setBrightness]      = useState(settings.brightness      || "dark");
+  const [accent,           setAccent]          = useState(settings.accent          || "blue");
+  const [avatarColor,      setAvatarColor]     = useState(settings.avatarColor     || profile?.avatar_color || "#00b4ff");
+  const [defaultTickers,   setDefaultTickers]  = useState(settings.defaultTickers  || "AAPL,MSFT,NVDA,GOOGL,AMZN");
+  const [interests,        setInterests]       = useState(profile?.trading_interests || []);
+  const [saving,           setSaving]          = useState(false);
+
+  function toggleInterest(id) {
+    setInterests(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
+  }
 
   async function handleSave() {
     setSaving(true);
     const newSettings = { brightness, accent, avatarColor, defaultTickers };
     await supabase.from("profiles")
-      .update({ settings: newSettings, avatar_color: avatarColor })
+      .update({ settings: newSettings, avatar_color: avatarColor, trading_interests: interests })
       .eq("id", session.user.id);
     onSave(newSettings, avatarColor);
     setSaving(false);
@@ -105,6 +117,23 @@ export default function Settings({ session, profile, settings, onSave, onClose }
               onChange={e => setDefaultTickers(e.target.value.toUpperCase())}
               placeholder="AAPL,MSFT,NVDA,GOOGL,AMZN"
             />
+          </div>
+
+          {/* Trading interests */}
+          <div className="settings-section">
+            <p className="settings-label">Trading Interests</p>
+            <p className="settings-hint">Used to match you with traders who share your focus</p>
+            <div className="settings-interests">
+              {TRADING_INTEREST_OPTIONS.map(opt => (
+                <button
+                  key={opt.id}
+                  className={`settings-interest-btn ${interests.includes(opt.id) ? "active" : ""}`}
+                  onClick={() => toggleInterest(opt.id)}
+                >
+                  {opt.icon} {opt.label}
+                </button>
+              ))}
+            </div>
           </div>
 
         </div>
