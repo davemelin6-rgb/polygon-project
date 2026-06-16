@@ -52,11 +52,8 @@ export default function NewsFeed({ tickers, session }) {
         {news.map((item, i) => {
           const color = colorMap[item.symbol] || "#8FA0C4";
           return (
-            <a
+            <div
               key={i}
-              href={item.url}
-              target="_blank"
-              rel="noopener noreferrer"
               className="nf-item"
             >
               <div className="nf-item-left">
@@ -80,7 +77,7 @@ export default function NewsFeed({ tickers, session }) {
                   onError={e => { e.target.style.display = "none"; }}
                 />
               )}
-            </a>
+            </div>
           );
         })}
       </div>
