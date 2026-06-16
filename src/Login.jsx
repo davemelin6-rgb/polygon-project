@@ -13,7 +13,7 @@ const PLANS = [
     features: [
       "Morning brief at 08:00 · Stockholm",
       "US market preview at 15:00",
-      "David Score leaderboard — 6 dimensions",
+      "QuantDiver Score leaderboard — 6 dimensions",
       "Sector signals & momentum indicators",
     ],
   },

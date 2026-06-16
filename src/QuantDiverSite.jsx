@@ -94,7 +94,7 @@ function ProductCard({ name, ticker, sub, score, color, dims, rotate = 0, opacit
 
       {/* main score */}
       <div style={{ height: 1, background: "rgba(90,130,200,.12)", marginBottom: 16 }} />
-      <div style={{ fontSize: ".6rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.dim, marginBottom: 8 }}>David Score</div>
+      <div style={{ fontSize: ".6rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.dim, marginBottom: 8 }}>QuantDiver Score</div>
       <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
         <div style={{ flex: 1, height: 7, background: "rgba(90,130,200,.1)", borderRadius: 4, overflow: "hidden" }}>
           <div style={{ width: `${score}%`, height: "100%", background: `linear-gradient(90deg, ${color}, ${color}88)`, borderRadius: 4 }} />
@@ -223,7 +223,7 @@ function HomePage({ go, onEnterApp }) {
           <div style={{ marginBottom: 56 }}>
             <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>Our methodology · Our scores</div>
             <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-.02em", margin: 0 }}>
-              The David Score leaderboard
+              The QuantDiver Score leaderboard
             </h2>
             <p style={{ color: T.sub, marginTop: 14, maxWidth: "38rem", lineHeight: 1.6, fontFamily: ff.body, fontSize: ".95rem" }}>
               Every company scored 0–100 across six dimensions. Our numbers, our methodology — updated after every report.
@@ -345,7 +345,7 @@ function HomePage({ go, onEnterApp }) {
             <ul style={{ listStyle: "none", margin: "0 0 32px", padding: 0, textAlign: "left" }}>
               {[
                 "Morning brief (08:00) + US preview (15:00) every trading day",
-                "Full David Score leaderboard with all six dimensions",
+                "Full QuantDiver Score leaderboard with all six dimensions",
                 "Sector momentum, hype, and contract-flow signals",
                 "Earnings-week calendar and watch notes",
                 "Cancel anytime — no lock-in, no commitment",
@@ -766,7 +766,7 @@ function BriefMePage({ onEnterApp }) {
         <div className="qd-wrap">
           <div style={{ marginBottom: 52 }}>
             <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>Our methodology · Our scores</div>
-            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 14px" }}>The David Score</h2>
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 14px" }}>The QuantDiver Score</h2>
             <p style={{ color: T.sub, maxWidth: "42rem", lineHeight: 1.6, fontFamily: ff.body, fontSize: ".95rem" }}>
               Every company we cover is scored 0–100 across six fundamentals: cash runway, dilution risk, revenue growth, gross margin, insider ownership, and valuation. Updated after every report.
             </p>
@@ -821,7 +821,7 @@ function BriefMePage({ onEnterApp }) {
             boxShadow: "0 0 80px rgba(59,130,246,.12), 0 40px 80px rgba(0,0,0,.4)",
           }}>
             <ul style={{ listStyle: "none", margin: "0 0 32px", padding: 0, textAlign: "left" }}>
-              {["Morning brief (08:00) + US preview (15:00) every trading day","Full David Score leaderboard with all six dimensions","Sector momentum, hype, and contract-flow signals","Earnings-week calendar and watch notes","Cancel anytime — no lock-in, no commitment"].map((li, i, arr) => (
+              {["Morning brief (08:00) + US preview (15:00) every trading day","Full QuantDiver Score leaderboard with all six dimensions","Sector momentum, hype, and contract-flow signals","Earnings-week calendar and watch notes","Cancel anytime — no lock-in, no commitment"].map((li, i, arr) => (
                 <li key={i} style={{ padding: "11px 0", display: "flex", gap: 12, alignItems: "flex-start", borderBottom: i < arr.length - 1 ? `1px solid ${T.border}` : "none", fontFamily: ff.body, fontSize: ".93rem", color: "#B8C8E4", lineHeight: 1.4 }}>
                   <span style={{ color: T.cyan, fontSize: ".75rem", paddingTop: 2, flexShrink: 0 }}>✓</span>{li}
                 </li>
