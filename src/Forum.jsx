@@ -341,6 +341,10 @@ export default function Forum({ session, onClose }) {
             <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontWeight: 700, fontSize: ".82rem", color: "#f59e0b", lineHeight: 1.5, maxWidth: 150, margin: "0 auto", fontStyle: "italic" }}>
               "Not talking about money is the first step to losing money."
             </p>
+            <p style={{ fontFamily: "'Space Grotesk', sans-serif", fontSize: ".72rem", fontWeight: 600, color: "#4a6a88", margin: "0.5rem auto 0", maxWidth: 150, textAlign: "center", letterSpacing: "0.04em" }}>
+              Albin Matsson<br />
+              <span style={{ color: "#2a4060", fontWeight: 500 }}>Co-founder, QuantDiver</span>
+            </p>
           </div>
           <div>
             <div className="forum-eyebrow">QuantDiver Community</div>
