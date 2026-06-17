@@ -158,28 +158,19 @@ function HomePage({ go, onEnterApp }) {
               fontFamily: ff.display, fontSize: "clamp(2.8rem,5.2vw,4.6rem)",
               lineHeight: 1.03, fontWeight: 800, letterSpacing: "-.035em", margin: 0,
             }}>
-              Intelligence<br />
-              that moves<br />
+              Judge us on<br />
+              our models.<br />
               <span style={{
                 background: `linear-gradient(100deg, ${T.cyan} 0%, #60A5FA 50%, #818CF8 100%)`,
                 WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent",
-              }}>markets.</span>
+              }}>Not on future promises.</span>
             </h1>
 
             <p style={{
-              margin: "24px 0 12px", fontSize: "1.08rem", color: T.sub,
+              margin: "24px 0 36px", fontSize: "1.08rem", color: T.sub,
               maxWidth: "30rem", lineHeight: 1.65, fontFamily: ff.body,
             }}>
               Proprietary stock scores across MOMENTUM, RISK, and TECH VALUE — validated weekly against real historical outcomes.
-            </p>
-
-            <p style={{
-              margin: "0 0 36px", fontSize: "1.15rem", fontWeight: 700,
-              color: T.ink, maxWidth: "30rem", lineHeight: 1.5, fontFamily: ff.display,
-              letterSpacing: "-.01em",
-            }}>
-              Judge us on our models.<br />
-              <span style={{ color: T.cyan }}>Not on future promises.</span>
             </p>
 
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
