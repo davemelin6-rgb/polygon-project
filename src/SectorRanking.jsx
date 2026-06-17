@@ -59,7 +59,19 @@ export default function SectorRanking({ stock, session }) {
       .finally(() => setLoading(false));
   }, [stock?.symbol, sector, session]);
 
-  if (!sector || loading || !data) return null;
+  if (!sector) return null;
+  if (loading) return (
+    <section className="panel" style={{ marginTop: "1.25rem" }}>
+      <div className="panel-eyebrow">Sector Analysis</div>
+      <p style={{ color: "#2a4060", fontSize: ".85rem", marginTop: "1rem" }}>Loading peer data…</p>
+    </section>
+  );
+  if (!data) return (
+    <section className="panel" style={{ marginTop: "1.25rem" }}>
+      <div className="panel-eyebrow">Sector Analysis</div>
+      <p style={{ color: "#ff3c50", fontSize: ".85rem", marginTop: "1rem" }}>Could not load sector data — check API or auth.</p>
+    </section>
+  );
 
   const me      = data.tickers?.find(t => t.symbol === stock.symbol);
   const peers   = data.tickers?.filter(t => t.symbol !== stock.symbol) || [];
