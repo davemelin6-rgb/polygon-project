@@ -167,10 +167,19 @@ function HomePage({ go, onEnterApp }) {
             </h1>
 
             <p style={{
-              margin: "24px 0 36px", fontSize: "1.08rem", color: T.sub,
+              margin: "24px 0 12px", fontSize: "1.08rem", color: T.sub,
               maxWidth: "30rem", lineHeight: 1.65, fontFamily: ff.body,
             }}>
-              Proprietary stock scores across six fundamentals — runway, growth, margins, dilution, insiders, valuation. AI-curated briefs on the sectors shaping the next decade.
+              Proprietary stock scores across MOMENTUM, RISK, and TECH VALUE — validated weekly against real historical outcomes.
+            </p>
+
+            <p style={{
+              margin: "0 0 36px", fontSize: "1.15rem", fontWeight: 700,
+              color: T.ink, maxWidth: "30rem", lineHeight: 1.5, fontFamily: ff.display,
+              letterSpacing: "-.01em",
+            }}>
+              Grade us on our models.<br />
+              <span style={{ color: T.cyan }}>Not on our promises.</span>
             </p>
 
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>

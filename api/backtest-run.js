@@ -37,6 +37,25 @@ export default async function handler(req, res) {
       const aggs = await fetchAggregates(ticker, polygonKey, 400);
       if (!aggs || aggs.length < 120) return;
 
+      // Only include stocks with solid fundamentals (RISK > 50)
+      // Bad balance sheets pollute the momentum signal
+      const currentRisk = await (async () => {
+        try {
+          const { fetchFundamentals } = await import("../lib/fetchFMP.js");
+          const { calcRisk } = await import("../lib/formulas.js");
+          const [agg, fund] = await Promise.all([
+            Promise.resolve(aggs),
+            fetchFundamentals(ticker, process.env.FMP_API_KEY),
+          ]);
+          return calcRisk({ aggs: agg, fundamentals: fund });
+        } catch { return null; }
+      })();
+
+      if (currentRisk !== null && currentRisk < 50) {
+        console.log(`Skipping ${ticker} — RISK score ${currentRisk} below threshold`);
+        return;
+      }
+
       // Step back weekly (5 trading days) for up to 24 weeks
       for (let weeksBack = 4; weeksBack <= 24; weeksBack++) {
         const cutoff = aggs.length - (weeksBack * 5);
