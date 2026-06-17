@@ -16,6 +16,7 @@ import AnalystPanel      from "./AnalystPanel.jsx";
 import InsiderFeed       from "./InsiderFeed.jsx";
 import TraderMatch       from "./TraderMatch.jsx";
 import ScoreHistory      from "./ScoreHistory.jsx";
+import SectorRanking     from "./SectorRanking.jsx";
 
 const SECTORS = [
   {
@@ -783,6 +784,7 @@ export default function App({ session, onLogout, onAdmin }) {
       {selected && <PriceChart            stock={selected} session={session} />}
       {selected && <TechnicalSignals      stock={selected} session={session} />}
       {selected && <FinancialIntelligence stocks={stocks} scoresMap={scoresMap} selected={selected} />}
+      {selected && <SectorRanking          stock={selected} session={session} />}
       {selected && <ScoreHistory          stock={selected} session={session} />}
       {selected && <AnalystPanel          stock={selected} session={session} />}
       {selected && <InsiderFeed           stock={selected} session={session} />}

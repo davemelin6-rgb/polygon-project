@@ -27,6 +27,7 @@ const { default: insiderHandler }    = await import("./api/insider.js");
 const { default: matchHandler }         = await import("./api/match.js");
 const { default: unsubscribeHandler }   = await import("./api/briefme-unsubscribe.js");
 const { default: backtestHandler }      = await import("./api/backtest-run.js");
+const { default: sectorScoresHandler }  = await import("./api/sector-scores.js");
 const { default: contributorHandler }   = await import("./api/contributor-apply.js");
 const { default: scoreHistoryHandler }  = await import("./api/score-history.js");
 
@@ -90,6 +91,8 @@ const server = http.createServer((req, res) => {
     } else {
       adminHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
     }
+  } else if (url.pathname === "/api/sector-scores") {
+    sectorScoresHandler(fakeReq, fakeRes).catch(err => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/backtest-run") {
     backtestHandler(fakeReq, fakeRes).catch(err => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/briefme-unsubscribe") {
