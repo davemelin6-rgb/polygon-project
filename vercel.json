@@ -10,6 +10,10 @@
     {
       "path": "/api/briefme-send?type=us",
       "schedule": "0 13 * * 1-5"
+    },
+    {
+      "path": "/api/backtest-run",
+      "schedule": "0 2 * * 0"
     }
   ],
   "headers": [
