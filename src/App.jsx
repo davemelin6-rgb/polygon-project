@@ -806,9 +806,29 @@ export default function App({ session, onLogout, onAdmin }) {
       )}
 
       <footer className="app-footer">
-        QuantDiver provides data and proprietary scores for informational purposes only.
-        Nothing on this platform constitutes financial advice.
-        Always conduct your own research before making any investment decision.
+        <p style={{ marginBottom: "1.25rem" }}>
+          QuantDiver provides data and proprietary scores for informational purposes only.
+          Nothing on this platform constitutes financial advice.
+          Always conduct your own research before making any investment decision.
+        </p>
+        <div style={{
+          borderTop: "1px solid rgba(255,255,255,0.05)",
+          paddingTop: "1.25rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "0.6rem",
+        }}>
+          <p style={{ color: "#2a4060", fontSize: "0.78rem", letterSpacing: "0.06em" }}>
+            Want to join QuantDiver as a contributor? Send us an email and tell us about yourself —
+            we will guide you through the next steps.{" "}
+            <a href="mailto:hello@quantdiver.com" style={{ color: "#00b4ff", textDecoration: "none" }}>
+              hello@quantdiver.com
+            </a>
+          </p>
+          <p style={{ color: "#1a3050", fontSize: "0.72rem", letterSpacing: "0.08em" }}>
+            © {new Date().getFullYear()} QuantDiver. All rights reserved.
+          </p>
+        </div>
       </footer>
     </div>
   );
