@@ -145,7 +145,7 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
                           padding: "2px 7px",
                           verticalAlign: "middle",
                         }}>
-                          ★ Top Pick
+                          ★ QuantDiver Top Rank
                         </span>
                       )}
                     </span>
