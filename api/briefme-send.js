@@ -97,122 +97,147 @@ function buildEmail(type, data, dateStr) {
   const { sectors, allMovers, events, earnings } = data;
   const ismorning = type === "morning";
 
-  const subjectDate = new Date().toLocaleDateString("en-SE", { weekday: "long", day: "numeric", month: "long" });
+  const now = new Date();
+  const subjectDate = now.toLocaleDateString("en-SE", { weekday: "long", day: "numeric", month: "long" });
+  const dateShort   = now.toLocaleDateString("en-SE", { day: "numeric", month: "long", year: "numeric" });
   const subject = ismorning
     ? `☀️ Morning Brief · ${subjectDate}`
     : `🇺🇸 US Market Preview · ${subjectDate}`;
 
-  // Top movers table rows
+  const titleEmoji = ismorning ? "☀️" : "🇺🇸";
+  const titleText  = ismorning ? "Morning Brief" : "US Market Preview";
+  const intro      = ismorning
+    ? "The biggest movers, macro events, and upcoming earnings — before the market opens."
+    : "Pre-market signals across AI, Quantum, Defence and Biotech — 30 minutes before Wall Street opens.";
+
+  // Top movers rows
   const moverRows = allMovers.map(m => `
     <tr>
-      <td style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:700;color:#c8d8e8;">${m.symbol}</td>
-      <td style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-family:'Courier New',monospace;font-size:13px;color:#6a8aaa;text-align:right;">$${fmt(m.price)}</td>
-      <td style="padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:${color(m.changePercent)};text-align:right;">${arrow(m.changePercent)} ${sign(m.changePercent)}${fmt(m.changePercent)}%</td>
+      <td style="padding:11px 0;border-bottom:1px solid #0f1e36;font-family:Georgia,serif;font-size:15px;font-weight:700;color:#e8f0fa;">${m.symbol}</td>
+      <td style="padding:11px 0;border-bottom:1px solid #0f1e36;font-family:'Courier New',monospace;font-size:13px;color:#4a6a88;text-align:center;">$${fmt(m.price)}</td>
+      <td style="padding:11px 0;border-bottom:1px solid #0f1e36;font-family:'Courier New',monospace;font-size:14px;font-weight:700;color:${color(m.changePercent)};text-align:right;">${arrow(m.changePercent)} ${sign(m.changePercent)}${fmt(m.changePercent)}%</td>
     </tr>`).join("");
 
-  // Sector blocks
-  const sectorBlocks = sectors.filter(s => s.movers.length > 0).map(s => `
-    <tr><td style="padding:0 0 16px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:#445268;margin-bottom:8px;">${s.icon} ${s.name}</div>
-      ${s.movers.map(m => `
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04);">
-          <span style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:13px;font-weight:700;color:#c8d8e8;">${m.symbol}</span>
-          <span style="font-family:'Courier New',monospace;font-size:12px;font-weight:700;color:${color(m.changePercent)};">${sign(m.changePercent)}${fmt(m.changePercent)}%</span>
-        </div>`).join("")}
-    </td></tr>`).join("");
+  // Sector blocks — 2 per row using nested table
+  const sectorPairs = [];
+  const filtered = sectors.filter(s => s.movers.length > 0);
+  for (let i = 0; i < filtered.length; i += 2) sectorPairs.push(filtered.slice(i, i + 2));
+
+  const sectorGrid = sectorPairs.map(pair => `
+    <tr>
+      ${pair.map(s => `
+        <td width="50%" valign="top" style="padding:0 8px 16px 0;">
+          <div style="background:#060c18;border:1px solid #0f1e36;border-radius:10px;padding:16px 18px;">
+            <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#2a4060;margin-bottom:12px;">${s.icon} ${s.name}</div>
+            ${s.movers.map(m => `
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:6px;">
+                <tr>
+                  <td style="font-family:Georgia,serif;font-size:14px;font-weight:700;color:#c8d8e8;">${m.symbol}</td>
+                  <td align="right" style="font-family:'Courier New',monospace;font-size:13px;font-weight:700;color:${color(m.changePercent)};">${sign(m.changePercent)}${fmt(m.changePercent)}%</td>
+                </tr>
+                <tr><td colspan="2" style="font-family:'Courier New',monospace;font-size:11px;color:#2a4060;padding-bottom:6px;border-bottom:1px solid #0a1428;">$${fmt(m.price)}</td></tr>
+              </table>`).join("")}
+          </div>
+        </td>`).join("")}
+      ${pair.length === 1 ? `<td width="50%"></td>` : ""}
+    </tr>`).join("");
 
   // Events
   const eventsHtml = events.length ? events.map(e => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;color:#445268;white-space:nowrap;">${e.flag} ${e.time || ""}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:#c8d8e8;">${e.event}</td>
-      <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:11px;font-weight:700;color:${e.impact === "High" ? "#ff3c50" : "#f59e0b"};text-align:right;white-space:nowrap;">${e.impact}</td>
+      <td style="padding:9px 0;border-bottom:1px solid #0f1e36;font-size:13px;color:#4a6a88;white-space:nowrap;">${e.flag}&nbsp;${e.time || ""}</td>
+      <td style="padding:9px 14px;border-bottom:1px solid #0f1e36;font-family:Georgia,serif;font-size:13px;color:#c8d8e8;">${e.event}</td>
+      <td style="padding:9px 0;border-bottom:1px solid #0f1e36;font-family:'Courier New',monospace;font-size:11px;font-weight:700;color:${e.impact === "High" ? "#ff3c50" : "#f59e0b"};text-align:right;white-space:nowrap;">${e.impact.toUpperCase()}</td>
     </tr>`).join("")
-    : `<tr><td colspan="3" style="padding:12px 0;font-size:13px;color:#445268;">No high-impact events today.</td></tr>`;
+    : `<tr><td colspan="3" style="padding:14px 0;font-size:13px;color:#2a4060;">No high-impact events today.</td></tr>`;
 
   // Earnings
   const earningsHtml = earnings.length ? earnings.map(e => `
     <tr>
-      <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:14px;font-weight:700;color:#c8d8e8;">${e.symbol}</td>
-      <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:#6a8aaa;">${e.date}</td>
-      <td style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:12px;color:#445268;text-align:right;">${e.epsEst != null ? "EPS est. $" + fmt(e.epsEst) : "—"}</td>
+      <td style="padding:9px 0;border-bottom:1px solid #0f1e36;font-family:Georgia,serif;font-size:15px;font-weight:700;color:#e8f0fa;">${e.symbol}</td>
+      <td style="padding:9px 0;border-bottom:1px solid #0f1e36;font-family:'Courier New',monospace;font-size:12px;color:#4a6a88;">${e.date}</td>
+      <td style="padding:9px 0;border-bottom:1px solid #0f1e36;font-family:'Courier New',monospace;font-size:12px;color:#2a4060;text-align:right;">${e.epsEst != null ? "EPS est. $" + fmt(e.epsEst) : "—"}</td>
     </tr>`).join("")
-    : `<tr><td colspan="3" style="padding:12px 0;font-size:13px;color:#445268;">No tracked earnings this week.</td></tr>`;
+    : `<tr><td colspan="3" style="padding:14px 0;font-size:13px;color:#2a4060;">No tracked earnings this week.</td></tr>`;
 
   const html = `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/></head>
-<body style="margin:0;padding:0;background:#070d16;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#070d16;padding:40px 16px;">
-<tr><td align="center">
-<table width="580" cellpadding="0" cellspacing="0" style="max-width:580px;width:100%;">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>${subject}</title>
+</head>
+<body style="margin:0;padding:0;background:#040810;">
 
-  <!-- Header -->
-  <tr><td style="padding-bottom:28px;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:18px;font-weight:700;letter-spacing:-0.02em;color:#ffffff;">QuantDiver</td>
-        <td align="right" style="font-family:'Courier New',monospace;font-size:10px;color:#445268;letter-spacing:0.12em;text-transform:uppercase;">${ismorning ? "Morning Brief" : "US Market Preview"}</td>
-      </tr>
-    </table>
-    <div style="height:1px;background:linear-gradient(90deg,rgba(0,180,255,0.5),transparent);margin-top:14px;"></div>
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#040810;padding:0;">
+<tr><td align="center" style="padding:0;">
+
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;">
+
+  <!-- Top bar -->
+  <tr><td style="background:#040810;padding:24px 32px 0;">
+    <table width="100%" cellpadding="0" cellspacing="0"><tr>
+      <td style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#1a3050;">QUANTDIVER</td>
+      <td align="right" style="font-family:'Courier New',monospace;font-size:10px;color:#1a3050;letter-spacing:0.12em;text-transform:uppercase;">${dateShort}</td>
+    </tr></table>
   </td></tr>
 
-  <!-- Date + intro -->
-  <tr><td style="padding-bottom:28px;">
-    <div style="font-family:'Courier New',monospace;font-size:11px;color:#445268;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:10px;">${subjectDate}</div>
-    <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;color:#8a9ec0;line-height:1.6;">
-      ${ismorning
-        ? "Good morning. Here are the biggest movers, today's macro events, and upcoming earnings across your sectors."
-        : "US markets open in under 30 minutes. Here is what QuantDiver is tracking pre-market."}
-    </p>
+  <!-- Hero title block -->
+  <tr><td style="background:linear-gradient(180deg,#060f20 0%,#040810 100%);padding:36px 32px 32px;border-bottom:1px solid #0d1f38;">
+    <div style="font-family:'Courier New',monospace;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#00b4ff;margin-bottom:14px;">${titleEmoji} ${titleText}</div>
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:38px;font-weight:700;color:#ffffff;letter-spacing:-0.02em;line-height:1.1;margin-bottom:18px;">${ismorning ? "Good morning." : "Market opens soon."}</div>
+    <div style="font-family:Georgia,'Times New Roman',serif;font-size:16px;color:#6a8aaa;line-height:1.65;">${intro}</div>
   </td></tr>
 
-  <!-- Top movers -->
-  <tr><td style="padding-bottom:28px;">
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(90,130,200,0.15);border-radius:12px;padding:20px 22px;">
-      <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#00b4ff;margin-bottom:14px;">Top Movers Today</div>
+  <!-- Body -->
+  <tr><td style="background:#040810;padding:32px;">
+
+    <!-- Top movers -->
+    <div style="margin-bottom:32px;">
+      <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#00b4ff;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #0d1f38;">TOP MOVERS TODAY</div>
       <table width="100%" cellpadding="0" cellspacing="0">${moverRows}</table>
     </div>
-  </td></tr>
 
-  <!-- Sectors -->
-  <tr><td style="padding-bottom:28px;">
-    <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#445268;margin-bottom:16px;">By Sector</div>
-    <table width="100%" cellpadding="0" cellspacing="0">${sectorBlocks}</table>
-  </td></tr>
+    <!-- Sectors -->
+    <div style="margin-bottom:32px;">
+      <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#1a3050;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #0d1f38;">BY SECTOR</div>
+      <table width="100%" cellpadding="0" cellspacing="0">${sectorGrid}</table>
+    </div>
 
-  <!-- Macro events -->
-  <tr><td style="padding-bottom:28px;">
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(90,130,200,0.15);border-radius:12px;padding:20px 22px;">
-      <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#f59e0b;margin-bottom:14px;">Macro Events Today</div>
+    <!-- Macro events -->
+    <div style="margin-bottom:32px;">
+      <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#f59e0b;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #0d1f38;">MACRO EVENTS TODAY</div>
       <table width="100%" cellpadding="0" cellspacing="0">${eventsHtml}</table>
     </div>
-  </td></tr>
 
-  <!-- Earnings watch -->
-  <tr><td style="padding-bottom:32px;">
-    <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(90,130,200,0.15);border-radius:12px;padding:20px 22px;">
-      <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#8b5cf6;margin-bottom:14px;">Earnings Watch · Next 7 Days</div>
+    <!-- Earnings -->
+    <div style="margin-bottom:36px;">
+      <div style="font-family:'Courier New',monospace;font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:#8b5cf6;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #0d1f38;">EARNINGS WATCH · NEXT 7 DAYS</div>
       <table width="100%" cellpadding="0" cellspacing="0">${earningsHtml}</table>
     </div>
-  </td></tr>
 
-  <!-- CTA -->
-  <tr><td style="padding-bottom:32px;text-align:center;">
-    <a href="https://quantdiver.com" style="display:inline-block;background:linear-gradient(135deg,#0078dc,#0050aa);color:#ffffff;font-family:'Helvetica Neue',Arial,sans-serif;font-size:15px;font-weight:700;text-decoration:none;padding:14px 32px;border-radius:10px;letter-spacing:-0.01em;">Open QuantDiver →</a>
-    <div style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:12px;color:#2a3f55;margin-top:10px;">Live MOMENTUM · RISK · TECH VALUE scores inside</div>
-  </td></tr>
+    <!-- CTA -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:36px;">
+      <tr><td align="center" style="background:#060f20;border:1px solid #0d1f38;border-radius:12px;padding:28px;">
+        <div style="font-family:Georgia,serif;font-size:18px;font-weight:700;color:#ffffff;margin-bottom:6px;">Full scores are live.</div>
+        <div style="font-family:Georgia,serif;font-size:14px;color:#4a6a88;margin-bottom:20px;">MOMENTUM · RISK · TECH VALUE — updated every 60 seconds.</div>
+        <a href="https://quantdiver.com" style="display:inline-block;background:#0066cc;color:#ffffff;font-family:'Courier New',monospace;font-size:13px;font-weight:700;text-decoration:none;padding:13px 28px;border-radius:8px;letter-spacing:0.06em;text-transform:uppercase;">Open QuantDiver</a>
+      </td></tr>
+    </table>
 
-  <!-- Footer -->
-  <tr><td style="border-top:1px solid rgba(255,255,255,0.05);padding-top:20px;">
-    <p style="margin:0;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:#1e3048;line-height:1.7;">
-      You're receiving this because you subscribed to QuantDiver BriefMe.<br/>
-      To unsubscribe, open <a href="https://quantdiver.com" style="color:#2a3f55;">Settings</a> in your account and toggle off this brief.
-    </p>
+    <!-- Footer -->
+    <div style="border-top:1px solid #0a1428;padding-top:20px;">
+      <p style="margin:0;font-family:'Courier New',monospace;font-size:10px;color:#12253a;line-height:1.8;letter-spacing:0.04em;">
+        QUANTDIVER · BRIEFME SUBSCRIPTION<br/>
+        To unsubscribe, open Settings inside your account at quantdiver.com and toggle off this brief.<br/>
+        This is not financial advice. QuantDiver provides data and scores for informational purposes only.
+      </p>
+    </div>
+
   </td></tr>
 
 </table>
+
 </td></tr>
 </table>
 </body>
