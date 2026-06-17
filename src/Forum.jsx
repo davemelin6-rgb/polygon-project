@@ -351,7 +351,7 @@ export default function Forum({ session, onClose }) {
           <button className="forum-new-btn" onClick={() => setShowNew(v => !v)}>
             {showNew ? "✕ Cancel" : "+ New Post"}
           </button>
-          <button className="forum-close" onClick={onClose}>✕ Close</button>
+          <button className="forum-close" onClick={onClose}>← Dashboard</button>
         </div>
       </div>
 
