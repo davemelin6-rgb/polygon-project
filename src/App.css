@@ -809,58 +809,117 @@
   font-family: 'Space Mono', monospace;
 }
 
+/* ── Mobile label helpers (desktop hides short labels) ───── */
+.btn-label-short { display: none; }
+.btn-label-full  { display: inline; }
+
+/* ── Header actions (desktop) ───────────────────────────── */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 /* ── Mobile responsive ───────────────────────────────────── */
 @media (max-width: 640px) {
   .app {
-    padding: 1.5rem 1rem 4rem;
+    padding: 1.25rem 0.9rem 4rem;
   }
 
+  /* Header: stack brand above buttons */
   .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
     margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    align-items: center;
+    padding-bottom: 1.25rem;
   }
 
-  .header h1 {
-    font-size: 2.2rem;
-  }
+  .header-brand { gap: 0.7rem; }
+
+  .header h1 { font-size: 2rem; }
 
   .header-eyebrow {
-    font-size: 0.6rem;
-    padding: 0.2rem 0.65rem 0.2rem 0.5rem;
+    font-size: 0.58rem;
+    padding: 0.18rem 0.6rem 0.18rem 0.45rem;
   }
 
   .header-welcome {
     font-size: 0.7rem;
-    margin-top: 0.3rem;
+    margin-top: 0.25rem;
   }
 
-  .gear-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 1rem;
+  /* Button row */
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
   }
 
   .logout-btn {
-    font-size: 0.65rem;
-    padding: 0.4rem 0.7rem;
+    font-size: 0.62rem;
+    padding: 0.38rem 0.65rem;
+    letter-spacing: 0.08em;
+    margin-top: 0;
   }
 
+  /* Abbreviate long button labels on mobile */
+  .btn-label-full  { display: none; }
+  .btn-label-short { display: inline; }
+
+  .gear-btn {
+    width: 30px;
+    height: 30px;
+    font-size: 0.95rem;
+  }
+
+  /* Grid: single column */
   .grid {
     grid-template-columns: 1fr;
   }
 
+  /* Search */
   .search-form {
     flex-direction: column;
-    gap: 0.6rem;
+    gap: 0.55rem;
+    max-width: 100%;
   }
 
-  .ticker-input {
-    width: 100%;
+  .ticker-input { width: 100%; }
+  .btn { width: 100%; }
+
+  /* Panels */
+  .panel {
+    padding: 1.5rem 1.1rem;
+    border-radius: 14px;
   }
 
-  .btn {
-    width: 100%;
+  .panel-title { font-size: 1.25rem; }
+
+  /* Risk rows: collapse level column on very small screens */
+  .risk-row {
+    grid-template-columns: 58px 1fr 48px 40px;
+    gap: 0.7rem;
+  }
+
+  .risk-stat-value { font-size: 1.1rem; }
+
+  /* Financial Intelligence verdict: stack on mobile */
+  .fi-verdict {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .fi-verdict-left { align-items: flex-start; }
+
+  .fi-grid { grid-template-columns: 1fr; }
+
+  .fi-stat-value { font-size: 1.1rem; }
+
+  .fi-leader-row {
+    grid-template-columns: 90px 1fr auto;
+    padding: 0.75rem 1rem;
   }
 
   .panels {

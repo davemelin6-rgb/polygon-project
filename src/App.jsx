@@ -15,6 +15,7 @@ import ContactModal      from "./ContactModal.jsx";
 import AnalystPanel      from "./AnalystPanel.jsx";
 import InsiderFeed       from "./InsiderFeed.jsx";
 import TraderMatch       from "./TraderMatch.jsx";
+import ScoreHistory      from "./ScoreHistory.jsx";
 
 const SECTORS = [
   {
@@ -694,13 +695,16 @@ export default function App({ session, onLogout, onAdmin }) {
             {username && <div className="header-welcome">Welcome back, {username}</div>}
           </div>
         </div>
-        <div style={{ display:"flex", alignItems:"center", gap:"0.75rem" }}>
+        <div className="header-actions">
           {onAdmin && (
             <button className="logout-btn" onClick={onAdmin} style={{ background: "rgba(0,180,255,.1)", borderColor: "rgba(0,180,255,.3)", color: "#00b4ff" }}>
               Admin
             </button>
           )}
-          <button className="logout-btn" onClick={() => setShowContact(true)}>Contact Support</button>
+          <button className="logout-btn" onClick={() => setShowContact(true)}>
+            <span className="btn-label-full">Contact Support</span>
+            <span className="btn-label-short">Support</span>
+          </button>
           <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
             Sign Out
           </button>
@@ -744,6 +748,7 @@ export default function App({ session, onLogout, onAdmin }) {
       {selected && <PriceChart            stock={selected} session={session} />}
       {selected && <TechnicalSignals      stock={selected} session={session} />}
       {selected && <FinancialIntelligence stocks={stocks} scoresMap={scoresMap} selected={selected} />}
+      {selected && <ScoreHistory          stock={selected} session={session} />}
       {selected && <AnalystPanel          stock={selected} session={session} />}
       {selected && <InsiderFeed           stock={selected} session={session} />}
 

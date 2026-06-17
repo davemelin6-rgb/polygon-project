@@ -81,6 +81,20 @@ export default async function handler(req, res) {
         await supabase
           .from("scores")
           .upsert(validResults, { onConflict: "symbol" });
+
+        // Write one snapshot per ticker per day to score_history
+        const today = new Date().toISOString().slice(0, 10);
+        const historyRows = validResults.map(r => ({
+          symbol:        r.symbol,
+          momentum:      r.momentum,
+          risk:          r.risk,
+          tech_value:    r.tech_value,
+          signal:        r.signal,
+          recorded_date: today,
+        }));
+        await supabase
+          .from("score_history")
+          .upsert(historyRows, { onConflict: "symbol,recorded_date", ignoreDuplicates: true });
       }
     }
 
