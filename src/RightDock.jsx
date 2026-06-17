@@ -185,17 +185,15 @@ function GordonPanel({ onClose }) {
 
 // ── RightDock ───────────────────────────────────────────────
 const TABS = [
-  { id: "community", icon: "🌐", label: "Community"     },
   { id: "match",     icon: "🤝", label: "Trader Connect" },
   { id: "chat",      icon: "💬", label: "Messages"       },
   { id: "gordon",    icon: "🤖", label: "AI Assistant"   },
 ];
 
-export default function RightDock({ session, onOpenCommunity }) {
+export default function RightDock({ session }) {
   const [active, setActive] = useState(null);
 
   function toggle(id) {
-    if (id === "community") { onOpenCommunity?.(); return; }
     setActive(prev => prev === id ? null : id);
   }
 
