@@ -127,7 +127,28 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
                   >
                     <span className="ss-rank">{String(i + 1).padStart(2, "0")}</span>
 
-                    <span className="ss-ticker">{stock.symbol}</span>
+                    <span className="ss-ticker">
+                      {stock.symbol}
+                      {i === 0 && (
+                        <span style={{
+                          display: "inline-block",
+                          marginLeft: 7,
+                          fontFamily: "inherit",
+                          fontSize: ".58rem",
+                          fontWeight: 700,
+                          letterSpacing: ".1em",
+                          textTransform: "uppercase",
+                          color: accent,
+                          background: `${accent}18`,
+                          border: `1px solid ${accent}40`,
+                          borderRadius: 999,
+                          padding: "2px 7px",
+                          verticalAlign: "middle",
+                        }}>
+                          ★ Top Pick
+                        </span>
+                      )}
+                    </span>
 
                     <span className="ss-price">
                       ${stock.price != null ? Number(stock.price).toFixed(2) : "—"}
