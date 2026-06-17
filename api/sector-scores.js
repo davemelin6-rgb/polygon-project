@@ -2,9 +2,10 @@
 // GET /api/sector-scores?sector=ai
 // Returns all scores for a sector with ranks, percentiles, and peer comparison.
 
-import { fetchAggregates }   from "../lib/fetchPolygon.js";
-import { fetchFundamentals } from "../lib/fetchFMP.js";
+import { fetchAggregates }    from "../lib/fetchPolygon.js";
+import { fetchFundamentals }  from "../lib/fetchFMP.js";
 import { calcMomentum, calcRisk, calcTechValue, calcSignal } from "../lib/formulas.js";
+import { getSectorBenchmarks } from "../lib/sectorBenchmarks.js";
 import { getSupabase }       from "../lib/supabase.js";
 import { verifySession }     from "../lib/apiGuard.js";
 
@@ -59,9 +60,10 @@ export default async function handler(req, res) {
           fetchAggregates(ticker, polygonKey),
           fetchFundamentals(ticker, fmpKey),
         ]);
+        const benchmarks = getSectorBenchmarks(ticker);
         const momentum   = calcMomentum({ price: aggs?.at(-1)?.c ?? null, aggs });
         const risk       = calcRisk({ aggs, fundamentals });
-        const tech_value = calcTechValue({ fundamentals });
+        const tech_value = calcTechValue({ fundamentals, benchmarks });
         const signal     = calcSignal({ momentum, risk, techValue: tech_value });
         const row = { symbol: ticker, momentum, risk, tech_value, signal, has_fundamentals: !!fundamentals, calculated_at: new Date().toISOString() };
         dbScores[ticker] = row;

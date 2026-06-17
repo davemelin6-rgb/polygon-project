@@ -4,6 +4,7 @@
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
 import { calcMomentum, calcRisk, calcTechValue, calcSignal } from "../lib/formulas.js";
+import { getSectorBenchmarks } from "../lib/sectorBenchmarks.js";
 import { getSupabase } from "../lib/supabase.js";
 import { verifySession, parseTickers } from "../lib/apiGuard.js";
 
@@ -59,9 +60,10 @@ export default async function handler(req, res) {
           fetchFundamentals(ticker, fmpKey),
         ]);
         const price      = aggs?.at(-1)?.c ?? null;
+        const benchmarks = getSectorBenchmarks(ticker);
         const momentum   = calcMomentum({ price, aggs, fundamentals });
         const risk       = calcRisk({ aggs, fundamentals });
-        const tech_value = calcTechValue({ fundamentals });
+        const tech_value = calcTechValue({ fundamentals, benchmarks });
         const signal     = calcSignal({ momentum, risk, techValue: tech_value });
         return {
           symbol:           ticker,

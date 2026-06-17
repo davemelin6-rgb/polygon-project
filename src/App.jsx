@@ -819,7 +819,6 @@ export default function App({ session, onLogout, onAdmin }) {
       {selected && <AnalystPanel          stock={selected} session={session} />}
       {selected && <InsiderFeed           stock={selected} session={session} />}
 
-      <DailyBrief session={session} />
 
       {(stocks.length > 0 || selected) && (
         <div className="sections">
