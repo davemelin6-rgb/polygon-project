@@ -1166,6 +1166,43 @@ function ContributorPage() {
             In return, you share your ideas, analysis, and market thinking with the community and stay actively engaged.
           </p>
 
+          {/* What you get */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 16, marginBottom: 40 }}>
+            {[
+              { icon: "📊", title: "Full Platform Access", body: "Live MOMENTUM, RISK, and TECH VALUE scores. Price charts, technicals, analyst data, insider feed — everything." },
+              { icon: "☀️", title: "Daily BriefMe Emails", body: "Morning brief at 08:00 and US market preview at 15:00 — every trading day, no charge." },
+              { icon: "💬", title: "Community Access", body: "Connect with serious investors across AI, quantum, biotech, and defence. Share ideas, challenge theses." },
+              { icon: "💸", title: "Referral Earnings", body: "Refer new paying members and earn 30% of their monthly subscription — every month they stay active." },
+            ].map(p => (
+              <div key={p.title} style={{ background: "rgba(255,255,255,0.03)", border: `1px solid ${T.border}`, borderRadius: 12, padding: "20px 20px" }}>
+                <div style={{ fontSize: "1.4rem", marginBottom: 10 }}>{p.icon}</div>
+                <div style={{ fontFamily: ff.display, fontWeight: 700, fontSize: ".95rem", color: T.ink, marginBottom: 8 }}>{p.title}</div>
+                <p style={{ fontFamily: ff.body, fontSize: ".82rem", color: T.sub, lineHeight: 1.65, margin: 0 }}>{p.body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Referral callout */}
+          <div style={{ background: "linear-gradient(135deg, rgba(0,220,130,.06) 0%, rgba(0,180,255,.06) 100%)", border: "1px solid rgba(0,220,130,.2)", borderRadius: 14, padding: "24px 28px", marginBottom: 40 }}>
+            <div style={{ fontFamily: ff.mono, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#00dc82", marginBottom: 12 }}>
+              💸 Referral Program
+            </div>
+            <p style={{ fontFamily: ff.body, fontSize: ".95rem", color: T.sub, lineHeight: 1.75, margin: "0 0 12px" }}>
+              Every paying member you bring to QuantDiver earns you <strong style={{ color: T.ink }}>30% of their monthly subscription</strong> — for as long as they stay active.
+            </p>
+            <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
+              {[["1 referral", "~30 SEK/mo"], ["5 referrals", "~150 SEK/mo"], ["10 referrals", "~300 SEK/mo"]].map(([label, earn]) => (
+                <div key={label}>
+                  <div style={{ fontFamily: ff.mono, fontSize: ".68rem", color: T.dim, marginBottom: 4 }}>{label}</div>
+                  <div style={{ fontFamily: ff.mono, fontSize: "1.1rem", fontWeight: 700, color: "#00dc82" }}>{earn}</div>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, margin: "12px 0 0" }}>
+              Referral codes and automated payouts launching with Stripe integration. Contributors who apply now will be first in line.
+            </p>
+          </div>
+
           {status === "done" ? (
             <div style={{ background: "rgba(0,220,130,0.07)", border: "1px solid rgba(0,220,130,0.25)", borderRadius: 14, padding: "2rem", textAlign: "center" }}>
               <div style={{ fontSize: "2rem", marginBottom: 12 }}>✓</div>
