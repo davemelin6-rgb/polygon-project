@@ -229,7 +229,7 @@ function buildEmail(type, data, dateStr) {
     <div style="border-top:1px solid #0a1428;padding-top:20px;">
       <p style="margin:0;font-family:'Courier New',monospace;font-size:10px;color:#12253a;line-height:1.8;letter-spacing:0.04em;">
         QUANTDIVER · BRIEFME SUBSCRIPTION<br/>
-        To unsubscribe, open Settings inside your account at quantdiver.com and toggle off this brief.<br/>
+        <a href="%%UNSUB_LINK%%" style="color:#1a3050;">Unsubscribe from this brief</a> &nbsp;·&nbsp; Manage all emails in Settings at quantdiver.com<br/>
         This is not financial advice. QuantDiver provides data and scores for informational purposes only.
       </p>
     </div>
@@ -270,7 +270,7 @@ export default async function handler(req, res) {
   const field = type === "morning" ? "briefme_morning" : "briefme_us";
   const { data: subscribers, error } = await supabase
     .from("profiles")
-    .select("email, username")
+    .select("id, email, username")
     .eq(field, true)
     .not("email", "is", null);
 
@@ -291,6 +291,10 @@ export default async function handler(req, res) {
   let sent = 0, failed = 0;
   for (const sub of subscribers) {
     try {
+      const uid      = Buffer.from(sub.id).toString("base64url");
+      const unsubUrl = `https://quantdiver.com/api/briefme-unsubscribe?uid=${uid}&type=${type}`;
+      const subHtml  = html.replace("%%UNSUB_LINK%%", unsubUrl);
+
       const r = await fetch(RESEND, {
         method: "POST",
         headers: { "Authorization": `Bearer ${resendKey}`, "Content-Type": "application/json" },
@@ -298,7 +302,7 @@ export default async function handler(req, res) {
           from:    "QuantDiver BriefMe <briefme@quantdiver.com>",
           to:      [sub.email],
           subject,
-          html,
+          html:    subHtml,
         }),
       });
       if (r.ok) sent++; else failed++;

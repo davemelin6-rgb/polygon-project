@@ -1053,6 +1053,82 @@ function AboutPage({ onEnterApp }) {
   );
 }
 
+/* ─── contributor page ────────────────────────────────────── */
+function ContributorPage() {
+  const [form,    setForm]    = useState({ name: "", email: "", background: "", whyJoin: "" });
+  const [status,  setStatus]  = useState("idle"); // idle | sending | done | error
+
+  function set(k, v) { setForm(f => ({ ...f, [k]: v })); }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus("sending");
+    try {
+      const r = await fetch("/api/contributor-apply", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, email: form.email, background: form.background, whyJoin: form.whyJoin }),
+      });
+      setStatus(r.ok ? "done" : "error");
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  const inputStyle = { width: "100%", background: "rgba(255,255,255,0.04)", border: `1px solid ${T.border}`, borderRadius: 10, color: T.ink, fontFamily: ff.body, fontSize: ".95rem", padding: "12px 14px", outline: "none", boxSizing: "border-box", resize: "vertical" };
+
+  return (
+    <div style={{ animation: "qd-fadein .4s ease" }}>
+      <section style={{ padding: "80px 0 40px" }}>
+        <div className="qd-wrap" style={{ maxWidth: 680 }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".72rem", fontWeight: 700, letterSpacing: ".2em", textTransform: "uppercase", color: T.cyan, marginBottom: 16 }}>
+            Join QuantDiver
+          </div>
+          <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,5vw,3.2rem)", fontWeight: 800, color: T.ink, letterSpacing: "-.03em", lineHeight: 1.1, marginBottom: 20 }}>
+            Become a Contributor
+          </h1>
+          <p style={{ fontSize: "1.05rem", color: T.sub, lineHeight: 1.75, marginBottom: 40, maxWidth: 560 }}>
+            Contributors get full access to all QuantDiver platform resources — completely free.
+            In return, you share your ideas, analysis, and market thinking with the community and stay actively engaged.
+          </p>
+
+          {status === "done" ? (
+            <div style={{ background: "rgba(0,220,130,0.07)", border: "1px solid rgba(0,220,130,0.25)", borderRadius: 14, padding: "2rem", textAlign: "center" }}>
+              <div style={{ fontSize: "2rem", marginBottom: 12 }}>✓</div>
+              <p style={{ fontWeight: 700, color: "#00dc82", marginBottom: 8 }}>Application received</p>
+              <p style={{ color: T.sub, fontSize: ".9rem" }}>We will review your application and be in touch at {form.email}.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
+              <div>
+                <label style={{ display: "block", fontSize: ".75rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim, marginBottom: 7 }}>Your Name</label>
+                <input style={inputStyle} value={form.name} onChange={e => set("name", e.target.value)} placeholder="David Melin" required />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: ".75rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim, marginBottom: 7 }}>Email Address</label>
+                <input type="email" style={inputStyle} value={form.email} onChange={e => set("email", e.target.value)} placeholder="you@example.com" required />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: ".75rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim, marginBottom: 7 }}>Your Background</label>
+                <textarea style={{ ...inputStyle, minHeight: 100 }} value={form.background} onChange={e => set("background", e.target.value)} placeholder="Trading experience, sectors you follow, tools you use..." required />
+              </div>
+              <div>
+                <label style={{ display: "block", fontSize: ".75rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim, marginBottom: 7 }}>Why do you want to join QuantDiver?</label>
+                <textarea style={{ ...inputStyle, minHeight: 120 }} value={form.whyJoin} onChange={e => set("whyJoin", e.target.value)} placeholder="What would you contribute to the community? What are you hoping to get out of it?" required />
+              </div>
+              {status === "error" && <p style={{ color: "#ff3c50", fontSize: ".85rem" }}>Something went wrong — please try again.</p>}
+              <PrimaryBtn type="submit" style={{ alignSelf: "flex-start", padding: "14px 36px", fontSize: "1rem", opacity: status === "sending" ? .6 : 1 }}>
+                {status === "sending" ? "Sending..." : "Submit Application →"}
+              </PrimaryBtn>
+              <p style={{ fontSize: ".78rem", color: T.dim }}>We review every application personally and respond within a few days.</p>
+            </form>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
+
 /* ─── privacy policy page ─────────────────────────────────── */
 function PrivacyPage() {
   const sec = (title, children) => (
@@ -1304,8 +1380,9 @@ export default function QuantDiverSite({ onEnterApp }) {
               <a onClick={() => go("scores")}  style={{ cursor: "pointer", color: page === "scores"  ? T.cyan : "inherit", transition: "color .15s" }}>Scores</a>
               <a onClick={() => go("briefme")} style={{ cursor: "pointer", color: page === "briefme" ? T.cyan : "inherit", transition: "color .15s" }}>BriefMe</a>
               <a onClick={() => go("pricing")} style={{ cursor: "pointer", color: page === "pricing" ? T.cyan : "inherit", transition: "color .15s" }}>Pricing</a>
-              <a onClick={() => go("about")}   style={{ cursor: "pointer", color: page === "about"   ? T.cyan : "inherit", transition: "color .15s" }}>About Us</a>
-              <a onClick={() => go("contact")} style={{ cursor: "pointer", color: page === "contact" ? T.cyan : "inherit", transition: "color .15s" }}>Contact</a>
+              <a onClick={() => go("about")}       style={{ cursor: "pointer", color: page === "about"       ? T.cyan : "inherit", transition: "color .15s" }}>About Us</a>
+              <a onClick={() => go("contributor")} style={{ cursor: "pointer", color: page === "contributor" ? T.cyan : "inherit", transition: "color .15s" }}>Join Us</a>
+              <a onClick={() => go("contact")}     style={{ cursor: "pointer", color: page === "contact"     ? T.cyan : "inherit", transition: "color .15s" }}>Contact</a>
             </div>
 
             <div className="qd-members-btn">
@@ -1344,9 +1421,10 @@ export default function QuantDiverSite({ onEnterApp }) {
         {page === "scores"  && <ScoresPage onEnterApp={onEnterApp} />}
         {page === "pricing" && <PricingPage onEnterApp={onEnterApp} go={go} />}
         {page === "about"   && <AboutPage onEnterApp={onEnterApp} />}
-        {page === "contact" && <ContactPage />}
-        {page === "privacy" && <PrivacyPage />}
-        {page === "terms"   && <TermsPage />}
+        {page === "contact"     && <ContactPage />}
+        {page === "privacy"     && <PrivacyPage />}
+        {page === "terms"       && <TermsPage />}
+        {page === "contributor" && <ContributorPage />}
 
         {/* FOOTER */}
         <footer style={{ borderTop: `1px solid ${T.border}`, padding: "48px 0 60px" }}>

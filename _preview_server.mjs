@@ -24,7 +24,10 @@ const { default: adminHandler }      = await import("./api/admin.js");
 const { default: contactHandler }    = await import("./api/contact.js");
 const { default: analystHandler }    = await import("./api/analyst.js");
 const { default: insiderHandler }    = await import("./api/insider.js");
-const { default: matchHandler }      = await import("./api/match.js");
+const { default: matchHandler }         = await import("./api/match.js");
+const { default: unsubscribeHandler }   = await import("./api/briefme-unsubscribe.js");
+const { default: contributorHandler }   = await import("./api/contributor-apply.js");
+const { default: scoreHistoryHandler }  = await import("./api/score-history.js");
 
 const server = http.createServer((req, res) => {
   const url   = new URL(req.url, "http://localhost:3456");
@@ -86,6 +89,14 @@ const server = http.createServer((req, res) => {
     } else {
       adminHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
     }
+  } else if (url.pathname === "/api/briefme-unsubscribe") {
+    unsubscribeHandler(fakeReq, { ...fakeRes, send(body) { res.writeHead(fakeRes._status, { "Content-Type": "text/html" }); res.end(body); } }).catch(err => { res.writeHead(500); res.end(String(err)); });
+  } else if (url.pathname === "/api/contributor-apply") {
+    let raw = "";
+    req.on("data", c => raw += c);
+    req.on("end", () => dispatch(contributorHandler, raw));
+  } else if (url.pathname === "/api/score-history") {
+    scoreHistoryHandler(fakeReq, fakeRes).catch(err => { res.writeHead(500); res.end(String(err)); });
   } else {
     res.writeHead(404);
     res.end("Not found");
