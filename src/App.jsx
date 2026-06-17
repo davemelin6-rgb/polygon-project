@@ -533,6 +533,7 @@ export default function App({ session, onLogout, onAdmin }) {
   const [showSettings,   setShowSettings]   = useState(false);
   const [showContact,    setShowContact]    = useState(false);
   const [showCommunity,  setShowCommunity]  = useState(false);
+  const [showUserMenu,   setShowUserMenu]   = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -701,14 +702,48 @@ export default function App({ session, onLogout, onAdmin }) {
               Admin
             </button>
           )}
-          <button className="logout-btn" onClick={() => setShowContact(true)}>
-            <span className="btn-label-full">Contact Support</span>
-            <span className="btn-label-short">Support</span>
-          </button>
-          <button className="logout-btn" onClick={async () => { await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
-            Sign Out
-          </button>
-          <button className="gear-btn" onClick={() => setShowSettings(true)} title="Settings">⚙</button>
+          {/* User menu */}
+          <div style={{ position: "relative" }}>
+            <button
+              className="user-menu-btn"
+              onClick={() => setShowUserMenu(v => !v)}
+              title={username || "Menu"}
+            >
+              <div className="user-menu-avatar" style={{ background: profile?.avatar_color || "#00b4ff" }}>
+                {(username || "?")[0].toUpperCase()}
+              </div>
+              <span className="user-menu-name">{username}</span>
+              <span style={{ fontSize: ".7rem", opacity: .5, marginLeft: 2 }}>▾</span>
+            </button>
+
+            {showUserMenu && (
+              <>
+                <div className="user-menu-backdrop" onClick={() => setShowUserMenu(false)} />
+                <div className="user-menu-dropdown">
+                  <div className="user-menu-header">
+                    <div className="user-menu-avatar lg" style={{ background: profile?.avatar_color || "#00b4ff" }}>
+                      {(username || "?")[0].toUpperCase()}
+                    </div>
+                    <div>
+                      <div style={{ fontWeight: 700, color: "#dce8f4", fontSize: ".9rem" }}>{username}</div>
+                      <div style={{ fontSize: ".72rem", color: "#3d5c78" }}>{session?.user?.email}</div>
+                    </div>
+                  </div>
+                  <div className="user-menu-divider" />
+                  <button className="user-menu-item" onClick={() => { setShowUserMenu(false); setShowSettings(true); }}>
+                    <span>⚙</span> Settings
+                  </button>
+                  <button className="user-menu-item" onClick={() => { setShowUserMenu(false); setShowContact(true); }}>
+                    <span>✉</span> Contact Support
+                  </button>
+                  <div className="user-menu-divider" />
+                  <button className="user-menu-item danger" onClick={async () => { setShowUserMenu(false); await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
+                    <span>→</span> Sign Out
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </header>
 

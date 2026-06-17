@@ -809,6 +809,99 @@
   font-family: 'Space Mono', monospace;
 }
 
+/* ── User menu ──────────────────────────────────────────── */
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem 0.35rem 0.35rem;
+  cursor: pointer;
+  color: #8aaec8;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.user-menu-btn:hover {
+  background: rgba(0,180,255,0.08);
+  border-color: rgba(0,180,255,0.25);
+  color: #c8e4f8;
+}
+.user-menu-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.user-menu-avatar.lg {
+  width: 40px; height: 40px;
+  font-size: 1rem;
+}
+.user-menu-name {
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 99;
+}
+.user-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: #080f1c;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 14px;
+  padding: 0.5rem;
+  z-index: 100;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,180,255,0.06);
+}
+.user-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.5rem 0.75rem;
+}
+.user-menu-divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+  margin: 0.3rem 0;
+}
+.user-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  color: #8aaec8;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s, color 0.15s;
+}
+.user-menu-item:hover {
+  background: rgba(0,180,255,0.07);
+  color: #c8e4f8;
+}
+.user-menu-item.danger { color: #5a3a48; }
+.user-menu-item.danger:hover {
+  background: rgba(255,60,80,0.08);
+  color: #ff3c50;
+}
+
 /* ── Mobile label helpers (desktop hides short labels) ───── */
 .btn-label-short { display: none; }
 .btn-label-full  { display: inline; }
@@ -867,6 +960,8 @@
   /* Abbreviate long button labels on mobile */
   .btn-label-full  { display: none; }
   .btn-label-short { display: inline; }
+
+  .user-menu-name { display: none; }
 
   .gear-btn {
     width: 30px;
