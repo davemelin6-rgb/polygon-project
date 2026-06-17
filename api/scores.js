@@ -105,9 +105,29 @@ export default async function handler(req, res) {
     }
   }
 
+  // Fetch 7-day-old scores for delta display
+  let historyMap = {};
+  if (supabase) {
+    const sevenAgo = new Date(Date.now() - 7 * 86400000).toISOString().slice(0, 10);
+    const { data: hist } = await supabase
+      .from("score_history")
+      .select("symbol, momentum, risk, tech_value, signal, recorded_date")
+      .in("symbol", tickers)
+      .lte("recorded_date", sevenAgo)
+      .order("recorded_date", { ascending: false });
+    // Take most recent record per ticker that's at least 7 days old
+    for (const row of hist || []) {
+      if (!historyMap[row.symbol]) historyMap[row.symbol] = row;
+    }
+  }
+
   const scores = tickers.map(ticker => {
-    const row = existingMap[ticker];
+    const row  = existingMap[ticker];
+    const hist = historyMap[ticker];
     if (!row) return { symbol: ticker, momentum: null, risk: null, techValue: null, signal: null, hasFundamentals: false };
+
+    const delta = (curr, prev) => curr != null && prev != null ? curr - prev : null;
+
     return {
       symbol:          row.symbol,
       momentum:        row.momentum,
@@ -115,6 +135,12 @@ export default async function handler(req, res) {
       techValue:       row.tech_value,
       signal:          row.signal ?? null,
       hasFundamentals: row.has_fundamentals,
+      deltas: {
+        momentum:  delta(row.momentum,    hist?.momentum),
+        risk:      delta(row.risk,        hist?.risk),
+        techValue: delta(row.tech_value,  hist?.tech_value),
+        signal:    delta(row.signal,      hist?.signal),
+      },
     };
   });
 

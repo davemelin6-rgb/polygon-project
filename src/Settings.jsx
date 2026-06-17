@@ -28,6 +28,7 @@ export default function Settings({ session, profile, settings, onSave, onClose }
   const [interests,        setInterests]       = useState(profile?.trading_interests || []);
   const [briefmeMorning,   setBriefmeMorning]  = useState(profile?.briefme_morning  || false);
   const [briefmeUS,        setBriefmeUS]       = useState(profile?.briefme_us       || false);
+  const [scoreAlerts,      setScoreAlerts]     = useState(profile?.score_alerts     || false);
   const [saving,           setSaving]          = useState(false);
 
   function toggleInterest(id) {
@@ -38,7 +39,7 @@ export default function Settings({ session, profile, settings, onSave, onClose }
     setSaving(true);
     const newSettings = { brightness, accent, avatarColor, defaultTickers };
     await supabase.from("profiles")
-      .update({ settings: newSettings, avatar_color: avatarColor, trading_interests: interests, briefme_morning: briefmeMorning, briefme_us: briefmeUS })
+      .update({ settings: newSettings, avatar_color: avatarColor, trading_interests: interests, briefme_morning: briefmeMorning, briefme_us: briefmeUS, score_alerts: scoreAlerts })
       .eq("id", session.user.id);
     onSave(newSettings, avatarColor);
     setSaving(false);
@@ -160,6 +161,21 @@ export default function Settings({ session, profile, settings, onSave, onClose }
                 <div className="sbm-desc">Pre-market signals on US tech, semis, biotech, defence</div>
               </div>
               <div className={`sbm-toggle ${briefmeUS ? "on" : ""}`}>
+                <div className="sbm-knob" />
+              </div>
+            </div>
+          </div>
+
+          {/* Score Alerts */}
+          <div className="settings-section">
+            <p className="settings-label">Score Alerts</p>
+            <p className="settings-hint">Get emailed when scores in your watchlist change significantly</p>
+            <div className="settings-briefme-toggle" onClick={() => setScoreAlerts(v => !v)}>
+              <div>
+                <div className="sbm-title">📊 Score Change Alerts</div>
+                <div className="sbm-desc">Signal threshold crossings · Momentum surges/drops · Risk warnings</div>
+              </div>
+              <div className={`sbm-toggle ${scoreAlerts ? "on" : ""}`}>
                 <div className="sbm-knob" />
               </div>
             </div>

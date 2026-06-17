@@ -139,7 +139,7 @@ function getVerdict(sc) {
   return              { label: "AVOID",           color: "#ff3c50", grade: "D", sig, summary };
 }
 
-function ScoreBar({ label, value }) {
+function ScoreBar({ label, value, delta }) {
   const color = scoreColor(value);
   return (
     <div className="score-row">
@@ -153,6 +153,11 @@ function ScoreBar({ label, value }) {
       <span className="score-value" style={{ color }}>
         {value != null ? value : "—"}
       </span>
+      {delta != null && Math.abs(delta) >= 5 && (
+        <span style={{ fontSize: ".62rem", fontWeight: 700, color: delta > 0 ? "#00dc82" : "#ff3c50", fontFamily: "'Space Mono',monospace", minWidth: 28, textAlign: "right" }}>
+          {delta > 0 ? "▲" : "▼"}{Math.abs(delta)}
+        </span>
+      )}
     </div>
   );
 }
@@ -218,9 +223,9 @@ function StockCard({ stock, scores, chart, selected, onClick }) {
       </div>
 
       <div className="score-section">
-        <ScoreBar label="MOM"  value={scores?.momentum} />
-        <ScoreBar label="RISK" value={scores?.risk}      />
-        <ScoreBar label="TECH" value={scores?.techValue} />
+        <ScoreBar label="MOM"  value={scores?.momentum}  delta={scores?.deltas?.momentum}  />
+        <ScoreBar label="RISK" value={scores?.risk}       delta={scores?.deltas?.risk}      />
+        <ScoreBar label="TECH" value={scores?.techValue}  delta={scores?.deltas?.techValue} />
       </div>
     </div>
   );
