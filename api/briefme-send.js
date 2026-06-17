@@ -43,7 +43,7 @@ async function fetchBriefData(polygonKey, fmpKey) {
   for (const t of (snapJson.tickers || [])) {
     priceMap[t.ticker] = {
       symbol:        t.ticker,
-      price:         t.lastTrade?.p ?? t.day?.c ?? null,
+      price:         t.lastTrade?.p || t.day?.c || t.prevDay?.c || null,
       changePercent: t.todaysChangePerc ?? null,
     };
   }
