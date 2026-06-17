@@ -1309,7 +1309,7 @@ export default function QuantDiverSite({ onEnterApp }) {
             </div>
 
             <div className="qd-members-btn">
-              <PrimaryBtn onClick={onEnterApp} style={{ fontSize: ".88rem", padding: "10px 20px" }}>
+              <PrimaryBtn onClick={() => onEnterApp("signin")} style={{ fontSize: ".88rem", padding: "10px 20px" }}>
                 Members Area →
               </PrimaryBtn>
             </div>
