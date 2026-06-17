@@ -818,10 +818,12 @@ export default function App({ session, onLogout, onAdmin }) {
           flexDirection: "column",
           gap: "0.6rem",
         }}>
-          <p style={{ color: "#2a4060", fontSize: "0.78rem", letterSpacing: "0.06em" }}>
-            Want to join QuantDiver as a contributor? Send us an email and tell us about yourself —
-            we will guide you through the next steps.{" "}
-            <a href="mailto:hello@quantdiver.com" style={{ color: "#00b4ff", textDecoration: "none" }}>
+          <p style={{ color: "#3d5c78", fontSize: "0.82rem", lineHeight: 1.7, maxWidth: 680, margin: "0 auto" }}>
+            <span style={{ color: "#8aaec8", fontWeight: 700 }}>Become a QuantDiver Contributor.</span>{" "}
+            Instead of a subscription, contributors get full access to all platform resources — completely free.
+            In return, you share your own ideas, analysis, and market thinking with the community,
+            and stay actively engaged. If that sounds like you, introduce yourself and we will take it from there.{" "}
+            <a href="mailto:hello@quantdiver.com" style={{ color: "#00b4ff", textDecoration: "none", fontWeight: 600 }}>
               hello@quantdiver.com
             </a>
           </p>
