@@ -17,6 +17,7 @@ import InsiderFeed       from "./InsiderFeed.jsx";
 import TraderMatch       from "./TraderMatch.jsx";
 import ScoreHistory      from "./ScoreHistory.jsx";
 import SectorRanking     from "./SectorRanking.jsx";
+import Portfolio         from "./Portfolio.jsx";
 
 const SECTORS = [
   {
@@ -535,6 +536,7 @@ export default function App({ session, onLogout, onAdmin }) {
   const [showContact,    setShowContact]    = useState(false);
   const [showCommunity,  setShowCommunity]  = useState(false);
   const [showUserMenu,   setShowUserMenu]   = useState(false);
+  const [activeTab,      setActiveTab]      = useState("dashboard");
 
   useEffect(() => {
     if (!session) return;
@@ -748,6 +750,34 @@ export default function App({ session, onLogout, onAdmin }) {
         </div>
       </header>
 
+      {/* ── Navigation tabs ── */}
+      <div className="app-tabs">
+        {[
+          { id: "dashboard",  label: "Dashboard",     icon: "📊" },
+          { id: "portfolio",  label: "My Portfolio",  icon: "💼" },
+          { id: "community",  label: "Community",     icon: "💬" },
+          { id: "brief",      label: "Daily Brief",   icon: "☀️" },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            className={`app-tab ${activeTab === tab.id ? "active" : ""}`}
+            onClick={() => {
+              if (tab.id === "community") { setShowCommunity(true); return; }
+              setActiveTab(tab.id);
+            }}
+          >
+            <span className="app-tab-icon">{tab.icon}</span>
+            <span className="app-tab-label">{tab.label}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* ── Portfolio tab ── */}
+      {activeTab === "portfolio" && <Portfolio session={session} />}
+
+      {/* ── Dashboard tab ── */}
+      {activeTab === "dashboard" && <>
+
       <form className="search-form" onSubmit={handleSubmit}>
         <input
           className="ticker-input"
@@ -825,7 +855,13 @@ export default function App({ session, onLogout, onAdmin }) {
       {lastUpdated && (
         <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>
       )}
-      <RightDock session={session} onOpenCommunity={() => setShowCommunity(true)} />
+
+      </> /* end dashboard tab */}
+
+      {/* ── Brief tab ── */}
+      {activeTab === "brief" && <DailyBrief session={session} expanded />}
+
+      <RightDock session={session} onOpenCommunity={() => { setShowCommunity(true); }} />
       {showSettings && (
         <Settings
           session={session}
