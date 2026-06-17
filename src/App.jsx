@@ -858,7 +858,7 @@ export default function App({ session, onLogout, onAdmin }) {
       </> /* end dashboard tab */}
 
       {/* ── Brief tab ── */}
-      {activeTab === "brief" && <DailyBrief session={session} expanded />}
+      {activeTab === "brief" && <DailyBrief session={session} />}
 
       <RightDock session={session} onOpenCommunity={() => { setShowCommunity(true); }} />
       {showSettings && (
