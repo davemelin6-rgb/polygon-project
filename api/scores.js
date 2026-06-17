@@ -59,7 +59,7 @@ export default async function handler(req, res) {
           fetchFundamentals(ticker, fmpKey),
         ]);
         const price      = aggs?.at(-1)?.c ?? null;
-        const momentum   = calcMomentum({ price, aggs });
+        const momentum   = calcMomentum({ price, aggs, fundamentals });
         const risk       = calcRisk({ aggs, fundamentals });
         const tech_value = calcTechValue({ fundamentals });
         const signal     = calcSignal({ momentum, risk, techValue: tech_value });
