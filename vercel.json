@@ -2,6 +2,16 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
+  "crons": [
+    {
+      "path": "/api/briefme-send?type=morning",
+      "schedule": "0 6 * * 1-5"
+    },
+    {
+      "path": "/api/briefme-send?type=us",
+      "schedule": "0 13 * * 1-5"
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
