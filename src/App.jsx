@@ -823,8 +823,8 @@ export default function App({ session, onLogout, onAdmin }) {
             Instead of a subscription, contributors get full access to all platform resources — completely free.
             In return, you share your own ideas, analysis, and market thinking with the community,
             and stay actively engaged. If that sounds like you, introduce yourself and we will take it from there.{" "}
-            <a href="mailto:hello@quantdiver.com" style={{ color: "#00b4ff", textDecoration: "none", fontWeight: 600 }}>
-              hello@quantdiver.com
+            <a href="mailto:contact@quantdiver.com" style={{ color: "#00b4ff", textDecoration: "none", fontWeight: 600 }}>
+              contact@quantdiver.com
             </a>
           </p>
           <p style={{ color: "#1a3050", fontSize: "0.72rem", letterSpacing: "0.08em" }}>
