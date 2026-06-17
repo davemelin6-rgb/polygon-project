@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   if (authed === "trial_expired") return res.status(402).json({ error: "Trial expired" });
   if (!authed)                    return res.status(401).json({ error: "Unauthorized" });
 
-  const ticker = (req.query.ticker || "").toString().trim().toUpperCase();
+  const [ticker] = parseTickers(req.query.ticker || "");
   if (!ticker) return res.status(400).json({ error: "Provide ?ticker=AAPL" });
 
   const supabase = getSupabase();

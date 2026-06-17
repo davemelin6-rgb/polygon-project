@@ -21,8 +21,9 @@ const BUCKETS = [
 
 export default async function handler(req, res) {
   // Secured — only Vercel cron or manual trigger with secret
-  const auth = req.headers.authorization || "";
-  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  const auth   = req.headers.authorization || "";
+  if (!secret || auth !== `Bearer ${secret}`) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 

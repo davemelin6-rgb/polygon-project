@@ -30,9 +30,11 @@ export default async function handler(req, res) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: "Invalid email address" });
   if (message.length > 2000) return res.status(400).json({ error: "Message too long (max 2000 characters)" });
 
-  const safeName    = (name    || "").slice(0, 100).replace(/[<>]/g, "");
-  const safeSubject = (subject || "").slice(0, 200).replace(/[<>]/g, "");
-  const safeMsg     = message.slice(0, 2000).replace(/[<>]/g, "");
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+  const safeName    = esc((name    || "").slice(0, 100));
+  const safeSubject = esc((subject || "").slice(0, 200));
+  const safeMsg     = esc(message.slice(0, 2000));
+  const safeEmail   = esc(email);
 
   try {
     const r = await fetch(RESEND_API, {
@@ -47,7 +49,7 @@ export default async function handler(req, res) {
         reply_to: email,
         subject:  `[QuantDiver Support] ${safeSubject || "New message"}`,
         html: `
-          <p><strong>From:</strong> ${safeName || "Anonymous"} &lt;${email}&gt;</p>
+          <p><strong>From:</strong> ${safeName || "Anonymous"} &lt;${safeEmail}&gt;</p>
           <p><strong>Subject:</strong> ${safeSubject || "(none)"}</p>
           <hr/>
           <p>${safeMsg.replace(/\n/g, "<br/>")}</p>

@@ -1,18 +1,44 @@
 // api/briefme-unsubscribe.js
-// GET /api/briefme-unsubscribe?uid=<base64-user-id>&type=morning|us|all
-// No auth required — token is the unguessable UUID
+// GET /api/briefme-unsubscribe?uid=<base64url-userId>&type=morning|us|all&tok=<hmac>
+// HMAC-signed token — cannot be forged without UNSUB_SECRET
 
+import { createHmac } from "crypto";
 import { getSupabase } from "../lib/supabase.js";
 
+function makeToken(userId, type) {
+  const secret = process.env.UNSUB_SECRET;
+  if (!secret) throw new Error("UNSUB_SECRET not configured");
+  return createHmac("sha256", secret).update(`${userId}:${type}`).digest("hex");
+}
+
 export default async function handler(req, res) {
-  const { uid, type = "all" } = req.query;
-  if (!uid) return res.status(400).send(page("Invalid link", "This unsubscribe link is invalid or has expired."));
+  const { uid, type = "all", tok } = req.query;
+  if (!uid || !tok) return res.status(400).send(page("Invalid link", "This unsubscribe link is invalid or has expired."));
 
   let userId;
   try {
     userId = Buffer.from(uid, "base64url").toString("utf8");
+    // Basic UUID format check
+    if (!/^[0-9a-f-]{36}$/.test(userId)) throw new Error("bad format");
   } catch {
     return res.status(400).send(page("Invalid link", "This unsubscribe link is invalid."));
+  }
+
+  // Verify HMAC — prevents anyone from unsubscribing another user
+  let expected;
+  try {
+    expected = makeToken(userId, type);
+  } catch {
+    return res.status(500).send(page("Error", "Service unavailable. Please try again later."));
+  }
+
+  if (tok !== expected) {
+    return res.status(400).send(page("Invalid link", "This unsubscribe link is invalid or has expired."));
+  }
+
+  const validTypes = ["morning", "us", "all"];
+  if (!validTypes.includes(type)) {
+    return res.status(400).send(page("Invalid link", "Unknown subscription type."));
   }
 
   const supabase = getSupabase();

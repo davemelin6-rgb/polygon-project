@@ -4,7 +4,8 @@
 
 import { getSupabase } from "../lib/supabase.js";
 
-const RESEND     = "https://api.resend.com/emails";
+const RESEND      = "https://api.resend.com/emails";
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const ADMIN_EMAIL = "administrator@quantdiver.com";
 
 export default async function handler(req, res) {
@@ -39,14 +40,14 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from:    "QuantDiver <briefme@quantdiver.com>",
         to:      [ADMIN_EMAIL],
-        subject: `New contributor application — ${name.trim()}`,
+        subject: `New contributor application — ${esc(name.trim())}`,
         html: `
           <div style="font-family:sans-serif;max-width:560px;padding:2rem;">
             <p style="font-size:.75rem;letter-spacing:.2em;color:#666;text-transform:uppercase;">QuantDiver · Contributor Application</p>
-            <h2 style="margin:0.5rem 0 1.5rem;">${name.trim()}</h2>
-            <p><strong>Email:</strong> ${email.trim()}</p>
-            <p><strong>Background:</strong><br>${background.trim()}</p>
-            <p><strong>Why they want to join:</strong><br>${whyJoin.trim()}</p>
+            <h2 style="margin:0.5rem 0 1.5rem;">${esc(name.trim())}</h2>
+            <p><strong>Email:</strong> ${esc(email.trim())}</p>
+            <p><strong>Background:</strong><br>${esc(background.trim()).replace(/\n/g,"<br/>")}</p>
+            <p><strong>Why they want to join:</strong><br>${esc(whyJoin.trim()).replace(/\n/g,"<br/>")}</p>
           </div>
         `,
       }),

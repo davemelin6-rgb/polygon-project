@@ -1,4 +1,5 @@
 // api/briefme-send.js — BriefMe scheduled email sender
+import { createHmac } from "crypto";
 // Called by Vercel Cron — secured by CRON_SECRET header
 // GET /api/briefme-send?type=morning   (08:00 Stockholm = 06:00 UTC, weekdays)
 // GET /api/briefme-send?type=us        (15:00 Stockholm = 13:00 UTC, weekdays)
@@ -292,7 +293,10 @@ export default async function handler(req, res) {
   for (const sub of subscribers) {
     try {
       const uid      = Buffer.from(sub.id).toString("base64url");
-      const unsubUrl = `https://quantdiver.com/api/briefme-unsubscribe?uid=${uid}&type=${type}`;
+      const tok      = process.env.UNSUB_SECRET
+        ? createHmac("sha256", process.env.UNSUB_SECRET).update(`${sub.id}:${type}`).digest("hex")
+        : "nosecret";
+      const unsubUrl = `https://quantdiver.com/api/briefme-unsubscribe?uid=${uid}&type=${type}&tok=${tok}`;
       const subHtml  = html.replace("%%UNSUB_LINK%%", unsubUrl);
 
       const r = await fetch(RESEND, {
