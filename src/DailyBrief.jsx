@@ -172,8 +172,6 @@ export default function DailyBrief({ session }) {
                           <span className="db-brief-article-date">{fmtDate(item.published)}</span>
                           <span className="db-brief-article-dot">·</span>
                           <span className="db-brief-article-sym" style={{ color: s.accent }}>{item.symbol}</span>
-                          <span className="db-brief-article-dot">·</span>
-                          <span className="db-brief-article-source">{item.source}</span>
                         </div>
                         <p className="db-brief-article-title">{item.title}</p>
                         {item.text && <p className="db-brief-article-text">{item.text}</p>}

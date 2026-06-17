@@ -63,8 +63,6 @@ export default function NewsFeed({ tickers, session }) {
                 <h4 className="nf-title">{item.title}</h4>
                 {item.snippet && <p className="nf-snippet">{item.snippet}…</p>}
                 <div className="nf-meta">
-                  <span className="nf-source">{item.source}</span>
-                  <span className="nf-dot">·</span>
                   <span className="nf-time">{timeAgo(item.published)}</span>
                 </div>
               </div>
