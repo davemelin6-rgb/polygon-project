@@ -273,6 +273,80 @@ function HomePage({ go, onEnterApp }) {
 
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
 
+      {/* METHODOLOGY */}
+      <section style={{ padding: "96px 0" }}>
+        <div className="qd-wrap">
+          <div style={{ marginBottom: 64 }}>
+            <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>How it works · Our methodology</div>
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 18px" }}>
+              Don't take our word for it.
+            </h2>
+            <p style={{ color: T.sub, maxWidth: "38rem", lineHeight: 1.7, fontFamily: ff.body, fontSize: ".95rem" }}>
+              Every score we publish is built on three layers of analysis — and every model has been back-tested against real historical outcomes. If the numbers don't hold up in the data, we adjust them until they do.
+            </p>
+          </div>
+
+          {/* Three pillars */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 24, marginBottom: 56 }}>
+            {[
+              {
+                icon: "⚡",
+                color: T.cyan,
+                label: "Financial Intelligence",
+                title: "MOMENTUM score",
+                body: "We track 1-month and 3-month price returns, relative volume, and moving average trends — weighted into a single 0–100 score. High means the market is confirming the move. Low means it isn't.",
+              },
+              {
+                icon: "🛡️",
+                color: T.amber,
+                label: "Advanced Risk Assessment",
+                title: "RISK score",
+                body: "Debt ratio, current ratio, interest coverage, price volatility — four components that tell you what you are actually walking into. We only back-test momentum on stocks that pass the risk filter. Bad balance sheets pollute the signal.",
+              },
+              {
+                icon: "🔬",
+                color: "#8b5cf6",
+                label: "Back-tested validation",
+                title: "TECH VALUE score",
+                body: "R&D intensity, gross margin, revenue growth, free cash flow margin — the fundamentals that separate durable businesses from momentum traps. Combined with MOMENTUM and RISK, this is where conviction comes from.",
+              },
+            ].map(p => (
+              <div key={p.label} style={{ background: T.s1, border: `1px solid ${T.border}`, borderRadius: 16, padding: "28px 28px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+                  <span style={{ fontSize: "1.3rem" }}>{p.icon}</span>
+                  <span style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: p.color }}>{p.label}</span>
+                </div>
+                <div style={{ fontFamily: ff.display, fontSize: "1.05rem", fontWeight: 700, color: T.ink, marginBottom: 12 }}>{p.title}</div>
+                <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, lineHeight: 1.7, margin: 0 }}>{p.body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Back-tested claim */}
+          <div style={{
+            background: "linear-gradient(135deg, rgba(0,180,255,.06) 0%, rgba(139,92,246,.06) 100%)",
+            border: `1px solid rgba(0,180,255,.18)`,
+            borderRadius: 16, padding: "32px 36px",
+            display: "flex", alignItems: "flex-start", gap: 28, flexWrap: "wrap",
+          }}>
+            <div style={{ fontSize: "2rem", flexShrink: 0 }}>📊</div>
+            <div>
+              <div style={{ fontFamily: ff.mono, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 10 }}>
+                Weekly back-testing · Running automatically
+              </div>
+              <p style={{ fontFamily: ff.body, fontSize: ".95rem", color: T.sub, lineHeight: 1.75, margin: "0 0 8px", maxWidth: "52rem" }}>
+                Every Sunday our engine re-runs the model against 6 months of historical price data across 20 tracked stocks. We measure whether stocks that scored high on MOMENTUM actually outperformed over the following 30 and 60 days — and by how much. The results update automatically. If the spread between high-scoring and low-scoring stocks narrows, we know the weights need adjusting. If it holds, the model is working.
+              </p>
+              <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.dim, margin: 0 }}>
+                This is not a claim. It is a process — and it runs whether you are watching or not.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
       {/* BRIEFME TEASER */}
       <section style={{ padding: "96px 0" }}>
         <div className="qd-wrap qd-briefme-teaser">
