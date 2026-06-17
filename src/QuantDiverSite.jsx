@@ -178,8 +178,8 @@ function HomePage({ go, onEnterApp }) {
               color: T.ink, maxWidth: "30rem", lineHeight: 1.5, fontFamily: ff.display,
               letterSpacing: "-.01em",
             }}>
-              Grade us on our models.<br />
-              <span style={{ color: T.cyan }}>Not on our promises.</span>
+              Judge us on our models.<br />
+              <span style={{ color: T.cyan }}>Not on future promises.</span>
             </p>
 
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
