@@ -5,7 +5,7 @@ import { verifySession } from "../lib/apiGuard.js";
 
 const POLYGON_BASE  = "https://api.polygon.io";
 const VALID_RANGES  = new Set(["1D","1W","1M","3M","1Y","5Y"]);
-const TICKER_RE     = /^[A-Z]{1,10}$/;
+const TICKER_RE     = /^([A-Z]{1,10}|X:[A-Z]{1,10}USD)$/; // stocks + crypto (X:BTCUSD)
 const cache         = new Map();
 
 const TTL = { "1D": 60_000, "1W": 5*60_000, "1M": 15*60_000, "3M": 15*60_000, "1Y": 60*60_000, "5Y": 60*60_000 };

@@ -27,7 +27,7 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(500).json({ error: "No API key" });
 
   const ticker = (req.query.ticker || "").toString().trim().toUpperCase();
-  if (!ticker || !/^[A-Z]{1,10}$/.test(ticker))
+  if (!ticker || !/^([A-Z]{1,10}|X:[A-Z]{1,10}USD)$/.test(ticker))
     return res.status(400).json({ error: "Invalid ticker" });
 
   const hit = cache.get(ticker);
