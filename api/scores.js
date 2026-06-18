@@ -3,8 +3,8 @@
 
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
-import { calcMomentum, calcRisk, calcTechValue, calcSignal } from "../lib/formulas.js";
-import { getSectorBenchmarks } from "../lib/sectorBenchmarks.js";
+import { calcMomentum, calcRisk, calcTechValue, calcSignal, calcSignalBreakdown } from "../lib/formulas.js";
+import { getSectorBenchmarks, getSectorPE } from "../lib/sectorBenchmarks.js";
 
 // Fetch current VIX once per scores request (shared across all tickers)
 let _vixCache = null;
@@ -80,9 +80,11 @@ export default async function handler(req, res) {
         ]);
         const price      = aggs?.at(-1)?.c ?? null;
         const benchmarks = getSectorBenchmarks(ticker);
+        const sectorPE   = getSectorPE(ticker);
         const momentum   = calcMomentum({ price, aggs, fundamentals, vix });
         const risk       = calcRisk({ aggs, fundamentals });
         const tech_value = calcTechValue({ fundamentals, benchmarks });
+        const breakdown  = calcSignalBreakdown({ fundamentals, sectorPE });
         const signal     = calcSignal({ momentum, risk, techValue: tech_value });
         return {
           symbol:           ticker,
@@ -90,6 +92,7 @@ export default async function handler(req, res) {
           risk,
           tech_value,
           signal,
+          breakdown:        breakdown ? JSON.stringify(breakdown) : null,
           has_fundamentals: !!fundamentals,
           calculated_at:    new Date().toISOString(),
         };
@@ -154,6 +157,7 @@ export default async function handler(req, res) {
       techValue:       row.tech_value,
       signal:          row.signal ?? null,
       hasFundamentals: row.has_fundamentals,
+      breakdown:       row.breakdown ?? null,
       deltas: {
         momentum:  delta(row.momentum,    hist?.momentum),
         risk:      delta(row.risk,        hist?.risk),

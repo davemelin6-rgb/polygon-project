@@ -233,6 +233,48 @@ function StockCard({ stock, scores, chart, selected, onClick }) {
   );
 }
 
+// ── Signal Breakdown (Runway / Growth / Dilution / Insiders / Valuation) ──
+function SignalBreakdown({ scores }) {
+  const bd = scores?.breakdown;
+  if (!bd) return null;
+
+  const metrics = [
+    { key: "runway",    label: "Runway",    icon: "🏃" },
+    { key: "growth",    label: "Growth",    icon: "📈" },
+    { key: "dilution",  label: "Dilution",  icon: "💧" },
+    { key: "insiders",  label: "Insiders",  icon: "👔" },
+    { key: "valuation", label: "Valuation", icon: "💰" },
+  ];
+
+  return (
+    <div style={{ marginTop: "1.5rem", borderTop: "1px solid rgba(255,255,255,.05)", paddingTop: "1.25rem" }}>
+      <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: "#3d5c78", marginBottom: "0.85rem" }}>
+        Signal Breakdown
+      </div>
+      <div style={{ display: "flex", flexDirection: "column", gap: "0.55rem" }}>
+        {metrics.map(m => {
+          const item = bd[m.key];
+          if (!item) return null;
+          const isNA = item.label === "N/A";
+          return (
+            <div key={m.key} style={{ display: "grid", gridTemplateColumns: "80px 1fr", alignItems: "center", gap: "0.75rem" }}>
+              <span style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "#3d5c78" }}>
+                {m.icon} {m.label}
+              </span>
+              <span style={{
+                fontFamily: "'Space Mono',monospace", fontSize: ".72rem", fontWeight: 700,
+                color: isNA ? "#2a4060" : item.color,
+              }}>
+                {item.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 // ── Advanced Risk Assessment ───────────────────────────────
 function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
   if (!stocks.length) return null;
@@ -280,6 +322,8 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
           <ScoreBar label="Momentum"     value={s.momentum} />
           <ScoreBar label="Tech Value"   value={s.techValue}/>
         </div>
+
+        <SignalBreakdown scores={s} />
 
       </section>
     );
