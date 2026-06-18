@@ -12,6 +12,8 @@ export default function AdminPanel({ session, onBack }) {
   const [btLoading,  setBtLoading]  = useState(true);
   const [btRunning,  setBtRunning]  = useState(false);
   const [btMsg,      setBtMsg]      = useState(null);
+  const [applicants, setApplicants] = useState([]);
+  const [appLoading, setAppLoading] = useState(true);
   const [activeTab,  setActiveTab]  = useState("users");
 
   const headers = {
@@ -31,6 +33,12 @@ export default function AdminPanel({ session, onBack }) {
       .order("run_date", { ascending: false })
       .limit(5)
       .then(({ data }) => { setBacktest(data || []); setBtLoading(false); });
+
+    // Load contributor applications
+    supabase.from("contributor_applications")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .then(({ data }) => { setApplicants(data || []); setAppLoading(false); });
   }, []);
 
   async function runBacktest() {
@@ -95,7 +103,7 @@ export default function AdminPanel({ session, onBack }) {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: 4, marginBottom: "1.5rem", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-          {[["users","👥 Users"], ["model","📊 Model Performance"]].map(([id, label]) => (
+          {[["users","👥 Users"], ["model","📊 Model Performance"], ["contributors","🤝 Contributors"]].map(([id, label]) => (
             <button key={id} onClick={() => setActiveTab(id)} style={{
               padding: "0.6rem 1.2rem", background: "none", border: "none",
               borderBottom: activeTab === id ? "2px solid #00b4ff" : "2px solid transparent",
@@ -297,6 +305,55 @@ export default function AdminPanel({ session, onBack }) {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* ── Contributors tab ── */}
+        {activeTab === "contributors" && (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "1.5rem" }}>
+              <p style={{ color: "#3d5c78", fontSize: ".82rem", margin: 0 }}>
+                Applications from the Join Us page — people who want contributor access.
+              </p>
+              <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".75rem", color: "#3d5c78" }}>
+                {applicants.length} application{applicants.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+
+            {appLoading && <p style={{ color: "#3d5c78" }}>Loading…</p>}
+
+            {!appLoading && applicants.length === 0 && (
+              <div style={{ background: "rgba(255,255,255,.02)", border: "1px solid rgba(255,255,255,.06)", borderRadius: 14, padding: "2rem", textAlign: "center" }}>
+                <p style={{ color: "#3d5c78" }}>No applications yet.</p>
+              </div>
+            )}
+
+            {applicants.map(a => (
+              <div key={a.id} style={{ background: "rgba(255,255,255,.02)", border: "1px solid rgba(255,255,255,.06)", borderRadius: 14, padding: "1.5rem", marginBottom: "1rem" }}>
+                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "1rem", flexWrap: "wrap", gap: "0.5rem" }}>
+                  <div>
+                    <div style={{ fontWeight: 700, color: "#dce8f4", fontSize: "1rem", marginBottom: 3 }}>{a.name}</div>
+                    <div style={{ fontFamily: "'Space Mono',monospace", fontSize: ".75rem", color: "#00b4ff" }}>{a.email}</div>
+                  </div>
+                  <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                    <span style={{ fontSize: ".65rem", fontWeight: 700, padding: "3px 10px", borderRadius: 4, background: a.status === "approved" ? "rgba(0,220,130,.1)" : "rgba(245,158,11,.1)", color: a.status === "approved" ? "#00dc82" : "#f59e0b", border: `1px solid ${a.status === "approved" ? "rgba(0,220,130,.2)" : "rgba(245,158,11,.2)"}`, textTransform: "uppercase", letterSpacing: ".08em" }}>
+                      {a.status}
+                    </span>
+                    <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".68rem", color: "#3d5c78" }}>
+                      {new Date(a.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
+                    </span>
+                  </div>
+                </div>
+                <div style={{ marginBottom: "0.75rem" }}>
+                  <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#3d5c78", marginBottom: 5 }}>Background</div>
+                  <p style={{ fontSize: ".85rem", color: "#6a8aac", lineHeight: 1.65, margin: 0 }}>{a.background}</p>
+                </div>
+                <div>
+                  <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#3d5c78", marginBottom: 5 }}>Why they want to join</div>
+                  <p style={{ fontSize: ".85rem", color: "#6a8aac", lineHeight: 1.65, margin: 0 }}>{a.why_join}</p>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

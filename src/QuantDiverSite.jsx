@@ -182,9 +182,9 @@ function HomePage({ go, onEnterApp }) {
             <div style={{
               marginTop: 48, display: "flex", gap: 36, flexWrap: "wrap",
             }}>
-              {[["6", "scoring dimensions"], ["2×", "daily briefs"], ["0–100", "score scale"]].map(([n, l]) => (
+              {[["+17.14%", "avg 90d return · Strong signals"], ["+22.15%", "spread vs weak signals"], ["840", "back-tested data points"]].map(([n, l]) => (
                 <div key={l}>
-                  <div style={{ fontFamily: ff.mono, fontSize: "1.5rem", fontWeight: 700, color: T.ink }}>{n}</div>
+                  <div style={{ fontFamily: ff.mono, fontSize: "1.5rem", fontWeight: 700, color: "#00dc82" }}>{n}</div>
                   <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 2 }}>{l}</div>
                 </div>
               ))}
@@ -326,24 +326,34 @@ function HomePage({ go, onEnterApp }) {
           <div style={{
             background: "linear-gradient(135deg, rgba(0,180,255,.06) 0%, rgba(139,92,246,.06) 100%)",
             border: `1px solid rgba(0,180,255,.18)`,
-            borderRadius: 16, padding: "32px 36px",
-            display: "flex", alignItems: "flex-start", gap: 28, flexWrap: "wrap",
+            borderRadius: 16, padding: "36px 36px",
           }}>
-            <div style={{ fontSize: "2rem", flexShrink: 0 }}>📊</div>
-            <div>
-              <div style={{ fontFamily: ff.mono, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 10 }}>
-                Weekly back-testing · Running automatically
-              </div>
-              <p style={{ fontFamily: ff.body, fontSize: ".95rem", color: T.sub, lineHeight: 1.75, margin: "0 0 8px", maxWidth: "52rem" }}>
-                Every Sunday our engine re-runs the model against historical price data across 55 tracked stocks. Stocks scoring above 70 on our MOMENTUM engine have returned an average of <strong style={{ color: T.ink }}>+17.14% over the following 90 days</strong>, versus -5.01% for stocks scoring below 40 — a spread of +22.15% across 840 historical data points.
-              </p>
-              <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, margin: "10px 0 6px" }}>
-                This is a <strong style={{ color: T.ink }}>90-day conviction signal</strong> — not a short-term trade indicator. Short-term price volatility is expected and normal. The edge shows up over 3 months, not 3 days.
-              </p>
-              <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.dim, margin: 0 }}>
-                This is not a claim. It is a process — and it runs whether you are watching or not.
-              </p>
+            <div style={{ fontFamily: ff.mono, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 24 }}>
+              📊 Weekly back-testing · Running automatically · 55 tickers · 840 data points
             </div>
+
+            {/* Big stat numbers */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 24, marginBottom: 28 }}>
+              {[
+                { value: "+17.14%", label: "Avg 90d return", sub: "Strong signals (>70)", color: "#00dc82" },
+                { value: "-5.01%",  label: "Avg 90d return", sub: "Weak signals (<40)",  color: "#ff3c50" },
+                { value: "+22.15%", label: "Spread",         sub: "Strong vs Weak",      color: T.cyan    },
+                { value: "90 days", label: "Signal horizon", sub: "Not a day-trade",     color: T.amber   },
+              ].map(s => (
+                <div key={s.label} style={{ borderLeft: `3px solid ${s.color}30`, paddingLeft: 16 }}>
+                  <div style={{ fontFamily: ff.mono, fontSize: "1.6rem", fontWeight: 700, color: s.color, lineHeight: 1 }}>{s.value}</div>
+                  <div style={{ fontFamily: ff.body, fontSize: ".78rem", fontWeight: 700, color: T.sub, marginTop: 6 }}>{s.label}</div>
+                  <div style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 2 }}>{s.sub}</div>
+                </div>
+              ))}
+            </div>
+
+            <p style={{ fontFamily: ff.body, fontSize: ".9rem", color: T.sub, lineHeight: 1.75, margin: "0 0 8px" }}>
+              Every Sunday the engine re-runs against 6 months of historical price data. If the spread between high and low scoring stocks narrows, we adjust the weights. If it holds, the model is working. These are not projections — they are measured historical outcomes.
+            </p>
+            <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.dim, margin: 0, fontStyle: "italic" }}>
+              This is not a claim. It is a process — and it runs whether you are watching or not.
+            </p>
           </div>
         </div>
       </section>
