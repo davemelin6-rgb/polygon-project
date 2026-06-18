@@ -20,6 +20,7 @@ import SectorRanking     from "./SectorRanking.jsx";
 import Portfolio         from "./Portfolio.jsx";
 import MarketRegime      from "./MarketRegime.jsx";
 import Crypto            from "./Crypto.jsx";
+import Guide             from "./Guide.jsx";
 
 const SECTORS = [
   {
@@ -812,6 +813,7 @@ export default function App({ session, onLogout, onAdmin }) {
           { id: "community",  label: "Community",     icon: "💬" },
           { id: "brief",      label: "Daily Brief",   icon: "☀️" },
           { id: "crypto",     label: "Crypto",        icon: "₿"  },
+          { id: "guide",      label: "Guide",         icon: "📖" },
         ].map(tab => (
           <button
             key={tab.id}
@@ -924,6 +926,9 @@ export default function App({ session, onLogout, onAdmin }) {
 
       {/* ── Crypto tab ── */}
       {activeTab === "crypto" && <Crypto session={session} />}
+
+      {/* ── Guide tab ── */}
+      {activeTab === "guide" && <Guide />}
 
       <RightDock session={session} onOpenCommunity={() => { setShowCommunity(true); }} />
       {showSettings && (
