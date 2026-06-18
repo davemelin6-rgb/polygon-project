@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
+import PriceChart      from "./PriceChart.jsx";
+import TechnicalSignals from "./TechnicalSignals.jsx";
 
 const CRYPTOS = [
   { symbol: "X:BTCUSD",  name: "Bitcoin",   abbr: "BTC",  color: "#F7931A" },
@@ -55,19 +57,24 @@ function ScoreBar({ label, value }) {
   );
 }
 
-function CryptoCard({ crypto, price, changePercent, scores }) {
+function CryptoCard({ crypto, price, changePercent, scores, selected, onClick }) {
   const positive = (changePercent ?? 0) >= 0;
   const verdict  = getGrade(scores?.signal);
 
   return (
-    <div style={{
-      background: "rgba(8,14,24,0.85)",
-      border: `1px solid rgba(255,255,255,0.07)`,
-      borderLeft: `3px solid ${positive ? "rgba(0,220,130,0.7)" : "rgba(255,60,80,0.7)"}`,
-      borderRadius: 16, padding: "1.5rem 1.4rem",
-      backdropFilter: "blur(16px)",
-      boxShadow: "0 4px 24px rgba(0,0,0,0.25)",
-    }}>
+    <div
+      onClick={onClick}
+      role="button"
+      style={{
+        background: selected ? "rgba(0,100,200,0.08)" : "rgba(8,14,24,0.85)",
+        border: selected ? "1px solid rgba(0,180,255,0.3)" : `1px solid rgba(255,255,255,0.07)`,
+        borderLeft: `3px solid ${positive ? "rgba(0,220,130,0.7)" : "rgba(255,60,80,0.7)"}`,
+        borderRadius: 16, padding: "1.5rem 1.4rem",
+        backdropFilter: "blur(16px)",
+        boxShadow: selected ? "0 8px 40px rgba(0,0,0,0.35), 0 0 0 1px rgba(0,180,255,0.12)" : "0 4px 24px rgba(0,0,0,0.25)",
+        cursor: "pointer",
+        transition: "all 0.2s",
+      }}>
       {/* Header */}
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
@@ -115,10 +122,11 @@ function CryptoCard({ crypto, price, changePercent, scores }) {
 }
 
 export default function Crypto({ session }) {
-  const [prices,    setPrices]    = useState({});
-  const [scores,    setScores]    = useState({});
-  const [loading,   setLoading]   = useState(true);
+  const [prices,      setPrices]      = useState({});
+  const [scores,      setScores]      = useState({});
+  const [loading,     setLoading]     = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
+  const [selected,    setSelected]    = useState(null);
 
   const fetchAll = useCallback(async () => {
     const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
@@ -180,9 +188,26 @@ export default function Crypto({ session }) {
             price={prices[c.symbol]?.price}
             changePercent={prices[c.symbol]?.changePercent}
             scores={scores[c.symbol]}
+            selected={selected?.symbol === c.symbol}
+            onClick={() => setSelected(prev => prev?.symbol === c.symbol ? null : { symbol: c.symbol, price: prices[c.symbol]?.price, changePercent: prices[c.symbol]?.changePercent })}
           />
         ))}
       </div>
+
+      {/* Price Chart + Technical Signals for selected crypto */}
+      {selected && (
+        <div style={{ marginTop: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "1rem" }}>
+            <span style={{ fontFamily: "'Space Mono',monospace", fontSize: "1rem", fontWeight: 700, color: "#dce8f4" }}>
+              {CRYPTOS.find(c => c.symbol === selected.symbol)?.name}
+            </span>
+            <span style={{ fontSize: ".72rem", color: "#3d5c78" }}>{selected.symbol}</span>
+            <button onClick={() => setSelected(null)} style={{ marginLeft: "auto", background: "none", border: "none", color: "#3d5c78", cursor: "pointer", fontSize: ".8rem" }}>✕ Close</button>
+          </div>
+          <PriceChart       stock={selected} session={session} />
+          <TechnicalSignals stock={selected} session={session} />
+        </div>
+      )}
 
       <p style={{ marginTop: "1.5rem", fontSize: ".75rem", color: "#1a3050", lineHeight: 1.7 }}>
         Crypto prices are highly volatile. QuantDiver scores are 90-day signals and do not constitute financial advice. Always conduct your own research.
