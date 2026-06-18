@@ -182,7 +182,7 @@ function HomePage({ go, onEnterApp }) {
             <div style={{
               marginTop: 48, display: "flex", gap: 36, flexWrap: "wrap",
             }}>
-              {[["+17.14%", "avg 90d return · Strong signals"], ["+22.15%", "spread vs weak signals"], ["840", "back-tested data points"]].map(([n, l]) => (
+              {[["+29.3%", "avg 90d return · Strong signals"], ["+31.09%", "spread vs weak signals"], ["1,029", "back-tested data points"]].map(([n, l]) => (
                 <div key={l}>
                   <div style={{ fontFamily: ff.mono, fontSize: "1.5rem", fontWeight: 700, color: "#00dc82" }}>{n}</div>
                   <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 2 }}>{l}</div>
@@ -329,15 +329,15 @@ function HomePage({ go, onEnterApp }) {
             borderRadius: 16, padding: "36px 36px",
           }}>
             <div style={{ fontFamily: ff.mono, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 24 }}>
-              📊 Weekly back-testing · Running automatically · 55 tickers · 840 data points
+              📊 Weekly back-testing · Running automatically · 55 tickers · 1,029 data points
             </div>
 
             {/* Big stat numbers */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 24, marginBottom: 28 }}>
               {[
-                { value: "+17.14%", label: "Avg 90d return", sub: "Strong signals (>70)", color: "#00dc82" },
-                { value: "-5.01%",  label: "Avg 90d return", sub: "Weak signals (<40)",  color: "#ff3c50" },
-                { value: "+22.15%", label: "Spread",         sub: "Strong vs Weak",      color: T.cyan    },
+                { value: "+29.3%",  label: "Avg 90d return", sub: "Strong signals (>70)", color: "#00dc82" },
+                { value: "-1.79%",  label: "Avg 90d return", sub: "Weak signals (<40)",  color: "#ff3c50" },
+                { value: "+31.09%", label: "Spread",         sub: "Strong vs Weak",      color: T.cyan    },
                 { value: "90 days", label: "Signal horizon", sub: "Not a day-trade",     color: T.amber   },
               ].map(s => (
                 <div key={s.label} style={{ borderLeft: `3px solid ${s.color}30`, paddingLeft: 16 }}>
