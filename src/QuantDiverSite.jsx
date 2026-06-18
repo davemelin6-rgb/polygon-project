@@ -217,6 +217,108 @@ function HomePage({ go, onEnterApp }) {
       {/* THIN RULE */}
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
 
+      {/* HOW IT WORKS */}
+      <section style={{ padding: "96px 0" }}>
+        <div className="qd-wrap">
+
+          {/* Header */}
+          <div style={{ textAlign: "center", marginBottom: 64 }}>
+            <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>
+              Proof, not promises
+            </div>
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 18px" }}>
+              How the scoring system works
+            </h2>
+            <p style={{ color: T.sub, maxWidth: "42rem", margin: "0 auto", lineHeight: 1.7, fontFamily: ff.body, fontSize: ".95rem" }}>
+              We score every stock from 0 to 100. Then we look back at history and ask: did the stocks we scored high actually go up? Here is what the data shows.
+            </p>
+          </div>
+
+          {/* Step 1 → 2 → 3 flow */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 2, marginBottom: 56 }}>
+            {[
+              {
+                step: "01",
+                title: "We score every stock",
+                body: "Three models — MOMENTUM, RISK, and TECH VALUE — run on live market data. Each stock gets a score from 0 to 100 and a grade: A, B, C, or D.",
+                color: T.cyan,
+              },
+              {
+                step: "02",
+                title: "You act on the signal",
+                body: "Grade A (score >70) means the model sees strong momentum, a clean balance sheet, and solid fundamentals. Grade D means avoid.",
+                color: T.amber,
+              },
+              {
+                step: "03",
+                title: "We measure the outcome",
+                body: "Every Sunday the engine goes back through 6 months of history and checks: were we right? The results are stored and updated automatically.",
+                color: "#00dc82",
+              },
+            ].map((s, i) => (
+              <div key={s.step} style={{ background: T.s1, border: `1px solid ${T.border}`, borderRadius: 0, padding: "32px 28px", borderLeft: i === 0 ? `1px solid ${T.border}` : "none", position: "relative" }}>
+                <div style={{ fontFamily: ff.mono, fontSize: "2.5rem", fontWeight: 700, color: s.color + "20", marginBottom: 16, lineHeight: 1 }}>{s.step}</div>
+                <div style={{ fontFamily: ff.display, fontWeight: 700, fontSize: "1rem", color: T.ink, marginBottom: 10 }}>{s.title}</div>
+                <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.sub, lineHeight: 1.7, margin: 0 }}>{s.body}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* The proof — bucket results */}
+          <div style={{ background: "rgba(0,0,0,.3)", border: `1px solid ${T.border}`, borderRadius: 16, overflow: "hidden", marginBottom: 40 }}>
+
+            {/* Header */}
+            <div style={{ padding: "24px 32px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+              <div>
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 4 }}>
+                  Back-test results · 1,029 data points · 55 stocks · 6 months of history
+                </div>
+                <div style={{ fontFamily: ff.display, fontSize: "1.1rem", fontWeight: 700, color: T.ink }}>
+                  What happened 90 days after each score was assigned
+                </div>
+              </div>
+              <div style={{ fontFamily: ff.mono, fontSize: ".72rem", color: T.dim }}>Updated automatically every Sunday</div>
+            </div>
+
+            {/* Buckets */}
+            {[
+              { grade: "A", label: "Grade A — Strong (>70)", ret: "+29.3%", samples: "177 data points", color: "#00dc82", bg: "rgba(0,220,130,.04)", desc: "Stocks the model flagged as strong momentum with solid fundamentals" },
+              { grade: "B/C", label: "Grade B/C — Neutral (40–70)", ret: "+4.99%", samples: "532 data points", color: "#f59e0b", bg: "rgba(245,158,11,.03)", desc: "Mixed signals — some positive but no clear conviction" },
+              { grade: "D", label: "Grade D — Weak (<40)", ret: "-1.79%", samples: "320 data points", color: "#ff3c50", bg: "rgba(255,60,80,.04)", desc: "Stocks the model flagged as weak momentum or elevated risk" },
+            ].map(b => (
+              <div key={b.grade} style={{ display: "grid", gridTemplateColumns: "80px 1fr auto", alignItems: "center", gap: 24, padding: "20px 32px", borderBottom: `1px solid ${T.border}`, background: b.bg }}>
+                <div style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: b.color, textAlign: "center" }}>{b.grade}</div>
+                <div>
+                  <div style={{ fontFamily: ff.display, fontWeight: 700, fontSize: ".95rem", color: T.ink, marginBottom: 3 }}>{b.label}</div>
+                  <div style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim }}>{b.desc} · {b.samples}</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: b.color, lineHeight: 1 }}>{b.ret}</div>
+                  <div style={{ fontFamily: ff.mono, fontSize: ".65rem", color: T.dim, marginTop: 3 }}>avg 90d return</div>
+                </div>
+              </div>
+            ))}
+
+            {/* Spread callout */}
+            <div style={{ padding: "20px 32px", display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
+              <div>
+                <div style={{ fontFamily: ff.mono, fontSize: "2rem", fontWeight: 700, color: T.cyan }}>+31.09%</div>
+                <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 3 }}>spread between Grade A and Grade D</div>
+              </div>
+              <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, lineHeight: 1.7, maxWidth: "44rem", margin: 0 }}>
+                Stocks the model graded A outperformed stocks graded D by 31 percentage points over 90 days. This is not a projection — it is a measured outcome across over a thousand historical data points. The model runs every Sunday and these numbers update automatically.
+              </p>
+            </div>
+          </div>
+
+          <p style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.dim, textAlign: "center" }}>
+            Past performance does not guarantee future results. QuantDiver scores are informational only and do not constitute financial advice.
+          </p>
+        </div>
+      </section>
+
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
       {/* LEADERBOARD */}
       <section style={{ padding: "96px 0" }}>
         <div className="qd-wrap">
