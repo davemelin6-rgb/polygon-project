@@ -130,8 +130,21 @@ export default async function handler(req, res) {
     content: String(m.content || "").slice(0, 2000),
   }));
 
-  // Inject current scores as context if available
   const supabase = getSupabase();
+
+  // Fetch editable knowledge base from Supabase (you control this from Admin panel)
+  let knowledgeBase = "";
+  if (supabase) {
+    const { data: kb } = await supabase
+      .from("ai_knowledge")
+      .select("content")
+      .order("id", { ascending: false })
+      .limit(1)
+      .single();
+    if (kb?.content) knowledgeBase = kb.content;
+  }
+
+  // Inject current live scores
   let scoresContext = "";
   if (supabase) {
     const { data } = await supabase
@@ -140,12 +153,14 @@ export default async function handler(req, res) {
       .order("calculated_at", { ascending: false })
       .limit(20);
     if (data?.length) {
-      scoresContext = "\n\nCURRENT LIVE SCORES (as of latest calculation):\n" +
+      scoresContext = "\nCURRENT LIVE SCORES (as of latest calculation):\n" +
         data.map(s => `${s.symbol}: MOM=${s.momentum ?? "—"} RISK=${s.risk ?? "—"} TECH=${s.tech_value ?? "—"} SIGNAL=${s.signal ?? "—"}`).join("\n");
     }
   }
 
-  const systemWithScores = SYSTEM_PROMPT + scoresContext;
+  const systemWithScores = SYSTEM_PROMPT +
+    (knowledgeBase ? `\n\nKNOWLEDGE BASE (use this as your primary source of truth for current information):\n---\n${knowledgeBase}\n---` : "") +
+    scoresContext;
 
   const r = await fetch(ANTHROPIC_API, {
     method:  "POST",

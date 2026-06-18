@@ -12,8 +12,12 @@ export default function AdminPanel({ session, onBack }) {
   const [btLoading,  setBtLoading]  = useState(true);
   const [btRunning,  setBtRunning]  = useState(false);
   const [btMsg,      setBtMsg]      = useState(null);
-  const [applicants, setApplicants] = useState([]);
-  const [appLoading, setAppLoading] = useState(true);
+  const [applicants,   setApplicants]   = useState([]);
+  const [appLoading,   setAppLoading]   = useState(true);
+  const [knowledge,    setKnowledge]    = useState("");
+  const [kbLoading,    setKbLoading]    = useState(true);
+  const [kbSaving,     setKbSaving]     = useState(false);
+  const [kbMsg,        setKbMsg]        = useState(null);
   const [activeTab,  setActiveTab]  = useState("users");
 
   const headers = {
@@ -33,6 +37,14 @@ export default function AdminPanel({ session, onBack }) {
       .order("run_date", { ascending: false })
       .limit(5)
       .then(({ data }) => { setBacktest(data || []); setBtLoading(false); });
+
+    // Load AI knowledge base
+    supabase.from("ai_knowledge")
+      .select("content")
+      .order("id", { ascending: false })
+      .limit(1)
+      .single()
+      .then(({ data }) => { setKnowledge(data?.content || ""); setKbLoading(false); });
 
     // Load contributor applications
     supabase.from("contributor_applications")
@@ -103,7 +115,7 @@ export default function AdminPanel({ session, onBack }) {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: 4, marginBottom: "1.5rem", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-          {[["users","👥 Users"], ["model","📊 Model Performance"], ["contributors","🤝 Contributors"]].map(([id, label]) => (
+          {[["users","👥 Users"], ["model","📊 Model Performance"], ["contributors","🤝 Contributors"], ["knowledge","🤖 AI Knowledge"]].map(([id, label]) => (
             <button key={id} onClick={() => setActiveTab(id)} style={{
               padding: "0.6rem 1.2rem", background: "none", border: "none",
               borderBottom: activeTab === id ? "2px solid #00b4ff" : "2px solid transparent",
@@ -354,6 +366,70 @@ export default function AdminPanel({ session, onBack }) {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* ── AI Knowledge tab ── */}
+        {activeTab === "knowledge" && (
+          <div>
+            <p style={{ color: "#3d5c78", fontSize: ".82rem", marginBottom: "1.25rem", lineHeight: 1.7 }}>
+              This is what the AI reads before every conversation. Write in plain text — no special formatting needed. Update it whenever scores change, new features launch, or you want to adjust what the AI knows.
+            </p>
+
+            {kbMsg && (
+              <p style={{ color: kbMsg.ok ? "#00dc82" : "#ff3c50", fontSize: ".82rem", marginBottom: "1rem" }}>
+                {kbMsg.ok ? "✅" : "❌"} {kbMsg.text}
+              </p>
+            )}
+
+            {kbLoading ? (
+              <p style={{ color: "#3d5c78" }}>Loading…</p>
+            ) : (
+              <>
+                <textarea
+                  value={knowledge}
+                  onChange={e => setKnowledge(e.target.value)}
+                  rows={24}
+                  style={{
+                    width: "100%", boxSizing: "border-box",
+                    background: "rgba(255,255,255,.03)",
+                    border: "1px solid rgba(255,255,255,.08)",
+                    borderRadius: 10, color: "#c8d8e8",
+                    fontFamily: "'Space Mono', monospace", fontSize: ".78rem",
+                    lineHeight: 1.7, padding: "1rem",
+                    outline: "none", resize: "vertical",
+                  }}
+                />
+                <div style={{ display: "flex", gap: "0.75rem", marginTop: "0.75rem", alignItems: "center" }}>
+                  <button
+                    disabled={kbSaving}
+                    onClick={async () => {
+                      setKbSaving(true); setKbMsg(null);
+                      const { error } = await supabase.from("ai_knowledge")
+                        .update({ content: knowledge, updated_at: new Date().toISOString(), updated_by: session?.user?.email })
+                        .order("id", { ascending: false })
+                        .limit(1);
+                      setKbSaving(false);
+                      setKbMsg(error
+                        ? { ok: false, text: error.message }
+                        : { ok: true, text: "Knowledge base saved. AI will use this from the next conversation." }
+                      );
+                    }}
+                    style={{
+                      background: "linear-gradient(135deg,#00b4ff,#1a6bcc)", border: "none",
+                      color: "#fff", borderRadius: 8, padding: "10px 24px",
+                      cursor: kbSaving ? "default" : "pointer", fontFamily: "inherit",
+                      fontSize: ".85rem", fontWeight: 700, opacity: kbSaving ? .5 : 1,
+                    }}
+                  >
+                    {kbSaving ? "Saving…" : "Save Knowledge Base"}
+                  </button>
+                  <span style={{ fontSize: ".72rem", color: "#2a4060" }}>
+                    {knowledge.length} characters
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         )}
 
