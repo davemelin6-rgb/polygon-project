@@ -675,7 +675,7 @@ export default function App({ session, onLogout, onAdmin }) {
     return (
       <div className="app">
         <div className="community-page">
-          <Forum session={session} onClose={() => setShowCommunity(false)} />
+          <Forum session={session} onClose={() => setShowCommunity(false)} onEnterApp={null} />
         </div>
       </div>
     );
