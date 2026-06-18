@@ -69,7 +69,7 @@ export default async function handler(req, res) {
         } catch { return null; }
       })();
 
-      if (currentRisk !== null && currentRisk < 50) {
+      if (currentRisk !== null && currentRisk < 35) {
         console.log(`Skipping ${ticker} — RISK score ${currentRisk} below threshold`);
         return;
       }
