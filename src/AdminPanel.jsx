@@ -259,7 +259,7 @@ export default function AdminPanel({ session, onBack }) {
                     <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".8rem" }}>
                       <thead>
                         <tr style={{ borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-                          {["Score Bucket", "Samples", "Avg 30d Return", "Avg 60d Return", "Win Rate"].map(h => (
+                          {["Score Bucket", "Samples", "Avg 30d", "Avg 60d", "Avg 90d", "Avg 180d", "Win Rate"].map(h => (
                             <th key={h} style={{ padding: "6px 10px", textAlign: "left", color: "#3d5c78", fontSize: ".65rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase" }}>{h}</th>
                           ))}
                         </tr>
@@ -274,6 +274,8 @@ export default function AdminPanel({ session, onBack }) {
                               <td style={{ padding: "8px 10px", color: "#6a8aac", fontFamily: "'Space Mono',monospace" }}>{b.samples}</td>
                               <td style={{ padding: "8px 10px", fontFamily: "'Space Mono',monospace", fontWeight: 700, color: ret30Color }}>{b.avg30d != null ? `${b.avg30d > 0 ? "+" : ""}${b.avg30d}%` : "—"}</td>
                               <td style={{ padding: "8px 10px", fontFamily: "'Space Mono',monospace", fontWeight: 700, color: ret60Color }}>{b.avg60d != null ? `${b.avg60d > 0 ? "+" : ""}${b.avg60d}%` : "—"}</td>
+                              <td style={{ padding: "8px 10px", fontFamily: "'Space Mono',monospace", fontWeight: 700, color: b.avg90d > 5 ? "#00dc82" : b.avg90d > 0 ? "#f59e0b" : "#ff3c50" }}>{b.avg90d != null ? `${b.avg90d > 0 ? "+" : ""}${b.avg90d}%` : "—"}</td>
+                              <td style={{ padding: "8px 10px", fontFamily: "'Space Mono',monospace", fontWeight: 700, color: b.avg180d > 8 ? "#00dc82" : b.avg180d > 0 ? "#f59e0b" : "#ff3c50" }}>{b.avg180d != null ? `${b.avg180d > 0 ? "+" : ""}${b.avg180d}%` : "—"}</td>
                               <td style={{ padding: "8px 10px", fontFamily: "'Space Mono',monospace", color: b.winRate > 55 ? "#00dc82" : b.winRate > 45 ? "#f59e0b" : "#ff3c50" }}>{b.winRate != null ? `${b.winRate}%` : "—"}</td>
                             </tr>
                           );

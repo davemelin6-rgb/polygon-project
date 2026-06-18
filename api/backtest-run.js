@@ -7,10 +7,24 @@ import { calcMomentum }     from "../lib/formulas.js";
 import { getSupabase }      from "../lib/supabase.js";
 
 const TICKERS = [
-  "AAPL","MSFT","NVDA","GOOGL","AMZN",
-  "IONQ","RGTI","IBM","META","AMD",
-  "PLTR","LMT","RTX","RKLB","ASTS",
-  "LLY","NVO","MRNA","REGN","VRTX",
+  // Growth / Tech (original)
+  "AAPL","MSFT","NVDA","GOOGL","AMZN","META","AMD","PLTR","IBM",
+  // Quantum / Space / Defence
+  "IONQ","RGTI","LMT","RTX","RKLB","ASTS","NOC","GD",
+  // Biotech
+  "LLY","NVO","MRNA","REGN","VRTX","GILD","ISRG",
+  // Financials / Value
+  "JPM","BAC","GS","V","MA","BRK-B","WFC","C",
+  // Energy
+  "XOM","CVX","COP","SLB",
+  // Consumer / Retail
+  "WMT","COST","HD","TGT","MCD",
+  // Healthcare (non-biotech)
+  "UNH","JNJ","ABT","PFE",
+  // Industrials
+  "CAT","GE","HON","DE",
+  // Other large-cap
+  "TSLA","NFLX","DIS","PYPL","INTC","AVGO",
 ];
 
 const BUCKETS = [
@@ -42,7 +56,7 @@ export default async function handler(req, res) {
 
   await Promise.all(TICKERS.map(async (ticker) => {
     try {
-      const aggs = await fetchAggregates(ticker, polygonKey, 400);
+      const aggs = await fetchAggregates(ticker, polygonKey, 500);
       if (!aggs || aggs.length < 120) return;
 
       // Only include stocks with solid fundamentals (RISK > 50)
@@ -74,14 +88,18 @@ export default async function handler(req, res) {
         const score = calcMomentum({ price: historicalAggs.at(-1).c, aggs: historicalAggs, vix: historicalVix });
         if (score === null) continue;
 
-        // Measure actual forward returns
-        const priceNow   = historicalAggs.at(-1).c;
-        const price30    = aggs[cutoff + 29]?.c ?? null;
-        const price60    = aggs[cutoff + 59]?.c ?? null;
-        const return30d  = price30 != null ? (price30 - priceNow) / priceNow : null;
-        const return60d  = price60 != null ? (price60 - priceNow) / priceNow : null;
+        // Measure actual forward returns — 30, 60, 90, 180 days
+        const priceNow    = historicalAggs.at(-1).c;
+        const price30     = aggs[cutoff + 29]?.c  ?? null;
+        const price60     = aggs[cutoff + 59]?.c  ?? null;
+        const price90     = aggs[cutoff + 89]?.c  ?? null;
+        const price180    = aggs[cutoff + 179]?.c ?? null;
+        const return30d   = price30  != null ? (price30  - priceNow) / priceNow : null;
+        const return60d   = price60  != null ? (price60  - priceNow) / priceNow : null;
+        const return90d   = price90  != null ? (price90  - priceNow) / priceNow : null;
+        const return180d  = price180 != null ? (price180 - priceNow) / priceNow : null;
 
-        allSamples.push({ ticker, score, return30d, return60d, weeksBack });
+        allSamples.push({ ticker, score, return30d, return60d, return90d, return180d, weeksBack });
       }
     } catch (e) {
       console.error(`Backtest error for ${ticker}:`, e.message);
@@ -95,26 +113,26 @@ export default async function handler(req, res) {
   // Group samples into buckets and calculate average returns
   const bucketResults = BUCKETS.map(bucket => {
     const samples = allSamples.filter(s => s.score >= bucket.min && s.score < bucket.max);
-    const with30  = samples.filter(s => s.return30d !== null);
-    const with60  = samples.filter(s => s.return60d !== null);
+    const with30  = samples.filter(s => s.return30d  !== null);
+    const with60  = samples.filter(s => s.return60d  !== null);
+    const with90  = samples.filter(s => s.return90d  !== null);
+    const with180 = samples.filter(s => s.return180d !== null);
 
-    const avg30d = with30.length
-      ? with30.reduce((sum, s) => sum + s.return30d, 0) / with30.length
-      : null;
-    const avg60d = with60.length
-      ? with60.reduce((sum, s) => sum + s.return60d, 0) / with60.length
+    const avg = (arr, key) => arr.length
+      ? Math.round(arr.reduce((sum, s) => sum + s[key], 0) / arr.length * 10000) / 100
       : null;
 
-    // Win rate: % of samples where 30d return was positive
-    const wins   = with30.filter(s => s.return30d > 0).length;
-    const winRate = with30.length ? wins / with30.length : null;
+    const wins    = with30.filter(s => s.return30d > 0).length;
+    const winRate = with30.length ? Math.round(wins / with30.length * 1000) / 10 : null;
 
     return {
-      bucket:      bucket.label,
-      samples:     samples.length,
-      avg30d:      avg30d != null ? Math.round(avg30d * 10000) / 100 : null, // as %
-      avg60d:      avg60d != null ? Math.round(avg60d * 10000) / 100 : null,
-      winRate:     winRate != null ? Math.round(winRate * 1000) / 10 : null, // as %
+      bucket:   bucket.label,
+      samples:  samples.length,
+      avg30d:   avg(with30,  "return30d"),
+      avg60d:   avg(with60,  "return60d"),
+      avg90d:   avg(with90,  "return90d"),
+      avg180d:  avg(with180, "return180d"),
+      winRate,
     };
   });
 
@@ -128,7 +146,10 @@ export default async function handler(req, res) {
   // Verdict
   const strongBucket  = bucketResults.find(b => b.bucket.startsWith("Strong"));
   const weakBucket    = bucketResults.find(b => b.bucket.startsWith("Weak"));
-  const spread        = (strongBucket?.avg30d ?? 0) - (weakBucket?.avg30d ?? 0);
+  // Use 90d spread as primary verdict signal — more meaningful than 30d
+  const spread90  = (strongBucket?.avg90d  ?? 0) - (weakBucket?.avg90d  ?? 0);
+  const spread30  = (strongBucket?.avg30d  ?? 0) - (weakBucket?.avg30d  ?? 0);
+  const spread    = spread90 !== 0 ? spread90 : spread30;
   const verdict = spread > 3  ? "PREDICTIVE"
                 : spread > 0  ? "WEAK_SIGNAL"
                 :               "NOT_PREDICTIVE";
