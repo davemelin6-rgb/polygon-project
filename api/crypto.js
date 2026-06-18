@@ -31,57 +31,56 @@ export default async function handler(req, res) {
 
   const now = Date.now();
 
-  // ── Step 1: Quick price fetch (last 3 days only, very fast) ──
-  if (!_priceCache.data || _priceCache.expires < now) {
-    const to   = new Date().toISOString().slice(0, 10);
-    const from = new Date(Date.now() - 5 * 86400000).toISOString().slice(0, 10);
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
-    // Fetch one at a time with small delay to avoid rate limiting
-    const newPrices = {};
-    for (const ticker of CRYPTOS) {
-      try {
-        const url = `https://api.polygon.io/v2/aggs/ticker/${encodeURIComponent(ticker)}/range/1/day/${from}/${to}?adjusted=true&sort=desc&limit=3&apiKey=${polygonKey}`;
-        const r   = await fetch(url);
-        if (r.ok) {
-          const j    = await r.json();
-          const last = j.results?.[0];
-          const prev = j.results?.[1];
-          if (last) {
-            const price = last.c;
-            const prevClose = prev?.c ?? null;
-            newPrices[ticker] = {
-              symbol: ticker, price,
-              changePercent: price && prevClose ? ((price - prevClose) / prevClose) * 100 : null,
-              prevClose,
-              volume: last.v ?? null,
-            };
-          }
-        }
-      } catch {}
-    }
-    _priceCache.data    = newPrices;
-    _priceCache.expires = now + PRICE_TTL;
-  }
-
-  // ── Step 2: Full score calculation (200 days, cached 1h) ────
+  // ── Step 1 + 2 combined: fetch price + score together per ticker ──
+  // Only recalculate if stale. Space out requests to avoid rate limiting.
   const stale = CRYPTOS.filter(t => !_scoreCache.get(t) || _scoreCache.get(t).expires < now);
-  if (stale.length > 0) {
-    // Sequential to avoid rate limiting on large fetches
-    for (const ticker of stale) {
+  const needsPriceRefresh = !_priceCache.data || _priceCache.expires < now;
+
+  if (stale.length > 0 || needsPriceRefresh) {
+    if (!_priceCache.data) _priceCache.data = {};
+
+    for (const ticker of CRYPTOS) {
+      const needsScore = !_scoreCache.get(ticker) || _scoreCache.get(ticker).expires < now;
+      if (!needsPriceRefresh && !needsScore) continue;
+
       try {
-        const aggs     = await fetchAggregates(ticker, polygonKey);
-        const price    = _priceCache.data?.[ticker]?.price ?? aggs?.at(-1)?.c ?? null;
-        const momentum = calcMomentum({ price, aggs });
-        const risk     = calcRisk({ aggs, fundamentals: null });
-        const signal   = calcSignal({ momentum, risk, techValue: null });
-        _scoreCache.set(ticker, {
-          score: { symbol: ticker, momentum, risk, techValue: null, signal, hasFundamentals: false },
-          expires: now + SCORE_TTL,
-        });
+        // Fetch 200 days — used for both price (last bar) and score calculation
+        const aggs  = await fetchAggregates(ticker, polygonKey);
+        const last  = aggs?.at(-1);
+        const prev  = aggs?.at(-2);
+        const price = last?.c ?? null;
+
+        // Price data
+        if (needsPriceRefresh && price != null) {
+          _priceCache.data[ticker] = {
+            symbol: ticker, price,
+            changePercent: price && prev?.c ? ((price - prev.c) / prev.c) * 100 : null,
+            prevClose: prev?.c ?? null,
+            volume:    last?.v ?? null,
+          };
+        }
+
+        // Score data
+        if (needsScore && aggs) {
+          const momentum = calcMomentum({ price, aggs });
+          const risk     = calcRisk({ aggs, fundamentals: null });
+          const signal   = calcSignal({ momentum, risk, techValue: null });
+          _scoreCache.set(ticker, {
+            score: { symbol: ticker, momentum, risk, techValue: null, signal, hasFundamentals: false },
+            expires: now + SCORE_TTL,
+          });
+        }
       } catch (e) {
-        console.error(`Crypto score error for ${ticker}:`, e.message);
+        console.error(`Crypto error for ${ticker}:`, e.message);
       }
+
+      // 300ms between tickers to stay well within rate limits
+      await sleep(300);
     }
+
+    if (needsPriceRefresh) _priceCache.expires = now + PRICE_TTL;
   }
 
   const prices = _priceCache.data || {};
