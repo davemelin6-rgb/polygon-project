@@ -889,7 +889,7 @@ function ContactPage() {
               border: "1px solid rgba(90,130,200,.15)", borderRadius: 20, padding: "40px 36px",
             }}>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 20px" }}>
-                <div>{inp("Your name", "name", "text", "Jane Smith")}</div>
+                <div>{inp("Your name", "name", "text", "Your name")}</div>
                 <div>{inp("Email address", "email", "email", "you@example.com")}</div>
               </div>
               {inp("Subject", "subject", "text", "Question about pricing...")}
