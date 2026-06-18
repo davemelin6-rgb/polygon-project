@@ -1226,7 +1226,7 @@ function ContributorPage() {
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.2rem" }}>
               <div>
                 <label style={{ display: "block", fontSize: ".75rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim, marginBottom: 7 }}>Your Name</label>
-                <input style={inputStyle} value={form.name} onChange={e => set("name", e.target.value)} placeholder="David Melin" required />
+                <input style={inputStyle} value={form.name} onChange={e => set("name", e.target.value)} placeholder="Your name" autoComplete="off" required />
               </div>
               <div>
                 <label style={{ display: "block", fontSize: ".75rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: T.dim, marginBottom: 7 }}>Email Address</label>
