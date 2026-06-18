@@ -1512,6 +1512,7 @@ export default function QuantDiverSite({ onEnterApp }) {
                 ["BriefMe",    "briefme"],
                 ["Pricing",    "pricing"],
                 ["About Us",   "about"],
+                ["Join Us",    "contributor"],
                 ["Contact",    "contact"],
               ].map(([label, route]) => (
                 <a key={route} className={`qd-mobile-link ${page === route ? "active" : ""}`}
