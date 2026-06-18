@@ -120,31 +120,24 @@ export default function Crypto({ session }) {
   const [loading,   setLoading]   = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  const tickers = CRYPTOS.map(c => c.symbol).join(",");
-
   const fetchAll = useCallback(async () => {
     const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
     try {
-      const [snapRes, scoresRes] = await Promise.all([
-        fetch(`/api/stocks?tickers=${encodeURIComponent(tickers)}`, { headers }),
-        fetch(`/api/scores?tickers=${encodeURIComponent(tickers)}`, { headers }),
-      ]);
-      if (snapRes.ok) {
-        const j = await snapRes.json();
-        const map = {};
-        for (const s of j.data || []) map[s.symbol] = s;
-        setPrices(map);
+      const r = await fetch("/api/crypto", { headers });
+      if (r.ok) {
+        const j = await r.json();
+        const pm = {}, sm = {};
+        for (const c of j.cryptos || []) {
+          pm[c.symbol] = c;
+          sm[c.symbol] = c.scores;
+        }
+        setPrices(pm);
+        setScores(sm);
+        setLastUpdated(new Date());
       }
-      if (scoresRes.ok) {
-        const j = await scoresRes.json();
-        const map = {};
-        for (const s of j.scores || []) map[s.symbol] = s;
-        setScores(map);
-      }
-      setLastUpdated(new Date());
     } catch {}
     setLoading(false);
-  }, [tickers, session]);
+  }, [session]);
 
   useEffect(() => {
     fetchAll();
