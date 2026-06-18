@@ -76,19 +76,35 @@ export default async function handler(req, res) {
   const apiKey = process.env.POLYGON_API_KEY;
   if (!apiKey) return res.status(500).json({ error: "POLYGON_API_KEY missing" });
 
-  const [vixBar, spxBars, qqBar] = await Promise.all([
-    fetchLatest("I:VIX", apiKey),
-    fetchHistory("I:SPX", apiKey, 260),
-    fetchLatest("QQQ",   apiKey),
+  // Fetch index snapshots via Polygon v3 endpoint (correct endpoint for indices)
+  // and SPY/QQQ via regular aggregates (ETF proxies, always reliable)
+  const [indexSnap, spyBars, qqBar] = await Promise.all([
+    fetch(`${BASE}/v3/snapshot/indices?ticker.any_of=I:VIX,I:SPX&apiKey=${apiKey}`)
+      .then(r => r.ok ? r.json() : null).catch(() => null),
+    fetchHistory("SPY", apiKey, 260),
+    fetchLatest("QQQ",  apiKey),
   ]);
 
-  const vix   = vixBar?.c ?? null;
-  const spx   = spxBars.length ? spxBars.at(-1).c : null;
-  const spxATH = spxBars.length ? Math.max(...spxBars.map(d => d.h)) : null;
-  const spxPctFromATH = spx && spxATH ? ((spx - spxATH) / spxATH) * 100 : null;
+  const indexResults = indexSnap?.results || [];
+  const vixEntry  = indexResults.find(r => r.ticker === "I:VIX");
+  const spxEntry  = indexResults.find(r => r.ticker === "I:SPX");
+
+  const vix    = vixEntry?.session?.close ?? vixEntry?.value ?? null;
+  const spxIdx = spxEntry?.session?.close ?? spxEntry?.value ?? null;
+
+  // Use SPY ETF for ATH calculation (has longer history in aggregates)
+  const spySeries = spyBars;
+  const spy       = spySeries.length ? spySeries.at(-1).c : null;
+  const spyATH    = spySeries.length ? Math.max(...spySeries.map(d => d.h)) : null;
+  // Approximate SPX from SPY (SPY ≈ SPX / 10)
+  const spx    = spxIdx ?? (spy ? spy * 10 : null);
+  const spxATH = spxIdx ? null : (spyATH ? spyATH * 10 : null);
+  const spxPctFromATH = spx && spxATH ? ((spx - spxATH) / spxATH) * 100
+                      : spy && spyATH  ? ((spy - spyATH) / spyATH) * 100
+                      : null;
 
   const qq    = qqBar?.c ?? null;
-  const qqATH = null; // QQQ ATH not tracked — use SPX as proxy
+  const qqATH = null;
 
   const regime = calcRegime(vix, spxPctFromATH, null);
 
