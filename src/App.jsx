@@ -19,6 +19,7 @@ import ScoreHistory      from "./ScoreHistory.jsx";
 import SectorRanking     from "./SectorRanking.jsx";
 import Portfolio         from "./Portfolio.jsx";
 import MarketRegime      from "./MarketRegime.jsx";
+import Crypto            from "./Crypto.jsx";
 
 const SECTORS = [
   {
@@ -766,6 +767,7 @@ export default function App({ session, onLogout, onAdmin }) {
           { id: "portfolio",  label: "My Portfolio",  icon: "💼" },
           { id: "community",  label: "Community",     icon: "💬" },
           { id: "brief",      label: "Daily Brief",   icon: "☀️" },
+          { id: "crypto",     label: "Crypto",        icon: "₿"  },
         ].map(tab => (
           <button
             key={tab.id}
@@ -875,6 +877,9 @@ export default function App({ session, onLogout, onAdmin }) {
 
       {/* ── Brief tab ── */}
       {activeTab === "brief" && <DailyBrief session={session} />}
+
+      {/* ── Crypto tab ── */}
+      {activeTab === "crypto" && <Crypto session={session} />}
 
       <RightDock session={session} onOpenCommunity={() => { setShowCommunity(true); }} />
       {showSettings && (
