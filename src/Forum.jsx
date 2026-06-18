@@ -401,7 +401,7 @@ export default function Forum({ session, onClose, onEnterApp }) {
           </div>
           <div>
             <div className="forum-eyebrow">QuantDiver Community</div>
-            <h2 className="forum-title">Albin's Community</h2>
+            <h2 className="forum-title">QuantDiver Community</h2>
             {profile && (
               <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 6 }}>
                 <span style={{ fontSize: ".75rem", color: "#3d5c78" }}>{profile.username}</span>
