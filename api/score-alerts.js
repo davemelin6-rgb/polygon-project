@@ -58,6 +58,7 @@ function buildAlertEmail(username, alerts) {
     </table>
     <p style="margin:20px 0 0;font-family:'Courier New',monospace;font-size:10px;color:#12253a;line-height:1.8;">
       QUANTDIVER · SCORE ALERTS<br/>
+      QuantDiver scores are 90-day signals. Short-term price action may not reflect the underlying momentum.<br/>
       Manage alerts in Settings at quantdiver.com · This is not financial advice.
     </p>
   </td></tr>

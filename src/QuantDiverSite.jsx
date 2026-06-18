@@ -335,7 +335,10 @@ function HomePage({ go, onEnterApp }) {
                 Weekly back-testing · Running automatically
               </div>
               <p style={{ fontFamily: ff.body, fontSize: ".95rem", color: T.sub, lineHeight: 1.75, margin: "0 0 8px", maxWidth: "52rem" }}>
-                Every Sunday our engine re-runs the model against 6 months of historical price data across 20 tracked stocks. We measure whether stocks that scored high on MOMENTUM actually outperformed over the following 30 and 60 days — and by how much. The results update automatically. If the spread between high-scoring and low-scoring stocks narrows, we know the weights need adjusting. If it holds, the model is working.
+                Every Sunday our engine re-runs the model against historical price data across 55 tracked stocks. Stocks scoring above 70 on our MOMENTUM engine have returned an average of <strong style={{ color: T.ink }}>+17.14% over the following 90 days</strong>, versus -5.01% for stocks scoring below 40 — a spread of +22.15% across 840 historical data points.
+              </p>
+              <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, margin: "10px 0 6px" }}>
+                This is a <strong style={{ color: T.ink }}>90-day conviction signal</strong> — not a short-term trade indicator. Short-term price volatility is expected and normal. The edge shows up over 3 months, not 3 days.
               </p>
               <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.dim, margin: 0 }}>
                 This is not a claim. It is a process — and it runs whether you are watching or not.
