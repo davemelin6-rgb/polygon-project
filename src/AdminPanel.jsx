@@ -11,6 +11,7 @@ export default function AdminPanel({ session, onBack }) {
   const [backtest,   setBacktest]   = useState(null);
   const [btLoading,  setBtLoading]  = useState(true);
   const [btRunning,  setBtRunning]  = useState(false);
+  const [btMsg,      setBtMsg]      = useState(null);
   const [activeTab,  setActiveTab]  = useState("users");
 
   const headers = {
@@ -34,16 +35,24 @@ export default function AdminPanel({ session, onBack }) {
 
   async function runBacktest() {
     setBtRunning(true);
+    setBtMsg(null);
     try {
-      await fetch("/api/admin", {
+      const r = await fetch("/api/admin", {
         method: "POST",
         headers,
         body: JSON.stringify({ action: "run_backtest" }),
       });
-      // Reload results
-      const { data } = await supabase.from("backtest_results").select("*").order("run_date", { ascending: false }).limit(5);
-      setBacktest(data || []);
-    } catch {}
+      const d = await r.json();
+      if (!r.ok) {
+        setBtMsg({ ok: false, text: d.error || `Error ${r.status}` });
+      } else {
+        setBtMsg({ ok: true, text: `Done — ${d.total_samples ?? "?"} samples · Verdict: ${d.verdict ?? "?"}` });
+        const { data } = await supabase.from("backtest_results").select("*").order("run_date", { ascending: false }).limit(5);
+        setBacktest(data || []);
+      }
+    } catch (e) {
+      setBtMsg({ ok: false, text: e.message || "Network error" });
+    }
     setBtRunning(false);
   }
 
@@ -203,10 +212,15 @@ export default function AdminPanel({ session, onBack }) {
                 disabled={btRunning}
                 style={{ background: "rgba(0,180,255,.1)", border: "1px solid rgba(0,180,255,.3)", color: "#00b4ff", borderRadius: 8, padding: "6px 16px", cursor: btRunning ? "default" : "pointer", fontSize: ".78rem", fontWeight: 700, opacity: btRunning ? .5 : 1 }}
               >
-                {btRunning ? "Running…" : "▶ Run Now"}
+                {btRunning ? "⏳ Running — ~60s…" : "▶ Run Now"}
               </button>
             </div>
 
+            {btMsg && (
+              <p style={{ color: btMsg.ok ? "#00dc82" : "#ff3c50", fontSize: ".82rem", marginBottom: "1rem" }}>
+                {btMsg.ok ? "✅" : "❌"} {btMsg.text}
+              </p>
+            )}
             {btLoading && <p style={{ color: "#3d5c78" }}>Loading…</p>}
 
             {!btLoading && backtest.length === 0 && (
