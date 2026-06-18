@@ -29,54 +29,52 @@ export default async function handler(req, res) {
   const polygonKey = process.env.POLYGON_API_KEY;
   if (!polygonKey) return res.status(500).json({ error: "POLYGON_API_KEY missing" });
 
-  // ── Live prices from Polygon crypto snapshot ───────────────
-  let prices = {};
-  if (_priceCache.data && _priceCache.expires > Date.now()) {
-    prices = _priceCache.data;
-  } else {
-    try {
-      const tickers = encodeURIComponent(CRYPTOS.join(","));
-      const r = await fetch(`${POLYGON}/v2/snapshot/locale/global/markets/crypto/tickers?tickers=${tickers}&apiKey=${polygonKey}`);
-      if (r.ok) {
-        const j = await r.json();
-        for (const t of j.tickers || []) {
-          prices[t.ticker] = {
-            symbol:        t.ticker,
-            price:         t.lastTrade?.p || t.day?.c || t.prevDay?.c || null,
-            changePercent: t.todaysChangePerc ?? null,
-            prevClose:     t.prevDay?.c ?? null,
-            volume:        t.day?.v ?? null,
-          };
-        }
-        _priceCache.data    = prices;
-        _priceCache.expires = Date.now() + PRICE_TTL;
-      }
-    } catch (e) {
-      console.error("Crypto price fetch error:", e.message);
-    }
-  }
+  // Polygon crypto snapshot requires a higher plan.
+  // Use aggregates (historical OHLCV) for both prices and scoring.
+  // Price = latest daily close. 24h change = (last close - prev close) / prev close.
+  const now   = Date.now();
+  const stale = CRYPTOS.filter(t => !_scoreCache.get(t) || _scoreCache.get(t).expires < now);
 
-  // ── MOMENTUM + RISK scores ─────────────────────────────────
-  const now    = Date.now();
-  const stale  = CRYPTOS.filter(t => !_scoreCache.get(t) || _scoreCache.get(t).expires < now);
+  // Always refresh prices (TTL 60s), only recalculate scores when stale (TTL 1h)
+  const needsPriceRefresh = !_priceCache.data || _priceCache.expires < now;
 
-  if (stale.length > 0) {
-    await Promise.all(stale.map(async (ticker) => {
+  if (stale.length > 0 || needsPriceRefresh) {
+    const toFetch = needsPriceRefresh ? CRYPTOS : stale;
+    await Promise.all(toFetch.map(async (ticker) => {
       try {
-        const aggs = await fetchAggregates(ticker, polygonKey);
-        const price = aggs?.at(-1)?.c ?? null;
-        const momentum = calcMomentum({ price, aggs });
-        const risk     = calcRisk({ aggs, fundamentals: null }); // volatility-only
-        const signal   = calcSignal({ momentum, risk, techValue: null });
-        _scoreCache.set(ticker, {
-          score: { symbol: ticker, momentum, risk, techValue: null, signal, hasFundamentals: false },
-          expires: now + SCORE_TTL,
-        });
+        const aggs     = await fetchAggregates(ticker, polygonKey);
+        const last     = aggs?.at(-1);
+        const prev     = aggs?.at(-2);
+        const price    = last?.c ?? null;
+        const prevClose = prev?.c ?? null;
+        const changePercent = price && prevClose && prevClose > 0
+          ? ((price - prevClose) / prevClose) * 100 : null;
+
+        // Store price data
+        if (!_priceCache.data) _priceCache.data = {};
+        _priceCache.data[ticker] = {
+          symbol: ticker, price, changePercent, prevClose,
+          volume: last?.v ?? null,
+        };
+
+        // Recalculate score if stale
+        if (!_scoreCache.get(ticker) || _scoreCache.get(ticker).expires < now) {
+          const momentum = calcMomentum({ price, aggs });
+          const risk     = calcRisk({ aggs, fundamentals: null });
+          const signal   = calcSignal({ momentum, risk, techValue: null });
+          _scoreCache.set(ticker, {
+            score: { symbol: ticker, momentum, risk, techValue: null, signal, hasFundamentals: false },
+            expires: now + SCORE_TTL,
+          });
+        }
       } catch (e) {
-        console.error(`Crypto score error for ${ticker}:`, e.message);
+        console.error(`Crypto fetch error for ${ticker}:`, e.message);
       }
     }));
+    _priceCache.expires = now + PRICE_TTL;
   }
+
+  const prices = _priceCache.data || {};
 
   const result = CRYPTOS.map(ticker => ({
     ...(prices[ticker] || { symbol: ticker, price: null, changePercent: null }),
