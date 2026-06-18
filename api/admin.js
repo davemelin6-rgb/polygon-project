@@ -33,12 +33,29 @@ export default async function handler(req, res) {
     return res.status(200).json({ users });
   }
 
-  // POST — update a user's password
+  // POST — update a user's password OR trigger backtest
   if (req.method === "POST") {
     let body = req.body;
     if (typeof body === "string") {
       try { body = JSON.parse(body); } catch { body = {}; }
     }
+
+    // Trigger backtest manually — admin only, uses server-side CRON_SECRET
+    if (body?.action === "run_backtest") {
+      const secret = process.env.CRON_SECRET;
+      if (!secret) return res.status(500).json({ error: "CRON_SECRET not configured" });
+      const { default: backtestHandler } = await import("./backtest-run.js");
+      const fakeReq = { headers: { authorization: `Bearer ${secret}` }, query: {} };
+      let result;
+      const fakeRes = {
+        _status: 200,
+        status(c) { this._status = c; return this; },
+        json(b) { result = b; },
+      };
+      await backtestHandler(fakeReq, fakeRes);
+      return res.status(fakeRes._status).json(result);
+    }
+
     const { userId, password } = body || {};
     if (!userId || !password || password.length < 6) {
       return res.status(400).json({ error: "userId and password (min 6 chars) required" });

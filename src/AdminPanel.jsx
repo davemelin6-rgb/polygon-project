@@ -35,8 +35,11 @@ export default function AdminPanel({ session, onBack }) {
   async function runBacktest() {
     setBtRunning(true);
     try {
-      const r = await fetch("/api/backtest-run", { headers: { Authorization: `Bearer ${process.env.CRON_SECRET || session.access_token}` } });
-      const d = await r.json();
+      await fetch("/api/admin", {
+        method: "POST",
+        headers,
+        body: JSON.stringify({ action: "run_backtest" }),
+      });
       // Reload results
       const { data } = await supabase.from("backtest_results").select("*").order("run_date", { ascending: false }).limit(5);
       setBacktest(data || []);
