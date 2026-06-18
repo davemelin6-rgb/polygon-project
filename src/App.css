@@ -346,7 +346,7 @@
 
 .score-row {
   display: grid;
-  grid-template-columns: 46px 1fr 34px 30px;
+  grid-template-columns: 72px 1fr 34px 30px;
   align-items: center;
   gap: 0.5rem;
 }
