@@ -18,6 +18,7 @@ import TraderMatch       from "./TraderMatch.jsx";
 import ScoreHistory      from "./ScoreHistory.jsx";
 import SectorRanking     from "./SectorRanking.jsx";
 import Portfolio         from "./Portfolio.jsx";
+import MarketRegime      from "./MarketRegime.jsx";
 
 const SECTORS = [
   {
@@ -827,8 +828,15 @@ export default function App({ session, onLogout, onAdmin }) {
 
       {(stocks.length > 0 || selected) && (
         <div className="sections">
-          <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
-          {selected && <KeyRatios          stock={selected} session={session} />}
+          <section className="panel">
+            <div className="panel-header" style={{ marginBottom: "1rem" }}>
+              <div className="panel-eyebrow">Market Intelligence</div>
+              <h2 className="panel-title">Market Condition</h2>
+            </div>
+            <MarketRegime session={session} />
+            <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
+          </section>
+          {selected && <KeyRatios stock={selected} session={session} />}
         </div>
       )}
 

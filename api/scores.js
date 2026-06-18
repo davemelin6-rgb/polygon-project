@@ -5,6 +5,23 @@ import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
 import { calcMomentum, calcRisk, calcTechValue, calcSignal } from "../lib/formulas.js";
 import { getSectorBenchmarks } from "../lib/sectorBenchmarks.js";
+
+// Fetch current VIX once per scores request (shared across all tickers)
+let _vixCache = null;
+async function getVix(polygonKey) {
+  if (_vixCache && _vixCache.expires > Date.now()) return _vixCache.value;
+  try {
+    const to   = new Date();
+    const from = new Date();
+    from.setDate(from.getDate() - 5);
+    const res = await fetch(`https://api.polygon.io/v2/aggs/ticker/I:VIX/range/1/day/${from.toISOString().slice(0,10)}/${to.toISOString().slice(0,10)}?adjusted=true&sort=desc&limit=1&apiKey=${polygonKey}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    const vix  = json.results?.[0]?.c ?? null;
+    _vixCache  = { value: vix, expires: Date.now() + 30 * 60 * 1000 };
+    return vix;
+  } catch { return null; }
+}
 import { getSupabase } from "../lib/supabase.js";
 import { verifySession, parseTickers } from "../lib/apiGuard.js";
 
@@ -53,6 +70,8 @@ export default async function handler(req, res) {
   });
 
   if (stale.length > 0) {
+    const vix = await getVix(polygonKey);
+
     const freshResults = await Promise.all(
       stale.map(async (ticker) => {
         const [aggs, fundamentals] = await Promise.all([
@@ -61,7 +80,7 @@ export default async function handler(req, res) {
         ]);
         const price      = aggs?.at(-1)?.c ?? null;
         const benchmarks = getSectorBenchmarks(ticker);
-        const momentum   = calcMomentum({ price, aggs, fundamentals });
+        const momentum   = calcMomentum({ price, aggs, fundamentals, vix });
         const risk       = calcRisk({ aggs, fundamentals });
         const tech_value = calcTechValue({ fundamentals, benchmarks });
         const signal     = calcSignal({ momentum, risk, techValue: tech_value });

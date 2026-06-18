@@ -33,22 +33,25 @@ export default async function handler(req, res) {
   const allSamples = []; // { ticker, score, return30d, return60d, weeksBack }
 
   // Fetch 400 days of data per ticker (enough for 6 months of weekly steps + 90d history)
+  // Fetch historical VIX for regime-adjusted back-test
+  let vixHistory = [];
+  try {
+    const vixAggs = await fetchAggregates("I:VIX", polygonKey, 400);
+    vixHistory = vixAggs || [];
+  } catch {}
+
   await Promise.all(TICKERS.map(async (ticker) => {
     try {
       const aggs = await fetchAggregates(ticker, polygonKey, 400);
       if (!aggs || aggs.length < 120) return;
 
       // Only include stocks with solid fundamentals (RISK > 50)
-      // Bad balance sheets pollute the momentum signal
       const currentRisk = await (async () => {
         try {
           const { fetchFundamentals } = await import("../lib/fetchFMP.js");
           const { calcRisk } = await import("../lib/formulas.js");
-          const [agg, fund] = await Promise.all([
-            Promise.resolve(aggs),
-            fetchFundamentals(ticker, process.env.FMP_API_KEY),
-          ]);
-          return calcRisk({ aggs: agg, fundamentals: fund });
+          const fund = await fetchFundamentals(ticker, process.env.FMP_API_KEY);
+          return calcRisk({ aggs, fundamentals: fund });
         } catch { return null; }
       })();
 
@@ -62,9 +65,13 @@ export default async function handler(req, res) {
         const cutoff = aggs.length - (weeksBack * 5);
         if (cutoff < 90) break;
 
+        // Get VIX at this historical point (same index offset)
+        const vixCutoff = vixHistory.length - (weeksBack * 5);
+        const historicalVix = vixCutoff > 0 ? vixHistory[vixCutoff]?.c ?? null : null;
+
         // Data as it would have looked at that historical point
         const historicalAggs = aggs.slice(0, cutoff);
-        const score = calcMomentum({ price: historicalAggs.at(-1).c, aggs: historicalAggs });
+        const score = calcMomentum({ price: historicalAggs.at(-1).c, aggs: historicalAggs, vix: historicalVix });
         if (score === null) continue;
 
         // Measure actual forward returns
