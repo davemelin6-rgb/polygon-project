@@ -76,32 +76,33 @@ export default async function handler(req, res) {
   const apiKey = process.env.POLYGON_API_KEY;
   if (!apiKey) return res.status(500).json({ error: "POLYGON_API_KEY missing" });
 
-  // Fetch index snapshots via Polygon v3 endpoint (correct endpoint for indices)
-  // and SPY/QQQ via regular aggregates (ETF proxies, always reliable)
-  const [indexSnap, spyBars, qqBar] = await Promise.all([
-    fetch(`${BASE}/v3/snapshot/indices?ticker.any_of=I:VIX,I:SPX&apiKey=${apiKey}`)
-      .then(r => r.ok ? r.json() : null).catch(() => null),
+  // Polygon index tickers (I:VIX, I:SPX) require a higher plan.
+  // Use SPY + QQQ ETFs — always available on unlimited plan.
+  // Compute realized volatility from SPY returns as VIX proxy.
+  const [spyBars, qqBar] = await Promise.all([
     fetchHistory("SPY", apiKey, 260),
     fetchLatest("QQQ",  apiKey),
   ]);
 
-  const indexResults = indexSnap?.results || [];
-  const vixEntry  = indexResults.find(r => r.ticker === "I:VIX");
-  const spxEntry  = indexResults.find(r => r.ticker === "I:SPX");
+  // Realized volatility (30-day annualised) from SPY — our VIX proxy
+  let vix = null;
+  if (spyBars.length >= 31) {
+    const recent = spyBars.slice(-31);
+    const returns = [];
+    for (let i = 1; i < recent.length; i++) {
+      if (recent[i-1].c > 0) returns.push((recent[i].c - recent[i-1].c) / recent[i-1].c);
+    }
+    const mean     = returns.reduce((a, b) => a + b, 0) / returns.length;
+    const variance = returns.reduce((a, b) => a + (b - mean) ** 2, 0) / returns.length;
+    vix = Math.round(Math.sqrt(variance * 252) * 100); // annualised vol as %
+  }
 
-  const vix    = vixEntry?.session?.close ?? vixEntry?.value ?? null;
-  const spxIdx = spxEntry?.session?.close ?? spxEntry?.value ?? null;
-
-  // Use SPY ETF for ATH calculation (has longer history in aggregates)
-  const spySeries = spyBars;
-  const spy       = spySeries.length ? spySeries.at(-1).c : null;
-  const spyATH    = spySeries.length ? Math.max(...spySeries.map(d => d.h)) : null;
+  const spy    = spyBars.length ? spyBars.at(-1).c : null;
+  const spyATH = spyBars.length ? Math.max(...spyBars.map(d => d.h)) : null;
+  const spxPctFromATH = spy && spyATH ? ((spy - spyATH) / spyATH) * 100 : null;
   // Approximate SPX from SPY (SPY ≈ SPX / 10)
-  const spx    = spxIdx ?? (spy ? spy * 10 : null);
-  const spxATH = spxIdx ? null : (spyATH ? spyATH * 10 : null);
-  const spxPctFromATH = spx && spxATH ? ((spx - spxATH) / spxATH) * 100
-                      : spy && spyATH  ? ((spy - spyATH) / spyATH) * 100
-                      : null;
+  const spx    = spy ? Math.round(spy * 10) : null;
+  const spxATH = null;
 
   const qq    = qqBar?.c ?? null;
   const qqATH = null;
