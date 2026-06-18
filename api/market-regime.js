@@ -76,35 +76,37 @@ export default async function handler(req, res) {
   const apiKey = process.env.POLYGON_API_KEY;
   if (!apiKey) return res.status(500).json({ error: "POLYGON_API_KEY missing" });
 
-  // Polygon index tickers (I:VIX, I:SPX) require a higher plan.
-  // Use SPY + QQQ ETFs — always available on unlimited plan.
-  // Compute realized volatility from SPY returns as VIX proxy.
-  const [spyBars, qqBar] = await Promise.all([
-    fetchHistory("SPY", apiKey, 260),
-    fetchLatest("QQQ",  apiKey),
-  ]);
+  const fmpKey = process.env.FMP_API_KEY;
+  const FMP    = "https://financialmodelingprep.com/stable";
 
-  // Realized volatility (30-day annualised) from SPY — our VIX proxy
-  let vix = null;
-  if (spyBars.length >= 31) {
-    const recent = spyBars.slice(-31);
-    const returns = [];
-    for (let i = 1; i < recent.length; i++) {
-      if (recent[i-1].c > 0) returns.push((recent[i].c - recent[i-1].c) / recent[i-1].c);
-    }
-    const mean     = returns.reduce((a, b) => a + b, 0) / returns.length;
-    const variance = returns.reduce((a, b) => a + (b - mean) ** 2, 0) / returns.length;
-    vix = Math.round(Math.sqrt(variance * 252) * 100); // annualised vol as %
+  // Fetch real index data from FMP + SPY history from Polygon for ATH
+  async function fmpQuote(sym) {
+    if (!fmpKey) return null;
+    try {
+      const r = await fetch(`${FMP}/quote?symbol=${encodeURIComponent(sym)}&apikey=${fmpKey}`);
+      if (!r.ok) return null;
+      const j = await r.json();
+      return Array.isArray(j) ? j[0] : null;
+    } catch { return null; }
   }
 
-  const spy    = spyBars.length ? spyBars.at(-1).c : null;
-  const spyATH = spyBars.length ? Math.max(...spyBars.map(d => d.h)) : null;
-  const spxPctFromATH = spy && spyATH ? ((spy - spyATH) / spyATH) * 100 : null;
-  // Approximate SPX from SPY (SPY ≈ SPX / 10)
-  const spx    = spy ? Math.round(spy * 10) : null;
-  const spxATH = null;
+  const [vixQ, spxQ, nasdaqQ, spyBars] = await Promise.all([
+    fmpQuote("^VIX"),   // Real CBOE VIX
+    fmpQuote("^GSPC"),  // Real S&P 500
+    fmpQuote("^IXIC"),  // Real Nasdaq Composite
+    fetchHistory("SPY", apiKey, 260), // SPY for ATH calculation
+  ]);
 
-  const qq    = qqBar?.c ?? null;
+  const vix  = vixQ?.price  ?? null;
+  const spx  = spxQ?.price  ?? null;
+  const nasdaq = nasdaqQ?.price ?? null;
+
+  // ATH from SPY (scale to SPX equivalent)
+  const spyATH = spyBars.length ? Math.max(...spyBars.map(d => d.h)) : null;
+  const spxATH = spyATH ? spyATH * 10 : null;
+  const spxPctFromATH = spx && spxATH ? ((spx - spxATH) / spxATH) * 100 : null;
+
+  const qq    = nasdaq;
   const qqATH = null;
 
   const regime = calcRegime(vix, spxPctFromATH, null);

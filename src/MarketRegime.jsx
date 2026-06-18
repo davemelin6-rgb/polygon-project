@@ -68,21 +68,21 @@ export default function MarketRegime({ session }) {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(100px, 1fr))", gap: 1, background: "rgba(255,255,255,0.04)", borderRadius: 10, overflow: "hidden" }}>
         {[
           {
-            label: "Volatility",
-            value: vix != null ? `${vix}%` : "—",
+            label: "VIX",
+            value: vix != null ? fmt(vix, 1) : "—",
             sub:   vixLabel,
             color: vixColor,
           },
           {
-            label: "SPY (S&P proxy)",
-            value: spy ? `$${fmt(spy, 0)}` : "—",
+            label: "S&P 500",
+            value: spx ? `${(spx / 1000).toFixed(2)}k` : "—",
             sub:   spxPctFromATH != null ? `${sign(spxPctFromATH)}${fmt(spxPctFromATH, 1)}% from ATH` : "—",
             color: spxPctFromATH != null && spxPctFromATH > -5 ? "#f59e0b" : spxPctFromATH != null && spxPctFromATH < -15 ? "#ff3c50" : "#00b4ff",
           },
           {
-            label: "QQQ",
-            value: qq ? `$${fmt(qq, 0)}` : "—",
-            sub:   "Nasdaq proxy",
+            label: "Nasdaq",
+            value: qq ? `${(qq / 1000).toFixed(1)}k` : "—",
+            sub:   "Composite index",
             color: "#8b5cf6",
           },
           {
