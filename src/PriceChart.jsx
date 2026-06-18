@@ -2,15 +2,20 @@ import { useEffect, useRef, useState } from "react";
 import { createChart, AreaSeries } from "lightweight-charts";
 import "./PriceChart.css";
 
-const RANGES = ["1D", "1W", "1M", "3M", "1Y", "5Y"];
+const RANGES_STOCK  = ["1D", "1W", "1M", "3M", "1Y", "5Y"];
+const RANGES_CRYPTO = ["1M", "3M", "1Y", "5Y"]; // no intraday for crypto
 
 function fmt(n) {
   if (n == null) return "—";
   return Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+const isCrypto = (symbol) => symbol?.startsWith("X:");
+
 export default function PriceChart({ stock, session }) {
-  const [range,   setRange]   = useState("1D");
+  const crypto = isCrypto(stock?.symbol);
+  const RANGES = crypto ? RANGES_CRYPTO : RANGES_STOCK;
+  const [range,   setRange]   = useState(crypto ? "1M" : "1D");
   const [bars,    setBars]    = useState([]);
   const [loading, setLoading] = useState(false);
 
