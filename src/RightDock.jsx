@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import Chat        from "./Chat.jsx";
 import TraderMatch from "./TraderMatch.jsx";
+import AIChat      from "./AIChat.jsx";
 import "./RightDock.css";
 
 // Gordon Gekko chat — inline panel (no floating character)
@@ -185,9 +186,9 @@ function GordonPanel({ onClose }) {
 
 // ── RightDock ───────────────────────────────────────────────
 const TABS = [
-  { id: "match",     icon: "🤝", label: "Trader Connect" },
-  { id: "chat",      icon: "💬", label: "Messages"       },
-  { id: "gordon",    icon: "🤖", label: "AI Assistant"   },
+  { id: "ai",    icon: "🤖", label: "AI Assistant"   },
+  { id: "match", icon: "🤝", label: "Trader Connect" },
+  { id: "chat",  icon: "💬", label: "Messages"       },
 ];
 
 export default function RightDock({ session }) {
@@ -200,9 +201,17 @@ export default function RightDock({ session }) {
   return (
     <>
       {/* Side panels — rendered to the left of the dock */}
-      {active === "chat"   && <Chat        session={session} dockMode onClose={() => setActive(null)} />}
-      {active === "match"  && <TraderMatch session={session} dockMode onClose={() => setActive(null)} />}
-      {active === "gordon" && <GordonPanel onClose={() => setActive(null)} />}
+      {active === "ai"    && (
+        <div className="rd-panel">
+          <div className="rd-panel-header">
+            <span>🤖 QuantDiver AI</span>
+            <button className="rd-panel-close" onClick={() => setActive(null)}>✕</button>
+          </div>
+          <AIChat session={session} />
+        </div>
+      )}
+      {active === "chat"  && <Chat        session={session} dockMode onClose={() => setActive(null)} />}
+      {active === "match" && <TraderMatch session={session} dockMode onClose={() => setActive(null)} />}
 
       {/* Dock strip */}
       <div className="rd-dock">

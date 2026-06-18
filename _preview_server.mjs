@@ -30,6 +30,7 @@ const { default: backtestHandler }      = await import("./api/backtest-run.js");
 const { default: sectorScoresHandler }  = await import("./api/sector-scores.js");
 const { default: scoreAlertsHandler }   = await import("./api/score-alerts.js");
 const { default: marketRegimeHandler }  = await import("./api/market-regime.js");
+const { default: aiChatHandler }        = await import("./api/ai-chat.js");
 const { default: contributorHandler }   = await import("./api/contributor-apply.js");
 const { default: scoreHistoryHandler }  = await import("./api/score-history.js");
 
@@ -93,6 +94,10 @@ const server = http.createServer((req, res) => {
     } else {
       adminHandler(fakeReq, fakeRes).catch((err) => { res.writeHead(500); res.end(String(err)); });
     }
+  } else if (url.pathname === "/api/ai-chat") {
+    let raw = "";
+    req.on("data", c => raw += c);
+    req.on("end", () => dispatch(aiChatHandler, raw));
   } else if (url.pathname === "/api/market-regime") {
     marketRegimeHandler(fakeReq, fakeRes).catch(err => { res.writeHead(500); res.end(String(err)); });
   } else if (url.pathname === "/api/score-alerts") {
