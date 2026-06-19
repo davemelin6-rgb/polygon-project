@@ -349,8 +349,13 @@
 .db-earnings-est  { color: #3d5c78; font-size: .7rem; text-align: right; }
 
 /* ── Mobile ─────────────────────────────────────────────── */
-@media (max-width: 700px) {
+@media (max-width: 640px) {
   .db-sectors { grid-template-columns: 1fr; }
   .db-event   { grid-template-columns: 12px 38px 20px 1fr; }
   .db-event-vals { display: none; }
+  .db-earnings-row {
+    grid-template-columns: 60px 1fr auto;
+  }
+  .db-earnings-time { display: none; }
+  .db-macro-sector { grid-template-columns: 80px 1fr; }
 }

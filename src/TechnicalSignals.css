@@ -86,7 +86,14 @@
 .ts-row-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-align: right; }
 
 @media (max-width: 640px) {
-  .ts-overall { grid-template-columns: 1fr 1fr; }
-  .ts-row { grid-template-columns: 70px 1fr 80px; }
+  .ts-overall {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .ts-overall-ring { width: 72px; height: 72px; }
+  .ts-overall-inner { width: 66px; height: 66px; }
+  .ts-overall-pct { font-size: 1.1rem; }
+  .ts-macd-block { min-width: unset; }
+  .ts-row { grid-template-columns: 65px 1fr 75px; }
   .ts-row-bar-wrap { display: none; }
 }

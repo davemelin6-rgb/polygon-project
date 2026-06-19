@@ -224,8 +224,14 @@
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 640px) {
   .ss-hide-sm { display: none; }
+  .ss-table { min-width: unset; }
   .ss-col-heads,
   .ss-row {
-    grid-template-columns: 28px 60px 80px 1fr 40px;
+    grid-template-columns: 28px 55px 1fr 40px;
+    padding: 10px 14px;
+    gap: 0 8px;
   }
+  .ss-price { display: none; }
+  .ss-header { padding: 14px 16px; }
+  .ss-mini-label { width: 22px; }
 }
