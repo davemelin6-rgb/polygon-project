@@ -968,7 +968,7 @@
 /* ── Mobile responsive ───────────────────────────────────── */
 @media (max-width: 640px) {
   .app {
-    padding: 1.25rem 0.9rem 4rem;
+    padding: 1.25rem 0.9rem 5rem;
   }
 
   /* Header: stack brand above buttons */

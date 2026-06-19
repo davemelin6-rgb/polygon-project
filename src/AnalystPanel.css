@@ -145,3 +145,14 @@
 
 .up   { color: #00dc82; }
 .down { color: #ff3c50; }
+
+@media (max-width: 640px) {
+  .ap-history-row {
+    grid-template-columns: 70px 1fr 1fr;
+    gap: .4rem;
+  }
+  .ap-history-est { display: none; }
+  .ap-targets { grid-template-columns: 1fr; }
+  .ap-target-value { font-size: 1.3rem; }
+  .ap-rating-label { font-size: 1.1rem; }
+}

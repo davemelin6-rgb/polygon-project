@@ -71,3 +71,12 @@
   color: #3d5c78;
   text-align: right;
 }
+
+@media (max-width: 640px) {
+  .if-row {
+    grid-template-columns: 48px 1fr auto;
+    gap: .6rem;
+  }
+  .if-date { display: none; }
+  .if-name { font-size: .78rem; }
+}
