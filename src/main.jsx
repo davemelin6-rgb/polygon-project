@@ -1,5 +1,6 @@
 import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
+import { inject } from "@vercel/analytics";
 import App from "./App.jsx";
 import Login from "./Login.jsx";
 import SetupPassword from "./SetupPassword.jsx";
@@ -7,6 +8,8 @@ import QuantDiverSite from "./QuantDiverSite.jsx";
 import AdminPanel from "./AdminPanel.jsx";
 import { supabase } from "./supabaseClient.js";
 import "./index.css";
+
+inject();
 
 const INACTIVITY_MS = 15 * 60 * 1000; // 15 minutes
 
