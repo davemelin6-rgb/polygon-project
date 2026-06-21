@@ -51,6 +51,13 @@ const SECTORS = [
     accent: "#10B981",
     tickers: ["LLY", "NVO", "MRNA", "REGN", "VRTX", "GILD", "ISRG", "DXCM"],
   },
+  {
+    id: "semiconductors",
+    name: "Semiconductors",
+    icon: "🔬",
+    accent: "#F97316",
+    tickers: ["NVDA", "TSM", "AVGO", "AMD", "QCOM", "INTC", "MU", "ASML", "TXN", "AMAT"],
+  },
 ];
 
 const DEFAULT_TICKERS = "AAPL,MSFT,NVDA,GOOGL,AMZN";
