@@ -24,20 +24,30 @@ function Root() {
   const ADMIN_EMAIL = "davemelin6@gmail.com";
 
   useEffect(() => {
-    // Check if this is a password setup link from invite email
-    const hash = window.location.hash;
-    if (hash.includes("type=invite") || hash.includes("type=recovery")) {
-      setIsSetup(true);
-    }
-
     supabase.auth.getSession().then(({ data }) => {
       setSession(data.session);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setIsSetup(false);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        // User clicked a password reset link — show the set-password screen
+        setSession(session);
+        setIsSetup(true);
+      } else if (event === "USER_UPDATED") {
+        // Password was successfully updated — go to the app
+        setSession(session);
+        setIsSetup(false);
+      } else {
+        setSession(session);
+        setIsSetup(false);
+      }
     });
+
+    // Fallback for invite links which use a different hash format
+    const hash = window.location.hash;
+    if (hash.includes("type=invite")) {
+      setIsSetup(true);
+    }
 
     return () => subscription.unsubscribe();
   }, []);
