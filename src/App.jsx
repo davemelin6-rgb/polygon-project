@@ -854,10 +854,11 @@ export default function App({ session, onLogout, onAdmin }) {
       {/* ── Dashboard sub-tabs ── */}
       <div className="dash-tabs">
         {[
-          { id: "watchlist", label: "Watchlist",  icon: "📈" },
-          { id: "analysis",  label: "Analysis",   icon: "🔬" },
-          { id: "sectors",   label: "Sectors",    icon: "🏭" },
-          { id: "news",      label: "News",       icon: "📰" },
+          { id: "watchlist", label: "Watchlist",         icon: "📈" },
+          { id: "analysis",  label: "Analysis",          icon: "🔬" },
+          { id: "market",    label: "Market Intel",      icon: "📡" },
+          { id: "sectors",   label: "Sectors",           icon: "🏭" },
+          { id: "news",      label: "News",              icon: "📰" },
         ].map(t => (
           <button
             key={t.id}
@@ -907,19 +908,6 @@ export default function App({ session, onLogout, onAdmin }) {
           </div>
         )}
 
-        {(stocks.length > 0) && (
-          <div className="sections">
-            <section className="panel">
-              <div className="panel-header" style={{ marginBottom: "1rem" }}>
-                <div className="panel-eyebrow">Market Intelligence</div>
-                <h2 className="panel-title">Market Condition</h2>
-              </div>
-              <MarketRegime session={session} />
-              <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
-            </section>
-          </div>
-        )}
-
         {lastUpdated && <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>}
       </>}
 
@@ -941,6 +929,26 @@ export default function App({ session, onLogout, onAdmin }) {
           <KeyRatios             stock={selected} session={session} />
         </>}
       </>}
+
+      {/* ── Market Intel sub-tab ── */}
+      {dashTab === "market" && (
+        <div className="sections">
+          <section className="panel">
+            <div className="panel-header" style={{ marginBottom: "1rem" }}>
+              <div className="panel-eyebrow">Live · VIX · S&P 500 · Nasdaq</div>
+              <h2 className="panel-title">Market Condition</h2>
+            </div>
+            <MarketRegime session={session} />
+          </section>
+          <section className="panel">
+            <div className="panel-header" style={{ marginBottom: "1rem" }}>
+              <div className="panel-eyebrow">Scoring Engine · Portfolio</div>
+              <h2 className="panel-title">Risk Assessment</h2>
+            </div>
+            <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
+          </section>
+        </div>
+      )}
 
       {/* ── Sectors sub-tab ── */}
       {dashTab === "sectors" && (
