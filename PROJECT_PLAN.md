@@ -28,7 +28,7 @@ For UI bugs: include a screenshot. For new features: describe the outcome + any 
 - Scoring engine: MOMENTUM + RISK + TECH VALUE + SIGNAL grade (A/B/C/D)
 - Back-test: runs every Sunday, currently PREDICTIVE (+33.29% spread, 966 samples)
 - Auth: Supabase login, 14-day free trial, BriefMe + Pro plans
-- Community: forum, contributor ranks, usefulness voting
+- Community: forum, contributor ranks, usefulness voting, Trader Connect (live 1-on-1 matching), live DM messaging with presence
 - Crypto tab: BTC/ETH/SOL and 7 others, MOMENTUM + RISK scores
 - Daily Brief tab: macro events, sector movers, news
 - Guide tab: 5-step QuantDiver Method
@@ -117,10 +117,11 @@ Priority order: **Revenue first, then product quality, then features.**
 
 ### 🔵 Growth Features (6+ months)
 
-**10. Trader Connect**
-- What: Real-time peer matching — connect with other investors in the same sector
-- Why: Community pillar of the platform
-- Status: Tables exist (match_queue, match_sessions, match_messages), UI exists in RightDock — needs testing
+**10. Trader Connect + Live Messaging — Polish & Promote**
+- What: Trader Connect and DM messaging are built and live in the Community tab. Need end-to-end testing and promotion on the landing page
+- Why: Real-time investor connection is a core differentiator — no other stock scoring tool has this
+- Behaviour: Community tab → Trader Connect sub-tab → pick topic → get matched → chat live. Messages sub-tab shows online members + DM history
+- Next: Test full match flow with two real accounts. Add to landing page value proposition.
 
 **11. Public Leaderboard**
 - What: Top-ranked stocks across all sectors, updated daily, visible on the landing page (no login required)
