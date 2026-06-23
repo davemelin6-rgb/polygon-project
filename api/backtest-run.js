@@ -75,8 +75,8 @@ export default async function handler(req, res) {
       // Fetch fundamentals per ticker (inside loop — avoids overwhelming FMP with 75 simultaneous batches)
       const fundamentals = fmpKey ? await fetchFundamentals(ticker, fmpKey).catch(() => null) : null;
 
-      // Step back weekly (5 trading days) for up to 24 weeks
-      for (let weeksBack = 4; weeksBack <= 24; weeksBack++) {
+      // Step back weekly (5 trading days) — go back 52 weeks for enough Grade A samples (300+)
+      for (let weeksBack = 4; weeksBack <= 52; weeksBack++) {
         const cutoff = aggs.length - (weeksBack * 5);
         if (cutoff < 90) break;
 
@@ -88,17 +88,14 @@ export default async function handler(req, res) {
         const vixCutoff     = vixHistory.length - (weeksBack * 5);
         const historicalVix = vixCutoff > 0 ? vixHistory[vixCutoff]?.c ?? null : null;
 
-        // Calculate all three scores
-        // MOMENTUM: fully historical (price-based)
+        // MOMENTUM: fully historical (price-based) — the only truly back-testable signal
         const momentum = calcMomentum({ price, aggs: historicalAggs, vix: historicalVix });
         if (momentum === null) continue;
 
-        // RISK: uses current fundamentals as proxy (balance sheets stable quarter-to-quarter)
-        // NOTE: no look-ahead filter — we include all tickers regardless of current risk
-        const risk = calcRisk({ aggs: historicalAggs, fundamentals });
-
-        // SIGNAL: combined score (handles null risk/tech gracefully)
-        const signal = calcSignal({ momentum, risk, techValue: null });
+        // Use MOMENTUM as the primary signal for bucketing — honest and fully historical
+        // RISK added lightly to penalise genuinely dangerous stocks
+        const risk   = calcRisk({ aggs: historicalAggs, fundamentals });
+        const signal = Math.round((momentum * 0.85) + ((risk ?? 50) * 0.15));
         if (signal === null) continue;
 
         // Forward returns — 30, 60, 90, 180 trading days
