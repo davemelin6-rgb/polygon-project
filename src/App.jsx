@@ -599,6 +599,7 @@ export default function App({ session, onLogout, onAdmin }) {
   const [showCommunity,  setShowCommunity]  = useState(false);
   const [showUserMenu,   setShowUserMenu]   = useState(false);
   const [activeTab,      setActiveTab]      = useState("dashboard");
+  const [dashTab,        setDashTab]        = useState("watchlist");
 
   useEffect(() => {
     if (!session) return;
@@ -706,12 +707,20 @@ export default function App({ session, onLogout, onAdmin }) {
   }
 
   function handleSelect(stock) {
-    setSelected((prev) => prev?.symbol === stock.symbol ? null : stock);
+    setSelected((prev) => {
+      const deselecting = prev?.symbol === stock.symbol;
+      if (!deselecting) setDashTab("analysis");
+      return deselecting ? null : stock;
+    });
   }
 
   // Sector stock selected — merge its scores into scoresMap so panels work
   function handleSectorSelect(stock, sectorScores) {
-    setSelected((prev) => prev?.symbol === stock.symbol ? null : stock);
+    setSelected((prev) => {
+      const deselecting = prev?.symbol === stock.symbol;
+      if (!deselecting) { setDashTab("analysis"); setActiveTab("dashboard"); }
+      return deselecting ? null : stock;
+    });
     setScoresMap((prev) => ({ ...prev, ...sectorScores }));
   }
 
@@ -842,88 +851,122 @@ export default function App({ session, onLogout, onAdmin }) {
       {/* ── Dashboard tab ── */}
       {activeTab === "dashboard" && <>
 
-      <form className="search-form" onSubmit={handleSubmit}>
-        <input
-          className="ticker-input"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="AAPL, MSFT, NVDA..."
-          spellCheck={false}
-        />
-        <button className="btn" type="submit">Analyze</button>
-      </form>
+      {/* ── Dashboard sub-tabs ── */}
+      <div className="dash-tabs">
+        {[
+          { id: "watchlist", label: "Watchlist",  icon: "📈" },
+          { id: "analysis",  label: "Analysis",   icon: "🔬" },
+          { id: "sectors",   label: "Sectors",    icon: "🏭" },
+          { id: "news",      label: "News",       icon: "📰" },
+        ].map(t => (
+          <button
+            key={t.id}
+            className={`dash-tab ${dashTab === t.id ? "active" : ""}`}
+            onClick={() => setDashTab(t.id)}
+          >
+            <span>{t.icon}</span> {t.label}
+            {t.id === "analysis" && selected && (
+              <span className="dash-tab-pill">{selected.symbol}</span>
+            )}
+          </button>
+        ))}
+      </div>
 
-      {error && <div className="error">{error}</div>}
+      {/* ── Watchlist sub-tab ── */}
+      {dashTab === "watchlist" && <>
+        <form className="search-form" onSubmit={handleSubmit}>
+          <input
+            className="ticker-input"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="AAPL, MSFT, NVDA..."
+            spellCheck={false}
+          />
+          <button className="btn" type="submit">Analyze</button>
+        </form>
 
-      {loading && stocks.length === 0 ? (
-        <div className="loading">
-          <div className="loading-spinner" />
-          Fetching market data
-        </div>
-      ) : (
-        <div className="grid">
-          {stocks.map((s) => (
-            <StockCard
-              key={s.symbol}
-              stock={s}
-              scores={scoresMap[s.symbol]}
-              chart={chartsMap[s.symbol]}
-              selected={selected?.symbol === s.symbol}
-              onClick={() => handleSelect(s)}
+        {error && <div className="error">{error}</div>}
+
+        {loading && stocks.length === 0 ? (
+          <div className="loading">
+            <div className="loading-spinner" />
+            Fetching market data
+          </div>
+        ) : (
+          <div className="grid">
+            {stocks.map((s) => (
+              <StockCard
+                key={s.symbol}
+                stock={s}
+                scores={scoresMap[s.symbol]}
+                chart={chartsMap[s.symbol]}
+                selected={selected?.symbol === s.symbol}
+                onClick={() => handleSelect(s)}
+              />
+            ))}
+          </div>
+        )}
+
+        {(stocks.length > 0) && (
+          <div className="sections">
+            <section className="panel">
+              <div className="panel-header" style={{ marginBottom: "1rem" }}>
+                <div className="panel-eyebrow">Market Intelligence</div>
+                <h2 className="panel-title">Market Condition</h2>
+              </div>
+              <MarketRegime session={session} />
+              <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
+            </section>
+          </div>
+        )}
+
+        {lastUpdated && <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>}
+      </>}
+
+      {/* ── Analysis sub-tab ── */}
+      {dashTab === "analysis" && <>
+        {!selected ? (
+          <div className="dash-empty">
+            <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>🔬</div>
+            <div style={{ color: "#4a6a88", fontSize: "1rem" }}>Select a stock from Watchlist or Sectors to see analysis</div>
+          </div>
+        ) : <>
+          <PriceChart            stock={selected} session={session} />
+          <TechnicalSignals      stock={selected} session={session} />
+          <FinancialIntelligence stocks={stocks}  scoresMap={scoresMap} selected={selected} />
+          <SectorRanking         stock={selected} session={session} />
+          <ScoreHistory          stock={selected} session={session} />
+          <AnalystPanel          stock={selected} session={session} />
+          <InsiderFeed           stock={selected} session={session} />
+          <KeyRatios             stock={selected} session={session} />
+        </>}
+      </>}
+
+      {/* ── Sectors sub-tab ── */}
+      {dashTab === "sectors" && (
+        <div className="sectors-wrap">
+          <h2 className="sectors-heading">Market Sectors</h2>
+          {SECTORS.map(s => (
+            <SectorSection
+              key={s.id}
+              name={s.name}
+              icon={s.icon}
+              tickers={s.tickers}
+              accent={s.accent}
+              session={session}
+              onSelect={handleSectorSelect}
+              selectedSymbol={selected?.symbol}
             />
           ))}
         </div>
       )}
 
-      {selected && <PriceChart            stock={selected} session={session} />}
-      {selected && <TechnicalSignals      stock={selected} session={session} />}
-      {selected && <FinancialIntelligence stocks={stocks} scoresMap={scoresMap} selected={selected} />}
-      {selected && <SectorRanking          stock={selected} session={session} />}
-      {selected && <ScoreHistory          stock={selected} session={session} />}
-      {selected && <AnalystPanel          stock={selected} session={session} />}
-      {selected && <InsiderFeed           stock={selected} session={session} />}
-
-
-      {(stocks.length > 0 || selected) && (
-        <div className="sections">
-          <section className="panel">
-            <div className="panel-header" style={{ marginBottom: "1rem" }}>
-              <div className="panel-eyebrow">Market Intelligence</div>
-              <h2 className="panel-title">Market Condition</h2>
-            </div>
-            <MarketRegime session={session} />
-            <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
-          </section>
-          {selected && <KeyRatios stock={selected} session={session} />}
-        </div>
-      )}
-
-      {/* News feed — shows selected stock news or full watchlist news */}
-      {stocks.length > 0 && (
+      {/* ── News sub-tab ── */}
+      {dashTab === "news" && (
         <NewsFeed
           tickers={selected ? [selected.symbol] : stocks.map(s => s.symbol).slice(0, 5)}
           session={session}
         />
-      )}
-
-      <div className="sectors-wrap">
-        <h2 className="sectors-heading">Market Sectors</h2>
-        {SECTORS.map(s => (
-          <SectorSection
-            key={s.id}
-            name={s.name}
-            icon={s.icon}
-            tickers={s.tickers}
-            accent={s.accent}
-            session={session}
-            onSelect={handleSectorSelect}
-            selectedSymbol={selected?.symbol}
-          />
-        ))}
-      </div>
-
-      {lastUpdated && (
-        <p className="timestamp">Updated {lastUpdated.toLocaleTimeString()}</p>
       )}
 
       </> /* end dashboard tab */}
