@@ -602,6 +602,29 @@ export default function App({ session, onLogout, onAdmin }) {
   const [activeTab,      setActiveTab]      = useState("dashboard");
   const [dashTab,        setDashTab]        = useState("watchlist");
 
+  const ANALYSIS_SECTIONS = [
+    { id: "technical",    label: "Technical"    },
+    { id: "intelligence", label: "Intelligence" },
+    { id: "risk",         label: "Risk"         },
+    { id: "rankings",     label: "Rankings"     },
+    { id: "analyst",      label: "Analyst"      },
+    { id: "ratios",       label: "Ratios"       },
+  ];
+  const [analysisVisible, setAnalysisVisible] = useState(() => {
+    try {
+      const saved = localStorage.getItem("qd_analysis_visible");
+      return saved ? JSON.parse(saved) : Object.fromEntries(ANALYSIS_SECTIONS.map(s => [s.id, true]));
+    } catch { return Object.fromEntries(ANALYSIS_SECTIONS.map(s => [s.id, true])); }
+  });
+
+  function toggleSection(id) {
+    setAnalysisVisible(prev => {
+      const next = { ...prev, [id]: !prev[id] };
+      localStorage.setItem("qd_analysis_visible", JSON.stringify(next));
+      return next;
+    });
+  }
+
   useEffect(() => {
     if (!session) return;
     import("./supabaseClient.js").then(({ supabase }) =>
@@ -920,15 +943,30 @@ export default function App({ session, onLogout, onAdmin }) {
             <div style={{ color: "#4a6a88", fontSize: "1rem" }}>Select a stock from Watchlist or Sectors to see analysis</div>
           </div>
         ) : <>
-          <PriceChart            stock={selected} session={session} />
-          <TechnicalSignals      stock={selected} session={session} />
-          <FinancialIntelligence stocks={stocks}  scoresMap={scoresMap} selected={selected} />
-          <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
-          <SectorRanking         stock={selected} session={session} />
-          <ScoreHistory          stock={selected} session={session} />
-          <AnalystPanel          stock={selected} session={session} />
-          <InsiderFeed           stock={selected} session={session} />
-          <KeyRatios             stock={selected} session={session} />
+          {/* Section toggles */}
+          <div className="analysis-toggles">
+            <span className="analysis-toggles-label">Show</span>
+            {ANALYSIS_SECTIONS.map(s => (
+              <button
+                key={s.id}
+                className={`analysis-toggle ${analysisVisible[s.id] ? "on" : "off"}`}
+                onClick={() => toggleSection(s.id)}
+              >
+                <span className="analysis-toggle-dot" />
+                {s.label}
+              </button>
+            ))}
+          </div>
+
+          {analysisVisible.technical    && <PriceChart            stock={selected} session={session} />}
+          {analysisVisible.technical    && <TechnicalSignals      stock={selected} session={session} />}
+          {analysisVisible.intelligence && <FinancialIntelligence stocks={stocks}  scoresMap={scoresMap} selected={selected} />}
+          {analysisVisible.risk         && <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />}
+          {analysisVisible.rankings     && <SectorRanking         stock={selected} session={session} />}
+          {analysisVisible.rankings     && <ScoreHistory          stock={selected} session={session} />}
+          {analysisVisible.analyst      && <AnalystPanel          stock={selected} session={session} />}
+          {analysisVisible.analyst      && <InsiderFeed           stock={selected} session={session} />}
+          {analysisVisible.ratios       && <KeyRatios             stock={selected} session={session} />}
         </>}
       </>}
 

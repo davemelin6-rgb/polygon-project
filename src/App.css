@@ -961,6 +961,67 @@
   text-align: center;
 }
 
+/* ── Analysis section toggles ───────────────────────────── */
+.analysis-toggles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px;
+}
+
+.analysis-toggles-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #3d5c78;
+  margin-right: 4px;
+}
+
+.analysis-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.analysis-toggle.on {
+  background: rgba(0,180,255,0.1);
+  border-color: rgba(0,180,255,0.3);
+  color: #00b4ff;
+}
+
+.analysis-toggle.off {
+  background: rgba(255,255,255,0.02);
+  border-color: rgba(255,255,255,0.07);
+  color: #2d4a5f;
+}
+
+.analysis-toggle-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+@media (max-width: 640px) {
+  .analysis-toggles { gap: 5px; }
+  .analysis-toggle  { font-size: 0.68rem; padding: 3px 9px; }
+}
+
 /* ── App navigation tabs ────────────────────────────────── */
 .app-tabs {
   display: flex;
