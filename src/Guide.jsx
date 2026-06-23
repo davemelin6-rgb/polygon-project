@@ -20,16 +20,20 @@ export default function Guide() {
   const divider = <div style={{ height: 1, background: "rgba(255,255,255,0.05)" }} />;
 
   const scoreCard = (label, color, desc, detail) => (
-    <div key={label} style={{
-      background: "rgba(255,255,255,.025)", border: `1px solid ${color}22`,
-      borderLeft: `3px solid ${color}`, borderRadius: 10, padding: "1rem 1.25rem",
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6 }}>
-        <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".72rem", fontWeight: 700, color, letterSpacing: ".1em" }}>{label}</span>
-        <span style={{ fontSize: ".72rem", color: "#3d5c78" }}>—</span>
-        <span style={{ fontSize: ".78rem", fontWeight: 700, color: "#dce8f4" }}>{desc}</span>
+    <div key={label} style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start" }}>
+      <div style={{
+        flexShrink: 0, width: 64, height: 44, borderRadius: 12,
+        background: color + "18", border: `1px solid ${color}40`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        fontFamily: "'Space Mono',monospace", fontSize: ".72rem", fontWeight: 700, color,
+        letterSpacing: ".06em",
+      }}>
+        {label}
       </div>
-      <p style={{ margin: 0, fontSize: ".82rem", color: "#4a6a88", lineHeight: 1.65 }}>{detail}</p>
+      <div style={{ paddingTop: 4 }}>
+        <div style={{ fontWeight: 700, fontSize: "1rem", color: "#dce8f4", marginBottom: 6 }}>{desc}</div>
+        <p style={{ fontSize: ".88rem", color: "#6a8aac", lineHeight: 1.75, margin: 0 }}>{detail}</p>
+      </div>
     </div>
   );
 
@@ -144,16 +148,16 @@ export default function Guide() {
         display: "flex", alignItems: "flex-start", gap: "1.25rem", flexWrap: "wrap",
       }}>
         <div style={{ flexShrink: 0 }}>
-          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>+29.3%</div>
+          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>+24.59%</div>
           <div style={{ fontSize: ".7rem", color: "#3d5c78", marginTop: 4, fontFamily: "'Space Mono',monospace" }}>avg 90d · Grade A</div>
         </div>
         <div style={{ flexShrink: 0 }}>
-          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#ff3c50", lineHeight: 1 }}>-1.79%</div>
-          <div style={{ fontSize: ".7rem", color: "#3d5c78", marginTop: 4, fontFamily: "'Space Mono',monospace" }}>avg 90d · Grade D</div>
+          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>72.7%</div>
+          <div style={{ fontSize: ".7rem", color: "#3d5c78", marginTop: 4, fontFamily: "'Space Mono',monospace" }}>win rate · Grade A · 90d</div>
         </div>
         <div style={{ flex: 1, minWidth: 200 }}>
           <p style={{ margin: 0, fontSize: ".85rem", color: "#4a6a88", lineHeight: 1.7 }}>
-            Measured historical outcomes across 1,029 data points — not projections. The back-test runs every Sunday and updates automatically. If the model drifts, we catch it and adjust.
+            Measured historical outcomes across 1,344 data points across 65 stocks — not projections. The back-test runs every Sunday and updates automatically. If the model drifts, we catch it and adjust.
           </p>
         </div>
       </div>
