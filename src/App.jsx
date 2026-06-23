@@ -19,6 +19,7 @@ import ScoreHistory      from "./ScoreHistory.jsx";
 import SectorRanking     from "./SectorRanking.jsx";
 import Portfolio         from "./Portfolio.jsx";
 import MarketRegime      from "./MarketRegime.jsx";
+import SectorRiskPanel   from "./SectorRiskPanel.jsx";
 import Crypto            from "./Crypto.jsx";
 import Guide             from "./Guide.jsx";
 
@@ -922,6 +923,7 @@ export default function App({ session, onLogout, onAdmin }) {
           <PriceChart            stock={selected} session={session} />
           <TechnicalSignals      stock={selected} session={session} />
           <FinancialIntelligence stocks={stocks}  scoresMap={scoresMap} selected={selected} />
+          <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
           <SectorRanking         stock={selected} session={session} />
           <ScoreHistory          stock={selected} session={session} />
           <AnalystPanel          stock={selected} session={session} />
@@ -940,13 +942,7 @@ export default function App({ session, onLogout, onAdmin }) {
             </div>
             <MarketRegime session={session} />
           </section>
-          <section className="panel">
-            <div className="panel-header" style={{ marginBottom: "1rem" }}>
-              <div className="panel-eyebrow">Scoring Engine · Portfolio</div>
-              <h2 className="panel-title">Risk Assessment</h2>
-            </div>
-            <AdvancedRiskAssessment stocks={stocks} scoresMap={scoresMap} selected={selected} />
-          </section>
+          <SectorRiskPanel session={session} />
         </div>
       )}
 
