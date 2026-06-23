@@ -118,6 +118,13 @@
 
 .ss-scores-head { color: #2d4a5f; }
 
+.ss-sort-head {
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.ss-sort-head:hover { color: #8aaec8; }
+.ss-sort-active { font-weight: 700; }
+
 /* ── Rows ───────────────────────────────────────────────────── */
 .ss-row {
   display: grid;

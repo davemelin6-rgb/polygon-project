@@ -36,6 +36,8 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
   const [scores,  setScores]  = useState({});
   const [loading, setLoading] = useState(true);
   const [open,    setOpen]    = useState(true);
+  const [sortBy,  setSortBy]  = useState("score");
+  const [sortDir, setSortDir] = useState("desc");
 
   useEffect(() => {
     if (!tickers.length) return;
@@ -55,9 +57,41 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
     }).catch(() => setLoading(false));
   }, [session]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const sorted = [...stocks].sort((a, b) =>
-    composite(scores[b.symbol]) - composite(scores[a.symbol])
-  );
+  function handleSort(col) {
+    if (sortBy === col) setSortDir(d => d === "desc" ? "asc" : "desc");
+    else { setSortBy(col); setSortDir("desc"); }
+  }
+
+  function sortValue(stock) {
+    const sc = scores[stock.symbol];
+    if (sortBy === "price")  return stock.price ?? -Infinity;
+    if (sortBy === "change") return stock.changePercent ?? -Infinity;
+    if (sortBy === "mom")    return sc?.momentum ?? -Infinity;
+    if (sortBy === "risk")   return sc?.risk ?? -Infinity;
+    if (sortBy === "tech")   return sc?.techValue ?? -Infinity;
+    return composite(sc); // default: score
+  }
+
+  const sorted = [...stocks].sort((a, b) => {
+    const diff = sortValue(b) - sortValue(a);
+    return sortDir === "desc" ? diff : -diff;
+  });
+
+  function SortHead({ col, children, className }) {
+    const active = sortBy === col;
+    return (
+      <span
+        className={`ss-sort-head ${className || ""} ${active ? "ss-sort-active" : ""}`}
+        onClick={() => handleSort(col)}
+        style={{ cursor: "pointer", userSelect: "none", color: active ? accent : undefined }}
+      >
+        {children}
+        <span style={{ marginLeft: 3, opacity: active ? 1 : 0.3, fontSize: ".65em" }}>
+          {active ? (sortDir === "desc" ? "▼" : "▲") : "▼"}
+        </span>
+      </span>
+    );
+  }
 
   const topComp  = sorted[0] ? Math.round(composite(scores[sorted[0]?.symbol])) : null;
   const avgChange = sorted.length
@@ -104,10 +138,10 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
               <div className="ss-col-heads">
                 <span>#</span>
                 <span>Ticker</span>
-                <span>Price</span>
-                <span className="ss-hide-sm">Change</span>
+                <SortHead col="price">Price</SortHead>
+                <SortHead col="change" className="ss-hide-sm">Change</SortHead>
                 <span className="ss-scores-head">MOM · RISK · TECH</span>
-                <span>Score</span>
+                <SortHead col="score">Score</SortHead>
               </div>
 
               {sorted.map((stock, i) => {
