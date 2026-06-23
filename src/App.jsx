@@ -111,7 +111,7 @@ function techLabel(v) {
   return "Weak";
 }
 
-function getVerdict(sc) {
+function getVerdict(sc, scFull) {
   const { momentum, risk, techValue, signal } = sc || {};
   if (momentum == null) return { label: "NO DATA", color: "#2d4a5f", grade: "—", summary: "Not enough data to generate a verdict for this stock." };
 
@@ -145,8 +145,13 @@ function getVerdict(sc) {
     else                       summary = "Scores are below threshold across multiple dimensions. Avoid until there is meaningful improvement.";
   }
 
-  if (sig >= 70) return { label: "STRONG · 180D", color: "#00dc82", grade: "A", sig, summary };
-  if (sig >= 55) return { label: "WATCH · 180D",  color: "#22D3EE", grade: "B", sig, summary };
+  if (sig >= 70) return { label: "STRONG · 180D",  color: "#00dc82", grade: "A", sig, summary };
+  // Transition Alert: Grade B + strong positive acceleration = highest 180d expected return
+  if (sig >= 55) {
+    const accel = scFull?.acceleration ?? sc?.acceleration ?? 0;
+    if (accel > 0.12) return { label: "⚡ RISING · 180D", color: "#a78bfa", grade: "B", sig, summary, transition: true };
+    return { label: "WATCH · 180D",  color: "#22D3EE", grade: "B", sig, summary };
+  }
   if (sig >= 40) return { label: "MIXED · 180D",  color: "#f59e0b", grade: "C", sig, summary };
   return              { label: "AVOID · 180D",   color: "#ff3c50", grade: "D", sig, summary };
 }
@@ -187,7 +192,7 @@ function ChangeChip({ value }) {
 
 function StockCard({ stock, scores, chart, selected, onClick }) {
   const positive = (stock.change ?? 0) >= 0;
-  const verdict  = getVerdict(scores);
+  const verdict  = getVerdict(scores, scores);
   return (
     <div
       className={`card ${positive ? "positive" : "negative"} ${selected ? "selected" : ""}`}

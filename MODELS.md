@@ -48,6 +48,14 @@ Improvement: +22.1 percentage points
 
 The cap works by excluding high-volatility stocks (RISK < 20) from Grade A in the backtest. These stocks have genuine price momentum but collapse frequently. They are better positioned in Grade B where conviction is lower.
 
+**Finding 5: Transition Alert — Grade B with high acceleration is the best 180d setup.**
+With momentum acceleration added, Grade B stocks with acceleration > +0.12 (rapid momentum build) show:
+- 180d avg return: +36.09% — outperforming Grade A (+26.74%) by nearly 10 percentage points
+- These are stocks transitioning FROM Grade B TO Grade A
+- The crossing point (negative to positive acceleration) is likely the optimal entry
+
+Implementation: stocks meeting this criterion show ⚡ RISING · 180D label in the UI.
+
 **Finding 4: Momentum acceleration is the key differentiator.**
 Pure momentum (is the stock going up?) is widely available. The genuine edge is momentum ACCELERATION — is the stock going up FASTER than it was? A stock moving from +10% 3M return to +35% 3M return (acceleration of +25%) is a structurally different setup than one sitting at +35% for 6 months.
 
@@ -62,7 +70,7 @@ Stocks with positive acceleration AND high absolute momentum are the highest-qua
 | 2026-06-23 | SIGNAL (MOM+RISK) | +5.1% | 1,344 | WEAK |
 | 2026-06-23 | SIGNAL (MOM+INNOV) | +9.8% | 1,344 | WEAK |
 | 2026-06-24 | MOM + vol cap | +16.6% | 3,136 | PREDICTIVE |
-| 2026-06-24 | MOM + accel + vol cap | TBD | 3,136+ | TBD |
+| 2026-06-24 | MOM + acceleration + vol cap | +13.3% | 3,136 | PREDICTIVE |
 
 Note: The SIGNAL score (with INNOV/TECH) performs worse in the backtest because INNOV and TECH use current fundamentals applied to historical price data — look-ahead contamination. The backtest uses momentum only for signal bucketing, while the live product uses all 4 scores.
 

@@ -3,7 +3,7 @@
 
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
-import { calcMomentum, calcRisk, calcTechValue, calcInnovation, calcSignal, calcSignalBreakdown } from "../lib/formulas.js";
+import { calcMomentum, calcRisk, calcTechValue, calcInnovation, calcAcceleration, calcSignal, calcSignalBreakdown } from "../lib/formulas.js";
 import { getSectorBenchmarks, getSectorPE } from "../lib/sectorBenchmarks.js";
 
 // Fetch current VIX once per scores request (shared across all tickers)
@@ -81,18 +81,20 @@ export default async function handler(req, res) {
         const price      = aggs?.at(-1)?.c ?? null;
         const benchmarks = getSectorBenchmarks(ticker);
         const sectorPE   = getSectorPE(ticker);
-        const momentum   = calcMomentum({ price, aggs, fundamentals, vix });
-        const risk       = calcRisk({ aggs, fundamentals });
-        const tech_value = calcTechValue({ fundamentals, benchmarks });
-        const innovation = calcInnovation({ fundamentals, benchmarks });
-        const breakdown  = calcSignalBreakdown({ fundamentals, sectorPE });
-        const signal     = calcSignal({ momentum, risk, techValue: tech_value, innovation });
+        const momentum    = calcMomentum({ price, aggs, fundamentals, vix });
+        const risk        = calcRisk({ aggs, fundamentals });
+        const tech_value  = calcTechValue({ fundamentals, benchmarks });
+        const innovation  = calcInnovation({ fundamentals, benchmarks });
+        const acceleration = calcAcceleration({ aggs });
+        const breakdown   = calcSignalBreakdown({ fundamentals, sectorPE });
+        const signal      = calcSignal({ momentum, risk, techValue: tech_value, innovation });
         return {
           symbol:           ticker,
           momentum,
           risk,
           tech_value,
           innovation,
+          acceleration,
           signal,
           breakdown:        breakdown ? JSON.stringify(breakdown) : null,
           has_fundamentals: !!fundamentals,
@@ -158,6 +160,7 @@ export default async function handler(req, res) {
       risk:            row.risk,
       techValue:       row.tech_value,
       innovation:      row.innovation,
+      acceleration:    row.acceleration,
       signal:          row.signal ?? null,
       hasFundamentals: row.has_fundamentals,
       breakdown:       row.breakdown ?? null,

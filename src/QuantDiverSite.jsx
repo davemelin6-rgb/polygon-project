@@ -182,7 +182,7 @@ function HomePage({ go, onEnterApp }) {
             <div style={{
               marginTop: 48, display: "flex", gap: 36, flexWrap: "wrap",
             }}>
-              {[["+24.64%", "avg 90d return · Grade A signals"], ["+16.56%", "spread vs weak signals"], ["3,136", "back-tested data points"]].map(([n, l]) => (
+              {[["+19.96%", "avg 90d return · Grade A signals"], ["75.6%", "Grade A win rate · 90 days"], ["3,136", "back-tested data points"]].map(([n, l]) => (
                 <div key={l}>
                   <div style={{ fontFamily: ff.mono, fontSize: "1.5rem", fontWeight: 700, color: "#00dc82" }}>{n}</div>
                   <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 2 }}>{l}</div>
@@ -282,7 +282,7 @@ function HomePage({ go, onEnterApp }) {
 
             {/* Buckets */}
             {[
-              { grade: "A", label: "Grade A — Strong (>70)", ret: "+24.64%", samples: "503 data points", color: "#00dc82", bg: "rgba(0,220,130,.04)", desc: "High conviction — strong momentum confirmed across time periods, 66.9% win rate at 90 days" },
+              { grade: "A", label: "Grade A — Strong (>70)", ret: "+19.96%", samples: "295 data points", color: "#00dc82", bg: "rgba(0,220,130,.04)", desc: "High conviction — strong accelerating momentum, 75.6% win rate at 90 days. Average +26.7% at 180 days." },
               { grade: "B/C", label: "Grade B/C — Neutral (40–70)", ret: "+8.74%", samples: "1,802 data points", color: "#f59e0b", bg: "rgba(245,158,11,.03)", desc: "Mixed signals — some positive but no clear conviction. Watch and wait for confirmation." },
               { grade: "D", label: "Grade D — Weak (<40)", ret: "+8.08%", samples: "831 data points", color: "#ff3c50", bg: "rgba(255,60,80,.04)", desc: "Weak or declining momentum. The model says wait — Grade A outperforms Grade D by 16.56%." },
             ].map(b => (
@@ -437,9 +437,9 @@ function HomePage({ go, onEnterApp }) {
             {/* Big stat numbers */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 24, marginBottom: 28 }}>
               {[
-                { value: "+24.64%", label: "Avg 90d return", sub: "Grade A signals",   color: "#00dc82" },
-                { value: "66.9%",   label: "Win rate",       sub: "Grade A · 90 days",  color: "#00dc82" },
-                { value: "+16.56%", label: "Spread",         sub: "Grade A vs Grade D",  color: T.cyan   },
+                { value: "+19.96%", label: "Avg 90d return", sub: "Grade A signals",    color: "#00dc82" },
+                { value: "75.6%",   label: "Win rate",       sub: "Grade A · 90 days",   color: "#00dc82" },
+                { value: "+13.29%", label: "Spread",         sub: "Grade A vs Grade D",   color: T.cyan   },
                 { value: "90 days", label: "Signal horizon", sub: "Not a day-trade",     color: T.amber   },
               ].map(s => (
                 <div key={s.label} style={{ borderLeft: `3px solid ${s.color}30`, paddingLeft: 16 }}>
