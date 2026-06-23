@@ -15,6 +15,7 @@ import ContactModal      from "./ContactModal.jsx";
 import AnalystPanel      from "./AnalystPanel.jsx";
 import InsiderFeed       from "./InsiderFeed.jsx";
 import TraderMatch       from "./TraderMatch.jsx";
+import Chat              from "./Chat.jsx";
 import ScoreHistory      from "./ScoreHistory.jsx";
 import SectorRanking     from "./SectorRanking.jsx";
 import Portfolio         from "./Portfolio.jsx";
@@ -756,16 +757,7 @@ export default function App({ session, onLogout, onAdmin }) {
   const showTrialBanner = trialDaysLeft !== null && trialDaysLeft >= 0
     && session?.user?.user_metadata?.subscription_status !== "active";
 
-  // ── Community page (full replace — dashboard not rendered) ──
-  if (showCommunity) {
-    return (
-      <div className="app">
-        <div className="community-page">
-          <Forum session={session} onClose={() => setShowCommunity(false)} onEnterApp={null} />
-        </div>
-      </div>
-    );
-  }
+  const [communityTab, setCommunityTab] = useState("forum");
 
   return (
     <div className="app">
@@ -858,10 +850,7 @@ export default function App({ session, onLogout, onAdmin }) {
           <button
             key={tab.id}
             className={`app-tab ${activeTab === tab.id ? "active" : ""}`}
-            onClick={() => {
-              if (tab.id === "community") { setShowCommunity(true); return; }
-              setActiveTab(tab.id);
-            }}
+            onClick={() => setActiveTab(tab.id)}
           >
             <span className="app-tab-icon">{tab.icon}</span>
             <span className="app-tab-label">{tab.label}</span>
@@ -871,6 +860,28 @@ export default function App({ session, onLogout, onAdmin }) {
 
       {/* ── Portfolio tab ── */}
       {activeTab === "portfolio" && <Portfolio session={session} />}
+
+      {/* ── Community tab ── */}
+      {activeTab === "community" && <>
+        <div className="dash-tabs">
+          {[
+            { id: "forum",   label: "Forum",          icon: "💬" },
+            { id: "connect", label: "Trader Connect",  icon: "🤝" },
+            { id: "messages",label: "Messages",        icon: "✉️" },
+          ].map(t => (
+            <button
+              key={t.id}
+              className={`dash-tab ${communityTab === t.id ? "active" : ""}`}
+              onClick={() => setCommunityTab(t.id)}
+            >
+              <span>{t.icon}</span> {t.label}
+            </button>
+          ))}
+        </div>
+        {communityTab === "forum"    && <Forum        session={session} onClose={null} onEnterApp={null} />}
+        {communityTab === "connect"  && <TraderMatch  session={session} dockMode={false} />}
+        {communityTab === "messages" && <Chat         session={session} dockMode={false} />}
+      </>}
 
       {/* ── Dashboard tab ── */}
       {activeTab === "dashboard" && <>
