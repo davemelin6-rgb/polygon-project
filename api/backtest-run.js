@@ -56,16 +56,7 @@ export default async function handler(req, res) {
   const fmpKey     = process.env.FMP_API_KEY;
   if (!polygonKey) return res.status(500).json({ error: "POLYGON_API_KEY missing" });
 
-  // Pre-fetch fundamentals for all tickers (used as current-proxy for RISK/TECH)
   const { fetchFundamentals } = await import("../lib/fetchFMP.js");
-  const fundamentalsMap = {};
-  if (fmpKey) {
-    await Promise.all(TICKERS.map(async ticker => {
-      try {
-        fundamentalsMap[ticker] = await fetchFundamentals(ticker, fmpKey);
-      } catch { fundamentalsMap[ticker] = null; }
-    }));
-  }
 
   // Pre-fetch VIX history
   let vixHistory = [];
@@ -81,7 +72,8 @@ export default async function handler(req, res) {
       const aggs = await fetchAggregates(ticker, polygonKey, 600);
       if (!aggs || aggs.length < 120) return;
 
-      const fundamentals = fundamentalsMap[ticker] || null;
+      // Fetch fundamentals per ticker (inside loop — avoids overwhelming FMP with 75 simultaneous batches)
+      const fundamentals = fmpKey ? await fetchFundamentals(ticker, fmpKey).catch(() => null) : null;
 
       // Step back weekly (5 trading days) for up to 24 weeks
       for (let weeksBack = 4; weeksBack <= 24; weeksBack++) {
