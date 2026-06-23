@@ -148,16 +148,16 @@ export default function Guide() {
         display: "flex", alignItems: "flex-start", gap: "1.25rem", flexWrap: "wrap",
       }}>
         <div style={{ flexShrink: 0 }}>
-          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>+24.59%</div>
+          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>+24.64%</div>
           <div style={{ fontSize: ".7rem", color: "#3d5c78", marginTop: 4, fontFamily: "'Space Mono',monospace" }}>avg 90d · Grade A</div>
         </div>
         <div style={{ flexShrink: 0 }}>
-          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>72.7%</div>
+          <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>66.9%</div>
           <div style={{ fontSize: ".7rem", color: "#3d5c78", marginTop: 4, fontFamily: "'Space Mono',monospace" }}>win rate · Grade A · 90d</div>
         </div>
         <div style={{ flex: 1, minWidth: 200 }}>
           <p style={{ margin: 0, fontSize: ".85rem", color: "#4a6a88", lineHeight: 1.7 }}>
-            Measured historical outcomes across 1,344 data points across 65 stocks — not projections. The back-test runs every Sunday and updates automatically. If the model drifts, we catch it and adjust.
+            Measured historical outcomes across 3,136 data points across 65 stocks — not projections. The back-test runs every Sunday and updates automatically. If the model drifts, we catch it and adjust.
           </p>
         </div>
       </div>

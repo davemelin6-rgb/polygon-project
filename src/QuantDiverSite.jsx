@@ -182,7 +182,7 @@ function HomePage({ go, onEnterApp }) {
             <div style={{
               marginTop: 48, display: "flex", gap: 36, flexWrap: "wrap",
             }}>
-              {[["+24.59%", "avg 90d return · Grade A signals"], ["+14.51%", "spread vs weak signals"], ["1,344", "back-tested data points"]].map(([n, l]) => (
+              {[["+24.64%", "avg 90d return · Grade A signals"], ["+16.56%", "spread vs weak signals"], ["3,136", "back-tested data points"]].map(([n, l]) => (
                 <div key={l}>
                   <div style={{ fontFamily: ff.mono, fontSize: "1.5rem", fontWeight: 700, color: "#00dc82" }}>{n}</div>
                   <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 2 }}>{l}</div>
@@ -271,7 +271,7 @@ function HomePage({ go, onEnterApp }) {
             <div style={{ padding: "24px 32px", borderBottom: `1px solid ${T.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
               <div>
                 <div style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 4 }}>
-                  Back-test results · 1,344 data points · 65 stocks · 6 months of history
+                  Back-test results · 3,136 data points · 65 stocks · 12 months of history
                 </div>
                 <div style={{ fontFamily: ff.display, fontSize: "1.1rem", fontWeight: 700, color: T.ink }}>
                   What happened 90 days after each score was assigned
@@ -282,9 +282,9 @@ function HomePage({ go, onEnterApp }) {
 
             {/* Buckets */}
             {[
-              { grade: "A", label: "Grade A — Strong (>70)", ret: "+24.59%", samples: "128 data points", color: "#00dc82", bg: "rgba(0,220,130,.04)", desc: "Stocks the model flagged as strong momentum with high innovation and solid fundamentals" },
-              { grade: "B/C", label: "Grade B/C — Neutral (40–70)", ret: "+8.63%", samples: "815 data points", color: "#f59e0b", bg: "rgba(245,158,11,.03)", desc: "Mixed signals — some positive but no clear conviction across all 4 scores" },
-              { grade: "D", label: "Grade D — Weak (<40)", ret: "+10.08%", samples: "401 data points", color: "#ff3c50", bg: "rgba(255,60,80,.04)", desc: "Stocks the model flagged as weak momentum or poor technology investment quality" },
+              { grade: "A", label: "Grade A — Strong (>70)", ret: "+24.64%", samples: "503 data points", color: "#00dc82", bg: "rgba(0,220,130,.04)", desc: "High conviction — strong momentum confirmed across time periods, 66.9% win rate at 90 days" },
+              { grade: "B/C", label: "Grade B/C — Neutral (40–70)", ret: "+8.74%", samples: "1,802 data points", color: "#f59e0b", bg: "rgba(245,158,11,.03)", desc: "Mixed signals — some positive but no clear conviction. Watch and wait for confirmation." },
+              { grade: "D", label: "Grade D — Weak (<40)", ret: "+8.08%", samples: "831 data points", color: "#ff3c50", bg: "rgba(255,60,80,.04)", desc: "Weak or declining momentum. The model says wait — Grade A outperforms Grade D by 16.56%." },
             ].map(b => (
               <div key={b.grade} style={{ display: "grid", gridTemplateColumns: "80px 1fr auto", alignItems: "center", gap: 24, padding: "20px 32px", borderBottom: `1px solid ${T.border}`, background: b.bg }}>
                 <div style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: b.color, textAlign: "center" }}>{b.grade}</div>
@@ -302,7 +302,7 @@ function HomePage({ go, onEnterApp }) {
             {/* Spread callout */}
             <div style={{ padding: "20px 32px", display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap" }}>
               <div>
-                <div style={{ fontFamily: ff.mono, fontSize: "2rem", fontWeight: 700, color: T.cyan }}>+14.51%</div>
+                <div style={{ fontFamily: ff.mono, fontSize: "2rem", fontWeight: 700, color: T.cyan }}>+16.56%</div>
                 <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 3 }}>spread between Grade A and Grade D</div>
               </div>
               <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, lineHeight: 1.7, maxWidth: "44rem", margin: 0 }}>
@@ -431,15 +431,15 @@ function HomePage({ go, onEnterApp }) {
             borderRadius: 16, padding: "36px 36px",
           }}>
             <div style={{ fontFamily: ff.mono, fontSize: ".68rem", fontWeight: 700, letterSpacing: ".16em", textTransform: "uppercase", color: T.cyan, marginBottom: 24 }}>
-              📊 Weekly back-testing · Running automatically · 65 tickers · 1,344 data points
+              📊 Weekly back-testing · Running automatically · 65 tickers · 3,136 data points
             </div>
 
             {/* Big stat numbers */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 24, marginBottom: 28 }}>
               {[
-                { value: "+24.59%", label: "Avg 90d return", sub: "Grade A signals",  color: "#00dc82" },
-                { value: "72.7%",  label: "Win rate",        sub: "Grade A · 90 days", color: "#00dc82" },
-                { value: "+14.51%",label: "Spread",          sub: "Grade A vs Grade D", color: T.cyan   },
+                { value: "+24.64%", label: "Avg 90d return", sub: "Grade A signals",   color: "#00dc82" },
+                { value: "66.9%",   label: "Win rate",       sub: "Grade A · 90 days",  color: "#00dc82" },
+                { value: "+16.56%", label: "Spread",         sub: "Grade A vs Grade D",  color: T.cyan   },
                 { value: "90 days", label: "Signal horizon", sub: "Not a day-trade",     color: T.amber   },
               ].map(s => (
                 <div key={s.label} style={{ borderLeft: `3px solid ${s.color}30`, paddingLeft: 16 }}>
