@@ -3,7 +3,7 @@
 
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
-import { calcMomentum, calcRisk, calcTechValue, calcSignal, calcSignalBreakdown } from "../lib/formulas.js";
+import { calcMomentum, calcRisk, calcTechValue, calcInnovation, calcSignal, calcSignalBreakdown } from "../lib/formulas.js";
 import { getSectorBenchmarks, getSectorPE } from "../lib/sectorBenchmarks.js";
 
 // Fetch current VIX once per scores request (shared across all tickers)
@@ -84,13 +84,15 @@ export default async function handler(req, res) {
         const momentum   = calcMomentum({ price, aggs, fundamentals, vix });
         const risk       = calcRisk({ aggs, fundamentals });
         const tech_value = calcTechValue({ fundamentals, benchmarks });
+        const innovation = calcInnovation({ fundamentals, benchmarks });
         const breakdown  = calcSignalBreakdown({ fundamentals, sectorPE });
-        const signal     = calcSignal({ momentum, risk, techValue: tech_value });
+        const signal     = calcSignal({ momentum, risk, techValue: tech_value, innovation });
         return {
           symbol:           ticker,
           momentum,
           risk,
           tech_value,
+          innovation,
           signal,
           breakdown:        breakdown ? JSON.stringify(breakdown) : null,
           has_fundamentals: !!fundamentals,
@@ -155,6 +157,7 @@ export default async function handler(req, res) {
       momentum:        row.momentum,
       risk:            row.risk,
       techValue:       row.tech_value,
+      innovation:      row.innovation,
       signal:          row.signal ?? null,
       hasFundamentals: row.has_fundamentals,
       breakdown:       row.breakdown ?? null,
@@ -162,6 +165,7 @@ export default async function handler(req, res) {
         momentum:  delta(row.momentum,    hist?.momentum),
         risk:      delta(row.risk,        hist?.risk),
         techValue: delta(row.tech_value,  hist?.tech_value),
+        innovation:delta(row.innovation,  hist?.innovation),
         signal:    delta(row.signal,      hist?.signal),
       },
     };

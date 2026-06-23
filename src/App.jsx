@@ -235,9 +235,10 @@ function StockCard({ stock, scores, chart, selected, onClick }) {
       </div>
 
       <div className="score-section">
-        <ScoreBar label="MOM"  value={scores?.momentum}  delta={scores?.deltas?.momentum}  />
-        <ScoreBar label="RISK" value={scores?.risk}       delta={scores?.deltas?.risk}      />
-        <ScoreBar label="TECH" value={scores?.techValue}  delta={scores?.deltas?.techValue} />
+        <ScoreBar label="MOM"   value={scores?.momentum}   delta={scores?.deltas?.momentum}   />
+        <ScoreBar label="RISK"  value={scores?.risk}        delta={scores?.deltas?.risk}       />
+        <ScoreBar label="TECH"  value={scores?.techValue}   delta={scores?.deltas?.techValue}  />
+        <ScoreBar label="INNOV" value={scores?.innovation}  delta={scores?.deltas?.innovation} />
       </div>
     </div>
   );
@@ -328,9 +329,10 @@ function AdvancedRiskAssessment({ stocks, scoresMap, selected }) {
         </div>
 
         <div className="risk-bars">
-          <ScoreBar label="Risk Score"   value={risk}       />
-          <ScoreBar label="Momentum"     value={s.momentum} />
-          <ScoreBar label="Tech Value"   value={s.techValue}/>
+          <ScoreBar label="Risk Score"   value={risk}          />
+          <ScoreBar label="Momentum"     value={s.momentum}    />
+          <ScoreBar label="Tech Value"   value={s.techValue}   />
+          <ScoreBar label="Innovation"   value={s.innovation}  />
         </div>
 
         <SignalBreakdown scores={s} />
