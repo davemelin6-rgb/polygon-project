@@ -145,10 +145,10 @@ function getVerdict(sc) {
     else                       summary = "Scores are below threshold across multiple dimensions. Avoid until there is meaningful improvement.";
   }
 
-  if (sig >= 70) return { label: "STRONG · 90D", color: "#00dc82", grade: "A", sig, summary };
-  if (sig >= 55) return { label: "WATCH · 90D",  color: "#22D3EE", grade: "B", sig, summary };
-  if (sig >= 40) return { label: "MIXED · 90D",  color: "#f59e0b", grade: "C", sig, summary };
-  return              { label: "AVOID · 90D",   color: "#ff3c50", grade: "D", sig, summary };
+  if (sig >= 70) return { label: "STRONG · 180D", color: "#00dc82", grade: "A", sig, summary };
+  if (sig >= 55) return { label: "WATCH · 180D",  color: "#22D3EE", grade: "B", sig, summary };
+  if (sig >= 40) return { label: "MIXED · 180D",  color: "#f59e0b", grade: "C", sig, summary };
+  return              { label: "AVOID · 180D",   color: "#ff3c50", grade: "D", sig, summary };
 }
 
 function ScoreBar({ label, value, delta }) {

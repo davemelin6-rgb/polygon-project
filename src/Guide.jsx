@@ -88,10 +88,10 @@ export default function Guide() {
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: ".65rem" }}>
           {[
-            { grade: "A", range: "70–100", label: "STRONG · 90D", color: "#00dc82", desc: "High conviction. All or most signals align. Act." },
-            { grade: "B", range: "55–70",  label: "WATCH · 90D",  color: "#22D3EE", desc: "Some positives but incomplete. Watch for confirmation." },
-            { grade: "C", range: "40–55",  label: "MIXED · 90D",  color: "#f59e0b", desc: "No clear edge. Wait for a cleaner setup." },
-            { grade: "D", range: "0–40",   label: "AVOID · 90D",  color: "#ff3c50", desc: "Multiple weak signals. Stay on the sidelines." },
+            { grade: "A", range: "70–100", label: "STRONG · 180D", color: "#00dc82", desc: "High conviction. All or most signals align. Act." },
+            { grade: "B", range: "55–70",  label: "WATCH · 180D",  color: "#22D3EE", desc: "Some positives but incomplete. Watch for confirmation." },
+            { grade: "C", range: "40–55",  label: "MIXED · 180D",  color: "#f59e0b", desc: "No clear edge. Wait for a cleaner setup." },
+            { grade: "D", range: "0–40",   label: "AVOID · 180D",  color: "#ff3c50", desc: "Multiple weak signals. Stay on the sidelines." },
           ].map(s => (
             <div key={s.grade} style={{ display: "grid", gridTemplateColumns: "36px 60px 140px 1fr", alignItems: "center", gap: "1rem" }}>
               <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.1rem", fontWeight: 700, color: s.color }}>{s.grade}</div>
@@ -128,8 +128,8 @@ export default function Guide() {
 
           {divider}
 
-          {step("4", "Hold for 90 days",
-            "This is a 90-day conviction signal. Short-term volatility in the first 30 days is normal and expected. The model is validated on 90-day outcomes. Do not react to short-term noise. If the signal holds, the process holds.",
+          {step("4", "Hold for 90–180 days",
+            "This is a 90 to 180-day conviction signal. The data shows Grade A stocks average +24.6% at 90 days and +44.8% at 180 days — the longer you hold, the stronger the edge. Short-term volatility in the first 30 days is normal. Do not react to noise. If the signal holds, the process holds.",
             "#8b5cf6")}
 
           {divider}

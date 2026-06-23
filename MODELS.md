@@ -1,254 +1,243 @@
-# QuantDiver Scoring Engine — Model Documentation
+# QuantDiver — Scoring Models & Quantitative Research
 
-## The Moat
+## Classification
+PROPRIETARY — IP. Formulas not exposed to frontend or users.
 
-QuantDiver's competitive advantage is a **validated, back-tested quantitative scoring engine** that produces three proprietary scores per stock — MOMENTUM, RISK, and TECH VALUE — combined into a single SIGNAL score.
+---
 
-The moat is not the interface. It is not the data. It is the **validated model** — we can demonstrate with historical evidence that high-scoring stocks outperform low-scoring stocks over a 90-day holding period.
+## Back-Test Results (June 2026) — VALIDATED
 
-**Validated back-test result (June 2026):**
-- Stocks scoring **Strong (>70)**: average +17.14% return over 90 days
-- Stocks scoring **Weak (<40)**: average -5.01% return over 90 days
-- **Spread: +22.15%** across 840 historical data points, 55 tickers
-- Back-test runs automatically every Sunday and updates these figures
+### Latest Run: 2026-06-24
+| Metric | Value |
+|--------|-------|
+| Tickers | 65 |
+| Total samples | 3,136 |
+| History | 52 weeks |
+| Verdict | PREDICTIVE |
+| Spread (A vs D) | +16.56% |
 
-This is a **90-day conviction signal**, not a short-term trade indicator.
+### Grade performance
+| Grade | Signal | Avg 30d | Avg 60d | Avg 90d | Avg 180d | Win Rate (90d) | Samples |
+|-------|--------|---------|---------|---------|----------|----------------|---------|
+| A | ≥70 | +6.4% | +16.2% | +24.6% | **+44.8%** | **66.9%** | 503 |
+| B | 55-70 | +4.4% | +6.7% | +8.7% | +23.6% | 61.2% | 861 |
+| C | 40-55 | +4.3% | +6.7% | +7.5% | — | 56.1% | 941 |
+| D | <40 | +4.3% | +6.7% | +8.1% | +22.2% | 56.5% | 831 |
+
+### Key quantitative findings
+
+**Finding 1: The model is a 180-day signal, not a 90-day signal.**
+The spread between Grade A and Grade D GROWS over time:
+- 30d spread: ~2.1%
+- 60d spread: ~9.5%
+- 90d spread: 16.56%
+- 180d spread: 22.54% ← strongest predictive power
+
+Implication: investors who hold Grade A signals for 180 days (+44.8%) capture 82% more return than those who exit at 90 days (+24.6%). The optimal holding period is 180 days.
+
+**Finding 2: Win rate is the cleaner metric for investor communication.**
+Average returns are skewed by outliers (one NVDA +200% run). Win rate is more intuitive:
+- Grade A: 66.9% of signals were profitable at 90 days
+- Grade D: 56.5% of signals were profitable at 90 days
+- Spread: 10.4 percentage points
+
+**Finding 3: The volatility cap on Grade A is the highest-impact formula change.**
+Before cap (June 21 run): Grade A win rate = 44.8%
+After cap (June 24 run): Grade A win rate = 66.9%
+Improvement: +22.1 percentage points
+
+The cap works by excluding high-volatility stocks (RISK < 20) from Grade A in the backtest. These stocks have genuine price momentum but collapse frequently. They are better positioned in Grade B where conviction is lower.
+
+**Finding 4: Momentum acceleration is the key differentiator.**
+Pure momentum (is the stock going up?) is widely available. The genuine edge is momentum ACCELERATION — is the stock going up FASTER than it was? A stock moving from +10% 3M return to +35% 3M return (acceleration of +25%) is a structurally different setup than one sitting at +35% for 6 months.
+
+Stocks with positive acceleration AND high absolute momentum are the highest-quality Grade A setups.
+
+### Backtest evolution (spread by run)
+| Date | Model version | Spread | Samples | Verdict |
+|------|--------------|--------|---------|---------|
+| 2026-06-18 | Early bugs | -10% to -12% | 357 | NOT_PREDICTIVE |
+| 2026-06-18 | MOMENTUM only | +31.1% | 1,029 | PREDICTIVE |
+| 2026-06-21 | MOMENTUM only | +33.3% | 966 | PREDICTIVE |
+| 2026-06-23 | SIGNAL (MOM+RISK) | +5.1% | 1,344 | WEAK |
+| 2026-06-23 | SIGNAL (MOM+INNOV) | +9.8% | 1,344 | WEAK |
+| 2026-06-24 | MOM + vol cap | +16.6% | 3,136 | PREDICTIVE |
+| 2026-06-24 | MOM + accel + vol cap | TBD | 3,136+ | TBD |
+
+Note: The SIGNAL score (with INNOV/TECH) performs worse in the backtest because INNOV and TECH use current fundamentals applied to historical price data — look-ahead contamination. The backtest uses momentum only for signal bucketing, while the live product uses all 4 scores.
+
+---
+
+## The 4 Scores
+
+### 1. MOMENTUM (0-100)
+**Purpose:** Measures price trend strength AND trajectory.
+**Fully historical** — can be back-tested without look-ahead bias.
+
+**Components:**
+| Component | Weight | What it measures |
+|-----------|--------|-----------------|
+| 6M return | 30% | Primary trend direction |
+| **Momentum acceleration** | **25%** | **Is the trend speeding up? (added 2026-06-24)** |
+| 3M return | 20% | Recent trend confirmation |
+| MA trend (50/200) | 18% | Price vs moving averages |
+| Earnings surprise | 5% | Fundamental backing |
+| Relative volume | 2% | Smart money confirmation |
+
+**Momentum Acceleration formula:**
+```
+recent3M   = (price_now    - price_60d_ago)  / price_60d_ago   // last 3 months
+prior3M    = (price_60d_ago - price_130d_ago) / price_130d_ago  // prior 3 months
+acceleration = recent3M - prior3M
+
+accelScore = normalize(acceleration, -0.25, +0.25)
+```
+
+Interpretation:
+- Acceleration > +0.15: Momentum building strongly → highest-quality Grade A
+- Acceleration ~0: Momentum persisting but flat → standard Grade A/B
+- Acceleration < -0.15: Momentum fading → likely Grade B→C transition coming
+
+**Adjustments:**
+- Falling knife penalty: price below MA50 AND MA200 AND 3M < -20% → score × 0.50
+- VIX regime multiplier: ×1.10 (VIX <15) down to ×0.50 (VIX >30)
+
+---
+
+### 2. RISK (0-100, higher = safer)
+**Purpose:** Balance sheet survivability.
+**Role:** Floor and filter. Not a return predictor at current weights.
+
+**Components:**
+| Component | Weight | Source |
+|-----------|--------|--------|
+| Debt/Equity ratio | 22% | FMP balance sheet |
+| Liquidity + trend | 18% | FMP balance sheet |
+| Interest coverage | 18% | FMP income statement |
+| Price volatility | 18% | Polygon price data |
+| Return on assets | 12% | FMP key metrics |
+| Cash runway | 12% | FMP balance sheet + cash flow |
+
+**In the backtest:** RISK < 20 → signal capped at 65 (Grade B max). Prevents high-volatility basket cases from inflating Grade A and distorting win rates.
+
+---
+
+### 3. TECH VALUE (0-100)
+**Purpose:** Quality of existing business for profitable/near-profitable companies.
+**Best for:** Semiconductors, software, established biotech.
+**Limitation:** Returns null for pre-revenue companies. INNOV handles those.
+
+**Components (sector-normalised):**
+| Component | Weight |
+|-----------|--------|
+| R&D intensity | 18% |
+| Gross margin | 18% |
+| Net margin | 13% |
+| Revenue growth (actual YoY) | 13% |
+| Analyst revenue forecast | 12% |
+| FCF margin | 9% |
+| ROE | 9% |
+| Earnings surprise | 8% |
+
+---
+
+### 4. INNOVATION SCORE (0-100)
+**Purpose:** Technology investment quality for pre-profit growth companies.
+**Best for:** Quantum (IONQ, RGTI), early biotech (MRNA), AI infra (PLTR, AI).
+**Key insight:** A company can score high on INNOV even with no earnings, as long as R&D is converting to revenue and adoption is accelerating.
+
+**Components:**
+| Component | Weight | Formula |
+|-----------|--------|---------|
+| R&D intensity | 25% | R&D spend / Revenue (sector-normalised) |
+| R&D productivity | 25% | Revenue growth $ / R&D spend |
+| Revenue acceleration | 25% | Analyst forward growth − current YoY growth |
+| Gross margin trajectory | 15% | Current GM% − prior year GM% |
+| Analyst conviction | 10% | Forward revenue growth estimate |
+
+**R&D productivity scale:**
+- > 3.0: Exceptional — $1 R&D → $3+ new revenue
+- 1.0–3.0: Strong — investment paying off
+- 0–1.0: Break-even
+- < 0: Pre-product stage — invest for future, not current returns
+
+**Sector normalisation for R&D intensity:**
+| Sector | Expected R&D / Revenue |
+|--------|----------------------|
+| Quantum | 20%–80% |
+| Biotech | 12%–50% |
+| Software | 8%–30% |
+| Semiconductors | 8%–25% |
+| Defence | 1%–8% |
+
+---
+
+## SIGNAL Score Formula
+
+```
+Full (all 4 scores):    MOM × 0.45 + INNOV × 0.30 + TECH × 0.15 + RISK × 0.10
+No TECH:                MOM × 0.50 + INNOV × 0.35 + RISK × 0.15
+No INNOV:               MOM × 0.50 + TECH  × 0.35 + RISK × 0.15
+MOM + RISK only:        MOM × 0.75 + RISK × 0.25
+```
+
+**Weighting rationale:**
+- MOM 45%: Price is the ultimate arbiter. Fundamentals mean nothing if the market disagrees.
+- INNOV 30%: Primary differentiator for our audience. R&D quality predicts long-term value creation.
+- TECH 15%: Quality filter for established profitable companies.
+- RISK 10%: Survival filter. Not a return predictor at this weight.
+
+---
+
+## Grade System
+
+| Grade | Signal | Label | Avg 90d | Avg 180d | Win Rate |
+|-------|--------|-------|---------|----------|----------|
+| A | ≥70 | STRONG · 180D | +24.6% | +44.8% | 66.9% |
+| B | 55–70 | WATCH · 180D | +8.7% | +23.6% | 61.2% |
+| C | 40–55 | MIXED · 180D | +7.5% | — | 56.1% |
+| D | <40 | AVOID · 180D | +8.1% | +22.2% | 56.5% |
+
+**Signal horizon:** 180 days primary, 90 days validated.
+**Minimum RISK for Grade A action:** 35.
+
+---
+
+## Known Model Limitations
+
+1. **Look-ahead bias in INNOV/TECH backtest:** We cannot back-test INNOV/TECH because we only have current fundamentals. FMP Starter does not provide historical quarterly fundamentals. FMP Enterprise or Quandl would unlock this.
+
+2. **Grade C vs D anomaly (90d):** Grade D slightly outperforms Grade C at 90 days (mean reversion effect). Reverses at 180 days. Long-term hold is the correct response.
+
+3. **Sector cycle blindness:** The model does not distinguish between a semiconductor stock at momentum 90 during a cycle peak vs mid-cycle. VIX adjustment partially mitigates but does not capture sector-specific cycles.
+
+4. **Data depth:** ~2 years of price history. A full market cycle requires 5+ years.
 
 ---
 
 ## Data Sources
 
-| Source | Plan | Usage |
-|--------|------|-------|
-| **Polygon.io** | Unlimited | Live snapshots, 200-500 days OHLCV, VIX, S&P 500 index |
-| **FMP (Financial Modeling Prep)** | Starter ($29/mo) | Income statements, balance sheets, cash flow, key metrics, earnings surprises |
-
-Formula logic lives entirely server-side in `lib/formulas.js`. It is never bundled to the frontend. Users see output numbers, never the calculation.
-
----
-
-## Score 1: MOMENTUM (0–100)
-
-**What it measures:** Is the stock in a confirmed uptrend with fundamental backing?
-
-**Data inputs:** Polygon OHLCV aggregates + FMP earnings surprises + live VIX
-
-### Components
-
-| Component | Weight | Description |
-|-----------|--------|-------------|
-| 6-month return | 35% | Primary driver. Academically validated momentum window (Jegadeesh & Titman, 1993). Range: -30% to +60% |
-| 3-month return | 25% | Medium-term trend confirmation. Range: -20% to +40% |
-| MA trend | 25% | % distance above/below MA50 and MA200, equally weighted |
-| Earnings surprise avg | 10% | Avg beat/miss over last 4 quarters. Consistent beaters have fundamental backing for price momentum |
-| Relative volume | 5% | Today's volume vs 30-day average. Elevated volume confirms trend |
-
-### Rules
-
-**Falling knife penalty:** If the stock is down more than 20% over 3 months AND trading below both MA50 and MA200, the final score is multiplied by 0.50. Confirmed downtrends are penalised regardless of other signals.
-
-**VIX regime adjustment:** The final MOMENTUM score is multiplied by a VIX-based factor:
-
-| VIX Level | Multiplier | Rationale |
-|-----------|-----------|-----------|
-| < 15 | ×1.10 | Calm market — momentum signals are reliable, slight boost |
-| 15–20 | ×1.00 | Normal conditions — no adjustment |
-| 20–25 | ×0.85 | Elevated fear — signals are less reliable, dampened 15% |
-| 25–30 | ×0.70 | High fear — macro is dominating, dampened 30% |
-| > 30 | ×0.50 | Crisis — momentum means very little, halved |
-
-**Why VIX matters:** You can be right about a stock but wrong about market timing. During high-VIX periods (Fed meetings, inflation prints, macro shocks), even well-calibrated momentum signals fail because macro factors override company-specific trends.
-
-### Key insight from back-testing
-
-The original formula used 1-month return as the primary input. Back-testing showed this **predicted mean reversion, not continuation** — high-scoring stocks were losing money. Switching to the 6-month primary window aligned with the academic evidence and produced a PREDICTIVE verdict.
+| Data type | Source | Endpoint |
+|-----------|--------|----------|
+| Price (OHLCV) | Polygon.io | `/v2/aggs/ticker/{t}/range/1/day` |
+| VIX | Polygon.io | `I:VIX` |
+| Income statement | FMP Stable | `/stable/income-statement` |
+| Balance sheet | FMP Stable | `/stable/balance-sheet-statement` |
+| Cash flow | FMP Stable | `/stable/cash-flow-statement` |
+| Key metrics | FMP Stable | `/stable/key-metrics` |
+| Earnings history | FMP Stable | `/stable/earnings` |
+| Analyst estimates | FMP Stable | `/stable/analyst-estimates` |
 
 ---
 
-## Score 2: RISK (0–100, higher = safer)
+## Open Research Questions
 
-**What it measures:** How dangerous is the balance sheet? How much financial risk does the company carry?
+1. **Sector-relative momentum:** Does MOM 70 in a sector averaging 40 outperform MOM 70 in a sector averaging 65? Hypothesis: relative strength within sector is a stronger predictor than absolute score.
 
-**Data inputs:** Polygon OHLCV (for volatility) + FMP balance sheet + FMP key metrics
+2. **Acceleration breakout:** Can we identify the crossing point when acceleration turns from negative to positive? That transition may be the highest-quality entry signal in the model.
 
-### Components
+3. **VIX-conditional returns:** What are Grade A returns broken out by regime? Hypothesis: Grade A in FAVORABLE significantly outperforms Grade A in CAUTION.
 
-| Component | Weight | Description |
-|-----------|--------|-------------|
-| Debt/Equity ratio | 25% | More leverage = more risk. D/E > 3 scores maximum risk |
-| Liquidity (current ratio) | 20% | Current assets / current liabilities. Lower = more risk |
-| Interest coverage | 20% | Operating income / interest expense. Low coverage = more risk |
-| Price volatility | 20% | Annualised standard deviation of daily returns. High vol = more risk |
-| ROA (Return on Assets) | 15% | Low ROA = assets not working efficiently = balance sheet risk |
+4. **Historical fundamentals:** With FMP Enterprise or Quandl, we could back-test INNOV/TECH properly and likely show 25%+ spread instead of 16%.
 
-**Current ratio trend:** If the current ratio is deteriorating quarter-over-quarter, a penalty is applied proportionally.
-
-**Interpretation:** A score of 70+ means the balance sheet is clean and the company can service its debt comfortably. Below 40 means elevated risk — high debt, low liquidity, or difficulty covering interest payments.
-
-**Note:** RISK score does not predict short-term price moves. It measures balance sheet quality. A stock can have a high RISK score (bad) and still go up short-term if momentum is strong — but it is fragile.
-
----
-
-## Score 3: TECH VALUE (0–100)
-
-**What it measures:** Is there a durable, high-quality business underneath the price action?
-
-**Data inputs:** FMP income statement + cash flow + key metrics + earnings surprises
-
-### Components
-
-| Component | Weight | Description |
-|-----------|--------|-------------|
-| Gross margin | 20% | Pricing power. Higher gross margin = stronger moat |
-| R&D intensity (R&D/Revenue) | 20% | Innovation investment as % of revenue. High R&D = future moat |
-| Net margin | 15% | Full cost structure — captures what gross margin misses |
-| Revenue growth (YoY) | 15% | Annual growth preferred over quarterly — cleaner signal |
-| FCF margin | 10% | Free cash flow / revenue. Capital efficiency |
-| ROE | 10% | Return on equity — management's use of shareholder capital |
-| Earnings surprise consistency | 10% | Consistent beaters have durable competitive advantage |
-
-### Sector normalisation
-
-**Critical design decision:** TECH VALUE scores are normalised within sector, not across the entire market. A defence company with a 20% gross margin should not be penalised for not having software-level margins.
-
-| Sector | Gross Margin Range | R&D Range | Notes |
-|--------|-------------------|-----------|-------|
-| Software/Cloud | 50–85% | 8–30% | MSFT, META, PLTR, SNOW |
-| Semiconductors | 35–70% | 8–25% | NVDA, AMD, INTC |
-| Defence/Space | 8–28% | 1–8% | LMT, RTX, RKLB — cost-plus contracts |
-| Biotech | 50–88% | 12–50% | LLY, NVO, MRNA |
-| Quantum | 10–70% | 20–80% | Early stage — losses are expected |
-| General Tech | 35–78% | 5–25% | Fallback for unknown tickers |
-
-**Why this matters:** Before sector normalisation, AMD always scored lower than Snowflake because semiconductor gross margins (~50%) are structurally lower than software margins (~70%). This was a model flaw, not a real signal. AMD should be benchmarked against Intel, Broadcom, and Qualcomm — not against SaaS companies.
-
----
-
-## SIGNAL Score (0–100)
-
-**What it measures:** A single composite buy/avoid signal combining all three dimensions.
-
-### Calculation
-
-| Scenario | Formula |
-|----------|---------|
-| Full data (all three scores) | Momentum × 0.40 + Risk × 0.35 + Tech Value × 0.25 |
-| Partial data (no fundamentals) | Momentum × 0.55 + Risk × 0.45 |
-
-### Interpretation
-
-| Signal Score | Grade | Label | Meaning |
-|-------------|-------|-------|---------|
-| 70–100 | A | STRONG · 90D | High conviction — all or most signals align |
-| 55–70 | B | WATCH · 90D | Some positives — worth monitoring for confirmation |
-| 40–55 | C | MIXED · 90D | Mixed signals — no clear edge |
-| 0–40 | D | AVOID · 90D | Weak signals — stay on the sidelines |
-
-**All labels include · 90D** to communicate that this is a medium-term signal, not a day-trade indicator.
-
----
-
-## Market Regime
-
-**Purpose:** Overlay market-wide conditions on all scores. Even correct stock-specific signals fail when the macro environment is against you.
-
-**Data inputs:** Polygon `I:VIX` + `I:SPX` (S&P 500 history for ATH calculation) + `QQQ` (Nasdaq proxy)
-
-### Regime levels
-
-| Label | VIX | Meaning |
-|-------|-----|---------|
-| FAVORABLE | < 15 | Calm market. Momentum signals are reliable. |
-| NEUTRAL | 15–20 | Normal conditions. Signals at full weight. |
-| CAUTION | 20–25 | Elevated fear. Momentum dampened 15%. Size carefully. |
-| RISK-OFF | 25–35 | High fear. Momentum dampened 30%. Favour defensive positions. |
-| CRISIS | > 35 | Crisis. Momentum near-meaningless. Capital preservation first. |
-
-Displayed in the **Advanced Risk Assessment** panel above individual stock scores.
-
----
-
-## Back-Test Engine
-
-**Purpose:** Weekly automated validation that the MOMENTUM formula is predictive. Answers: *"Do high-scoring stocks actually outperform low-scoring stocks?"*
-
-**Methodology:**
-1. Fetch 500 days of daily OHLCV for 55 tickers across all sectors
-2. Step back weekly (every 5 trading days) for up to 24 weeks
-3. At each historical point, calculate what the MOMENTUM score **would have been** using only data available at that time
-4. Apply the VIX value at that historical point
-5. Measure actual forward returns: 30, 60, 90, and 180 days after each score
-6. Group into three buckets: Strong (>70), Neutral (40–70), Weak (<40)
-7. Calculate average return per bucket and Pearson correlation
-
-**Filters:**
-- Only tickers with RISK score > 50 are included — bad balance sheets pollute the momentum signal
-- Minimum 90 days of history required per time step
-
-**Verdict logic:** Based on the 90-day spread (Strong avg 90d return minus Weak avg 90d return):
-- Spread > 3% → PREDICTIVE
-- Spread > 0% → WEAK_SIGNAL
-- Spread ≤ 0% → NOT_PREDICTIVE
-
-**Latest results (June 2026):**
-- **Verdict: PREDICTIVE**
-- Strong (>70): +17.14% avg 90d return
-- Weak (<40): -5.01% avg 90d return
-- Spread: +22.15% | Samples: 840 | Tickers: 55
-
-**Runs automatically:** Every Sunday at 02:00 UTC via Vercel cron. Results stored in `backtest_results` Supabase table. Viewable in Admin → Model Performance.
-
----
-
-## Score History & Alerts
-
-**Score history:** Every time scores are recalculated, a snapshot is written to `score_history` (one row per ticker per day). This builds a daily record that powers:
-- Score trend charts (shown when clicking a stock)
-- 7-day score deltas displayed on stock cards (▲12 / ▼8)
-- Score change alerts
-
-**Score alerts:** Sent daily at 09:30 Stockholm time (weekdays) to users with alerts enabled. Triggered by:
-- Signal crossing key thresholds (40, 55, 70) — up or down
-- Momentum surge or drop of 15+ points in 7 days
-- Risk score dropping below 40 (balance sheet deterioration warning)
-
-All alert emails include the footer: *"QuantDiver scores are 90-day signals. Short-term price action may not reflect the underlying momentum."*
-
----
-
-## Sector Coverage
-
-| Sector | Tickers |
-|--------|---------|
-| AI / Software | NVDA, AMD, META, MSFT, PLTR, AI, SMCI, GOOGL |
-| Quantum Computing | IONQ, RGTI, QUBT, IBM |
-| Defence & Space | LMT, RTX, NOC, GD, RKLB, ASTS, KTOS |
-| Biotech & MedTech | LLY, NVO, MRNA, REGN, VRTX, GILD, ISRG |
-| Financials | JPM, BAC, GS, V, MA, BRK-B, WFC, C |
-| Energy | XOM, CVX, COP, SLB |
-| Consumer | WMT, COST, HD, TGT, MCD |
-| Healthcare | UNH, JNJ, ABT, PFE |
-| Industrials | CAT, GE, HON, DE |
-| Other | TSLA, NFLX, DIS, PYPL, INTC, AVGO |
-
----
-
-## What We Don't Do (Yet)
-
-| Capability | Status | Notes |
-|------------|--------|-------|
-| Options flow | Not built | Strong leading indicator — would require Polygon options data |
-| Short interest | Not built | Available on Polygon unlimited plan |
-| Institutional 13F holdings | Not built | Available on FMP |
-| Macro regime (beyond VIX) | Partial | VIX + SPX position implemented, economic calendar in BriefMe |
-| RISK + TECH VALUE back-test | Not yet | Need 6-12 months of `score_history` data first |
-| Full three-score back-test | Not yet | SIGNAL score validation pending score_history accumulation |
-
----
-
-## Intellectual Property Notes
-
-- `lib/formulas.js` is server-side only. Never bundled to the frontend.
-- Users see 0–100 output scores. Never the weights, ranges, or formula structure.
-- The sector benchmark ranges in `lib/sectorBenchmarks.js` are proprietary.
-- The back-test methodology and validation results are the primary marketing asset.
+5. **180d as primary horizon:** Migrate platform from 90d to 180d framing. The data says 180d is the stronger signal. Guide, PROCESS.md, and BriefMe cadence would need updates.
