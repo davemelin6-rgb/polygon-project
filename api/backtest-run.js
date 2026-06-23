@@ -92,10 +92,13 @@ export default async function handler(req, res) {
         const momentum = calcMomentum({ price, aggs: historicalAggs, vix: historicalVix });
         if (momentum === null) continue;
 
-        // Use MOMENTUM as the primary signal for bucketing — honest and fully historical
-        // RISK added lightly to penalise genuinely dangerous stocks
-        const risk   = calcRisk({ aggs: historicalAggs, fundamentals });
-        const signal = Math.round((momentum * 0.85) + ((risk ?? 50) * 0.15));
+        // RISK: historical volatility component (price-based, no fundamental look-ahead)
+        const risk = calcRisk({ aggs: historicalAggs, fundamentals: null }); // volatility only
+
+        // Signal = momentum only — purest historical test
+        // Hard cap: if volatility risk < 20, cap at 65 (too dangerous for Grade A)
+        let signal = Math.round(momentum);
+        if ((risk ?? 50) < 20) signal = Math.min(signal, 65);
         if (signal === null) continue;
 
         // Forward returns — 30, 60, 90, 180 trading days
