@@ -393,14 +393,14 @@ export default function TraderMatch({ session, dockMode = false, onClose }) {
       <div className="tm-header">
         <div>
           <span className="tm-title">Trader Connect</span>
-          <div className="tm-subtitle">Match with a real trader</div>
+          <div className="tm-subtitle">Talk to a real investor, right now</div>
         </div>
         <button className="tm-close" onClick={handleClose}>−</button>
       </div>
 
       <div className="tm-body">
         <p className="tm-desc">
-          Choose a topic and we'll pair you with another QuantDiver member who shares your interest — then chat directly.
+          Select a sector, get matched instantly with another QuantDiver member, and chat live. Same niche, same signals — finally someone who speaks your language.
         </p>
 
         <p className="tm-section-label">Select a topic</p>
