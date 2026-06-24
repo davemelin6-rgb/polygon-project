@@ -246,6 +246,60 @@
   cursor: not-allowed;
 }
 
+/* ── About section (embedded mode only) ────────────── */
+.tm-about {
+  background: rgba(139,92,246,.05);
+  border: 1px solid rgba(139,92,246,.15);
+  border-radius: 14px;
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.tm-about-lead {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #dce8f4;
+  margin: 0 0 .6rem;
+}
+
+.tm-about-body {
+  font-size: .85rem;
+  color: #4a6a88;
+  line-height: 1.7;
+  margin: 0 0 1.1rem;
+}
+
+.tm-how-it-works {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+
+.tm-step {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  font-size: .82rem;
+  color: #5a7a9a;
+  line-height: 1.5;
+}
+
+.tm-step-num {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(139,92,246,.2);
+  border: 1px solid rgba(139,92,246,.35);
+  color: #a78bfa;
+  font-size: .68rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+}
+
 .tm-disclaimer {
   font-size: 0.62rem;
   color: #1e3048;

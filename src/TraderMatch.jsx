@@ -399,9 +399,23 @@ export default function TraderMatch({ session, dockMode = false, onClose }) {
       </div>
 
       <div className="tm-body">
-        <p className="tm-desc">
-          Select a sector, get matched instantly with another QuantDiver member, and chat live. Same niche, same signals — finally someone who speaks your language.
-        </p>
+
+        {/* Description — shown in embedded mode only */}
+        {!dockMode && (
+          <div className="tm-about">
+            <p className="tm-about-lead">
+              Talk to a real investor, right now.
+            </p>
+            <p className="tm-about-body">
+              Trader Connect pairs you live with another QuantDiver member who is invested in the same sector as you. No public feed, no noise — just a direct one-on-one conversation with someone who tracks the same stocks, reads the same signals, and speaks your language.
+            </p>
+            <div className="tm-how-it-works">
+              <div className="tm-step"><span className="tm-step-num">1</span><span>Pick a sector — AI, Quantum, Defence, or Biotech</span></div>
+              <div className="tm-step"><span className="tm-step-num">2</span><span>We match you instantly with another member in the queue</span></div>
+              <div className="tm-step"><span className="tm-step-num">3</span><span>Chat live — share ideas, discuss signals, compare positions</span></div>
+            </div>
+          </div>
+        )}
 
         <p className="tm-section-label">Select a topic</p>
         <div className="tm-topics">
