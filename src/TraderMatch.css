@@ -242,7 +242,7 @@
   box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2);
 }
 .tm-find-btn:disabled {
-  opacity: 0.35;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
