@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "./supabaseClient";
+import ForwardValidation from "./ForwardValidation.jsx";
 
 export default function AdminPanel({ session, onBack }) {
   const [users,      setUsers]      = useState([]);
@@ -115,7 +116,7 @@ export default function AdminPanel({ session, onBack }) {
 
         {/* Tabs */}
         <div style={{ display: "flex", gap: 4, marginBottom: "1.5rem", borderBottom: "1px solid rgba(255,255,255,.06)" }}>
-          {[["users","👥 Users"], ["model","📊 Model Performance"], ["contributors","🤝 Contributors"], ["knowledge","🤖 AI Knowledge"]].map(([id, label]) => (
+          {[["users","👥 Users"], ["model","📊 Model Performance"], ["validation","🎯 Forward Validation"], ["contributors","🤝 Contributors"], ["knowledge","🤖 AI Knowledge"]].map(([id, label]) => (
             <button key={id} onClick={() => setActiveTab(id)} style={{
               padding: "0.6rem 1.2rem", background: "none", border: "none",
               borderBottom: activeTab === id ? "2px solid #00b4ff" : "2px solid transparent",
@@ -318,6 +319,11 @@ export default function AdminPanel({ session, onBack }) {
               );
             })}
           </div>
+        )}
+
+        {/* ── Forward Validation tab ── */}
+        {activeTab === "validation" && (
+          <ForwardValidation session={session} />
         )}
 
         {/* ── Contributors tab ── */}

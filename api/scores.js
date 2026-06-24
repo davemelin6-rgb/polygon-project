@@ -96,6 +96,7 @@ export default async function handler(req, res) {
           innovation,
           acceleration,
           signal,
+          price:            price ?? null,
           breakdown:        breakdown ? JSON.stringify(breakdown) : null,
           has_fundamentals: !!fundamentals,
           calculated_at:    new Date().toISOString(),
@@ -111,15 +112,22 @@ export default async function handler(req, res) {
           .upsert(validResults, { onConflict: "symbol" });
 
         // Write one snapshot per ticker per day to score_history
+        // price and grade stored so forward validation can measure actual returns later
         const today = new Date().toISOString().slice(0, 10);
-        const historyRows = validResults.map(r => ({
-          symbol:        r.symbol,
-          momentum:      r.momentum,
-          risk:          r.risk,
-          tech_value:    r.tech_value,
-          signal:        r.signal,
-          recorded_date: today,
-        }));
+        const historyRows = validResults.map(r => {
+          const sig   = r.signal ?? null;
+          const grade = sig >= 70 ? "A" : sig >= 55 ? "B" : sig >= 40 ? "C" : "D";
+          return {
+            symbol:        r.symbol,
+            momentum:      r.momentum,
+            risk:          r.risk,
+            tech_value:    r.tech_value,
+            signal:        r.signal,
+            grade,
+            price:         r.price ?? null,
+            recorded_date: today,
+          };
+        });
         await supabase
           .from("score_history")
           .upsert(historyRows, { onConflict: "symbol,recorded_date", ignoreDuplicates: true });
