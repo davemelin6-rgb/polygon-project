@@ -39,6 +39,18 @@
   50%       { opacity: 0.35; }
 }
 
+/* ── Panel embedded (Community tab — not fixed) ──── */
+.tm-panel.tm-panel--embedded {
+  position: relative !important;
+  bottom: auto !important;
+  right: auto !important;
+  width: 100% !important;
+  max-width: 520px;
+  height: auto !important;
+  min-height: 480px;
+  margin: 0 auto;
+}
+
 /* ── Panel ─────────────────────────────────────────────────── */
 .tm-panel {
   position: fixed;

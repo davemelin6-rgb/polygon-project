@@ -26,7 +26,7 @@ function avatarColor(name) {
 }
 
 export default function TraderMatch({ session, dockMode = false, onClose }) {
-  const [open,      setOpen]      = useState(false);
+  const [open,      setOpen]      = useState(!dockMode); // always open when embedded in Community tab
   const [state,     setState]     = useState("idle");   // idle | queued | matched | ended
   const [topic,     setTopic]     = useState(null);     // selected topic id while picking
   const [queueId,   setQueueId]   = useState(null);
@@ -294,7 +294,7 @@ export default function TraderMatch({ session, dockMode = false, onClose }) {
 
   // ── Ended state ───────────────────────────────────────────
   if (state === "ended") return (
-    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : " tm-panel--embedded"}`}>
       <div className="tm-header">
         <span className="tm-title">Trader Connect</span>
         <button className="tm-close" onClick={handleClose}>−</button>
@@ -312,7 +312,7 @@ export default function TraderMatch({ session, dockMode = false, onClose }) {
 
   // ── Active chat ───────────────────────────────────────────
   if (state === "matched" && matchSession) return (
-    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : " tm-panel--embedded"}`}>
       <div className="tm-header">
         <div className="tm-header-left">
           <div className="tm-partner-avatar" style={{ background: avatarColor(partnerName) }}>
@@ -371,7 +371,7 @@ export default function TraderMatch({ session, dockMode = false, onClose }) {
 
   // ── Queue waiting ─────────────────────────────────────────
   if (state === "queued") return (
-    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : " tm-panel--embedded"}`}>
       <div className="tm-header">
         <span className="tm-title">Trader Connect</span>
         <button className="tm-close" onClick={handleClose}>−</button>
@@ -389,7 +389,7 @@ export default function TraderMatch({ session, dockMode = false, onClose }) {
 
   // ── Topic picker (idle) ───────────────────────────────────
   return (
-    <div className={`tm-panel${dockMode ? " tm-panel--dock" : ""}`}>
+    <div className={`tm-panel${dockMode ? " tm-panel--dock" : " tm-panel--embedded"}`}>
       <div className="tm-header">
         <div>
           <span className="tm-title">Trader Connect</span>
