@@ -722,6 +722,70 @@ function ScoresPage({ onEnterApp }) {
 
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
 
+      {/* GRADE RESULTS */}
+      <section style={{ padding: "72px 0 56px" }}>
+        <div className="qd-wrap">
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 12 }}>
+              Back-tested · 3,136 data points · 65 stocks · 12 months
+            </div>
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.4rem)", fontWeight: 800, letterSpacing: "-.02em", margin: "0 0 12px" }}>
+              What each grade actually returned
+            </h2>
+            <p style={{ fontFamily: ff.body, color: T.sub, fontSize: ".92rem", lineHeight: 1.7, maxWidth: "38rem", margin: "0 auto" }}>
+              Measured historical outcomes. The model scored every stock — then we checked what happened 90 days later.
+            </p>
+          </div>
+
+          {/* Grade cards */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12, marginBottom: 28 }}>
+            {[
+              { grade: "A", label: "STRONG", range: "≥63", ret: "+18.16%", phase2: "+15.59%", winRate: "65.9%", color: "#00dc82", desc: "Outperforms in both the first AND second 3-month window" },
+              { grade: "B", label: "WATCH",  range: "48–63", ret: "+9.19%",  phase2: "+13.22%", winRate: "56.9%", color: "#22D3EE", desc: "Building momentum — watch for transition to Grade A" },
+              { grade: "C", label: "MIXED",  range: "35–48", ret: "+6.54%",  phase2: "+5.70%",  winRate: "54.5%", color: "#f59e0b", desc: "Weakest grade across both periods — wait for a clearer setup" },
+              { grade: "D", label: "AVOID",  range: "<35",   ret: "+5.45%",  phase2: "+13.03%", winRate: "53.9%", color: "#ff3c50", desc: "Low momentum — mean reversion only, not a signal" },
+            ].map(g => (
+              <div key={g.grade} style={{ background: T.s1, border: `1px solid ${g.color}25`, borderTop: `3px solid ${g.color}`, borderRadius: 14, padding: "20px 18px" }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginBottom: 4 }}>
+                  <span style={{ fontFamily: ff.mono, fontSize: "1.6rem", fontWeight: 700, color: g.color, lineHeight: 1 }}>{g.grade}</span>
+                  <span style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".12em", color: g.color }}>{g.label} · {g.range}</span>
+                </div>
+                <div style={{ fontFamily: ff.mono, fontSize: "1.4rem", fontWeight: 700, color: T.ink, margin: "10px 0 2px" }}>{g.ret}</div>
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", color: T.dim, marginBottom: 10 }}>avg 90d return</div>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, paddingBottom: 10, borderBottom: `1px solid ${T.border}` }}>
+                  <div>
+                    <div style={{ fontFamily: ff.mono, fontSize: ".78rem", fontWeight: 700, color: g.color }}>{g.phase2}</div>
+                    <div style={{ fontFamily: ff.mono, fontSize: ".58rem", color: T.dim }}>months 4–6</div>
+                  </div>
+                  <div style={{ textAlign: "right" }}>
+                    <div style={{ fontFamily: ff.mono, fontSize: ".78rem", fontWeight: 700, color: T.ink }}>{g.winRate}</div>
+                    <div style={{ fontFamily: ff.mono, fontSize: ".58rem", color: T.dim }}>win rate</div>
+                  </div>
+                </div>
+                <p style={{ fontFamily: ff.body, fontSize: ".75rem", color: T.dim, lineHeight: 1.55, margin: 0 }}>{g.desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* Alpha callout */}
+          <div style={{ background: "rgba(0,220,130,.05)", border: "1px solid rgba(0,220,130,.2)", borderRadius: 14, padding: "20px 28px", display: "flex", alignItems: "center", gap: 32, flexWrap: "wrap" }}>
+            <div style={{ flexShrink: 0 }}>
+              <div style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>+12.69%</div>
+              <div style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 3 }}>Grade A alpha vs S&P 500</div>
+            </div>
+            <div style={{ flexShrink: 0 }}>
+              <div style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>8.23</div>
+              <div style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 3 }}>t-statistic (statistically significant)</div>
+            </div>
+            <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.sub, lineHeight: 1.65, margin: 0, flex: 1, minWidth: 200 }}>
+              Grade A stocks outperformed the S&P 500 by +12.69% in the same time windows — with a t-statistic of 8.23, meaning the probability this is random is essentially zero.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
       {/* Score cards — 2-column grid */}
       <section style={{ padding: "72px 0" }}>
         <div className="qd-wrap">
