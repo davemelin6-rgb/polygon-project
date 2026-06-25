@@ -32,10 +32,10 @@ const TICKERS = [
 
 // Grade buckets — match what users see (A/B/C/D)
 const BUCKETS = [
-  { label: "Grade A (≥70)",  min: 70,  max: 101 },
-  { label: "Grade B (55-70)",min: 55,  max: 70  },
-  { label: "Grade C (40-55)",min: 40,  max: 55  },
-  { label: "Grade D (<40)",  min: 0,   max: 40  },
+  { label: "Grade A (≥63)",  min: 63,  max: 101 },
+  { label: "Grade B (48-63)",min: 48,  max: 63  },
+  { label: "Grade C (35-48)",min: 35,  max: 48  },
+  { label: "Grade D (<35)",  min: 0,   max: 35  },
 ];
 
 // Legacy spread buckets (kept for backward compat with front-end)
