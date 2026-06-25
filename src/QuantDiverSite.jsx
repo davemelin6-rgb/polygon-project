@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import QDLogo from "./QDLogo.jsx";
 
 /* ─── tokens ──────────────────────────────────────────────── */
@@ -120,8 +120,8 @@ function ProductCard({ name, ticker, sub, score, color, dims, rotate = 0, opacit
 
 /* ─── data ────────────────────────────────────────────────── */
 const leaderboard = [
-  { rank: "01", name: "ServiceNow", ticker: "NOW", sub: "Enterprise software · US", score: 74.6, color: T.green,
-    dims: [["Runway","A",88,T.green],["Dilution","Low",78,T.green],["Growth","Strong",84,T.green],["Margin","▲",72,T.cyan],["Insiders","Mid",55,T.amber],["Valuation","Rich",38,T.amber]] },
+  { rank: "01", name: "NVIDIA", ticker: "NVDA", sub: "AI semiconductors · US", score: 78.4, color: T.green,
+    dims: [["Momentum","A",88,T.green],["Demand","High",84,T.green],["Innovation","Strong",82,T.green],["Tech","▲",76,T.cyan],["Sentiment","Bullish",71,T.cyan],["Risk","Mod",42,T.amber]] },
   { rank: "02", name: "AAC Clyde Space", ticker: "AAC", sub: "Space systems · Sweden", score: 62.0, color: T.amber,
     dims: [["Runway","B",58,T.amber],["Dilution","Watch",42,T.amber],["Growth","Strong",80,T.green],["Margin","▲",55,T.amber],["Insiders","High",82,T.green],["Valuation","Fair",65,T.green]] },
   { rank: "03", name: "Salesforce", ticker: "CRM", sub: "Enterprise software · US", score: 58.4, color: T.amber,
@@ -205,7 +205,7 @@ function HomePage({ go, onEnterApp }) {
             {/* front card */}
             <div style={{ position: "relative", transform: "rotate(-1.5deg)" }}>
               <ProductCard
-                name="ServiceNow" ticker="NOW" sub="Enterprise software · US"
+                name="NVIDIA" ticker="NVDA" sub="AI semiconductors · US"
                 score={74.6} color={T.green}
                 dims={[["Runway","A",88,T.green],["Growth","STRONG",84,T.green],["Margin","▲",72,T.cyan],["Dilution","LOW",78,T.green],["Insiders","MID",55,T.amber],["Valuation","RICH",38,T.amber]]}
               />
@@ -645,6 +645,162 @@ const SCORE_DEFS = [
   },
 ];
 
+const GRADE_COLORS = { A: "#00dc82", B: "#22D3EE", C: "#f59e0b", D: "#ff3c50" };
+const GRADE_LABELS = { A: "STRONG · 180D", B: "WATCH · 180D", C: "MIXED · 180D", D: "AVOID · 180D" };
+
+function ScoreBar({ label, value, avgValue, color }) {
+  const pct = value != null ? value : 0;
+  const avgPct = avgValue != null ? avgValue : null;
+  return (
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+        <span style={{ fontFamily: ff.mono, fontSize: ".68rem", color: T.dim, letterSpacing: ".06em" }}>{label}</span>
+        <span style={{ fontFamily: ff.mono, fontSize: ".78rem", fontWeight: 700, color: color || T.cyan }}>
+          {value != null ? value : "—"}
+          {avgValue != null && <span style={{ color: T.dim, fontWeight: 400 }}> / avg {avgValue}</span>}
+        </span>
+      </div>
+      <div style={{ position: "relative", height: 6, background: "rgba(100,140,200,.1)", borderRadius: 6 }}>
+        <div style={{ width: `${pct}%`, height: "100%", background: color || T.cyan, borderRadius: 6, opacity: .8, transition: "width .6s ease" }} />
+        {avgPct != null && (
+          <div style={{ position: "absolute", top: -2, left: `${avgPct}%`, width: 2, height: 10, background: "rgba(255,255,255,.35)", borderRadius: 1 }} />
+        )}
+      </div>
+    </div>
+  );
+}
+
+function TryItSection() {
+  const [ticker,  setTicker]  = React.useState("");
+  const [loading, setLoading] = React.useState(false);
+  const [result,  setResult]  = React.useState(null);
+  const [error,   setError]   = React.useState(null);
+
+  async function analyse(e) {
+    e?.preventDefault();
+    const t = ticker.trim().toUpperCase();
+    if (!t) return;
+    setLoading(true); setError(null); setResult(null);
+    try {
+      const r = await fetch(`/api/demo-score?ticker=${t}`);
+      const d = await r.json();
+      if (!r.ok) { setError(d.error || "Something went wrong."); }
+      else { setResult(d); }
+    } catch { setError("Network error — please try again."); }
+    setLoading(false);
+  }
+
+  const gradeColor = result ? (GRADE_COLORS[result.grade] || T.cyan) : T.cyan;
+
+  return (
+    <section style={{ padding: "96px 0", background: "linear-gradient(180deg, transparent, rgba(0,180,255,.03) 50%, transparent)" }}>
+      <div className="qd-wrap" style={{ maxWidth: 760, margin: "0 auto" }}>
+
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>
+            Live demo · No account needed
+          </div>
+          <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.6rem)", fontWeight: 800, letterSpacing: "-.02em", margin: "0 0 16px" }}>
+            Try it yourself.
+          </h2>
+          <p style={{ fontFamily: ff.body, color: T.sub, fontSize: ".95rem", lineHeight: 1.7, maxWidth: "36rem", margin: "0 auto" }}>
+            Enter any stock ticker and see how the QuantDiver Engine scores it — live, right now. Then see how it compares to our current Grade A portfolio.
+          </p>
+        </div>
+
+        {/* Input */}
+        <form onSubmit={analyse} style={{ display: "flex", gap: 12, marginBottom: 32, maxWidth: 480, margin: "0 auto 32px" }}>
+          <input
+            value={ticker}
+            onChange={e => setTicker(e.target.value.toUpperCase())}
+            placeholder="NVDA, AAPL, IONQ, MRNA..."
+            maxLength={6}
+            style={{
+              flex: 1, background: T.s1, border: `1px solid ${T.border}`, borderRadius: 12,
+              color: T.ink, fontFamily: ff.mono, fontSize: "1rem", letterSpacing: ".06em",
+              padding: "14px 18px", outline: "none",
+            }}
+          />
+          <PrimaryBtn style={{ padding: "14px 28px", fontSize: ".88rem" }}>
+            {loading ? "Analysing…" : "Analyse →"}
+          </PrimaryBtn>
+        </form>
+
+        {error && (
+          <div style={{ background: "rgba(255,60,80,.08)", border: "1px solid rgba(255,60,80,.2)", borderRadius: 12, padding: "14px 20px", color: "#ff3c50", fontFamily: ff.body, fontSize: ".88rem", textAlign: "center", marginBottom: 24 }}>
+            {error}
+          </div>
+        )}
+
+        {result && (
+          <div style={{ animation: "qd-fadein .4s ease" }}>
+
+            {/* Grade badge */}
+            <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 32, background: gradeColor + "10", border: `1px solid ${gradeColor}30`, borderRadius: 16, padding: "20px 28px" }}>
+              <div style={{ width: 64, height: 64, borderRadius: 14, background: gradeColor + "20", border: `2px solid ${gradeColor}50`, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <span style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: gradeColor, lineHeight: 1 }}>{result.grade}</span>
+              </div>
+              <div>
+                <div style={{ fontFamily: ff.mono, fontSize: ".7rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: gradeColor, marginBottom: 4 }}>
+                  {result.ticker} · {GRADE_LABELS[result.grade]}
+                </div>
+                <div style={{ fontFamily: ff.display, fontSize: "1.5rem", fontWeight: 700, color: T.ink, lineHeight: 1 }}>
+                  Signal Score: {result.signal ?? "—"}<span style={{ fontSize: ".8em", color: T.dim, fontWeight: 400 }}>/100</span>
+                </div>
+                {result.price && <div style={{ fontFamily: ff.mono, fontSize: ".8rem", color: T.dim, marginTop: 4 }}>${result.price}</div>}
+              </div>
+              {result.gradeAAvg && (
+                <div style={{ marginLeft: "auto", textAlign: "right" }}>
+                  <div style={{ fontFamily: ff.mono, fontSize: ".62rem", color: T.dim, letterSpacing: ".1em", textTransform: "uppercase", marginBottom: 4 }}>Grade A avg</div>
+                  <div style={{ fontFamily: ff.mono, fontSize: "1.3rem", fontWeight: 700, color: "#00dc82" }}>{result.gradeAAvg.signal}</div>
+                  <div style={{ fontFamily: ff.mono, fontSize: ".65rem", color: T.dim }}>{result.gradeAAvg.count} stocks</div>
+                </div>
+              )}
+            </div>
+
+            {/* Score comparison */}
+            <div style={{ background: T.s1, border: `1px solid ${T.border}`, borderRadius: 16, padding: "28px 28px 24px", marginBottom: 24 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: T.dim }}>
+                  Score breakdown
+                </div>
+                {result.gradeAAvg && (
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, fontFamily: ff.mono, fontSize: ".62rem", color: T.dim }}>
+                    <div style={{ width: 2, height: 10, background: "rgba(255,255,255,.35)", borderRadius: 1 }} />
+                    White line = Grade A average
+                  </div>
+                )}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                {[
+                  { label: "MOMENTUM",   value: result.momentum,   avg: result.gradeAAvg?.momentum,   color: T.cyan    },
+                  { label: "RISK",       value: result.risk,        avg: result.gradeAAvg?.risk,        color: "#00dc82" },
+                  { label: "TECH",       value: result.techValue,   avg: result.gradeAAvg?.techValue,   color: T.amber   },
+                  { label: "DEMAND",     value: result.techDemand,  avg: result.gradeAAvg?.techDemand,  color: "#a78bfa" },
+                  { label: "INNOVATION", value: result.innovation,  avg: result.gradeAAvg?.innovation,  color: "#10B981" },
+                  { label: "SENTIMENT",  value: result.sentiment,   avg: result.gradeAAvg?.sentiment,   color: "#F59E0B" },
+                ].map(s => (
+                  <ScoreBar key={s.label} label={s.label} value={s.value} avgValue={s.avg} color={s.color} />
+                ))}
+              </div>
+            </div>
+
+            {/* CTA */}
+            <div style={{ textAlign: "center" }}>
+              <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.sub, marginBottom: 16 }}>
+                This is one stock. Inside QuantDiver you get all 65 stocks scored, ranked, and updated hourly.
+              </p>
+              <PrimaryBtn onClick={() => window.scrollTo({ top: 0 })}>
+                See all Grade A stocks → Start free trial
+              </PrimaryBtn>
+            </div>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 function ScoresPage({ onEnterApp }) {
   return (
     <div style={{ animation: "qd-fadein .4s ease" }}>
@@ -822,6 +978,9 @@ function ScoresPage({ onEnterApp }) {
           </div>
         </div>
       </section>
+
+      {/* TRY IT YOURSELF */}
+      <TryItSection />
 
       {/* HOW WE BACK-TEST */}
       <section style={{ padding: "96px 0", background: "rgba(255,255,255,.015)" }}>
