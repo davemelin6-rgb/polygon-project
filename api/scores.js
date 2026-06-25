@@ -3,8 +3,8 @@
 
 import { fetchAggregates }   from "../lib/fetchPolygon.js";
 import { fetchFundamentals } from "../lib/fetchFMP.js";
-import { calcMomentum, calcRisk, calcTechValue, calcInnovation, calcAcceleration, calcSignal, calcSignalBreakdown } from "../lib/formulas.js";
-import { getSectorBenchmarks, getSectorPE } from "../lib/sectorBenchmarks.js";
+import { calcMomentum, calcRisk, calcTechQuality, calcTechValue, calcInnovation, calcAcceleration, calcTechDemand, calcSentiment, calcSignal, calcSignalBreakdown } from "../lib/formulas.js";
+import { getSectorBenchmarks, getSectorPE, getSectorDemandScore, getSectorETF } from "../lib/sectorBenchmarks.js";
 
 // Fetch current VIX once per scores request (shared across all tickers)
 let _vixCache = null;
@@ -83,17 +83,27 @@ export default async function handler(req, res) {
         const sectorPE   = getSectorPE(ticker);
         const momentum    = calcMomentum({ price, aggs, fundamentals, vix });
         const risk        = calcRisk({ aggs, fundamentals });
-        const tech_value  = calcTechValue({ fundamentals, benchmarks });
+        const tech_value  = calcTechQuality({ fundamentals, benchmarks });
         const innovation  = calcInnovation({ fundamentals, benchmarks });
         const acceleration = calcAcceleration({ aggs });
+
+        // Fetch sector ETF aggs for tech demand signal
+        const etfTicker  = getSectorETF(ticker);
+        const etfAggs    = etfTicker ? await fetchAggregates(etfTicker, polygonKey, 70).catch(() => null) : null;
+        const sectorDemandScore = getSectorDemandScore(ticker);
+        const tech_demand = calcTechDemand({ fundamentals, sectorDemandScore, sectorEtfAggs: etfAggs });
+        const sentiment_score = calcSentiment({ fundamentals });
+
         const breakdown   = calcSignalBreakdown({ fundamentals, sectorPE });
-        const signal      = calcSignal({ momentum, risk, techValue: tech_value, innovation });
+        const signal      = calcSignal({ momentum, risk, techValue: tech_value, innovation, techDemand: tech_demand, sentiment: sentiment_score });
         return {
           symbol:           ticker,
           momentum,
           risk,
           tech_value,
           innovation,
+          tech_demand,
+          sentiment:        sentiment_score,
           acceleration,
           signal,
           price:            price ?? null,
@@ -168,6 +178,8 @@ export default async function handler(req, res) {
       risk:            row.risk,
       techValue:       row.tech_value,
       innovation:      row.innovation,
+      techDemand:      row.tech_demand,
+      sentiment:       row.sentiment,
       acceleration:    row.acceleration,
       signal:          row.signal ?? null,
       hasFundamentals: row.has_fundamentals,
