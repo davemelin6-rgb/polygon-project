@@ -2000,11 +2000,10 @@ export default function QuantDiverSite({ onEnterApp }) {
             <div className="qd-nav-links" style={{ display: "flex", gap: 28, fontFamily: ff.body, fontSize: ".88rem", color: T.dim }}>
               <a onClick={() => go("home")}    style={{ cursor: "pointer", color: page === "home"    ? T.sub  : "inherit", transition: "color .15s" }}>Home</a>
               <a onClick={() => go("scores")}  style={{ cursor: "pointer", color: page === "scores"  ? T.cyan : "inherit", transition: "color .15s" }}>How It Works</a>
-              <a onClick={() => go("briefme")} style={{ cursor: "pointer", color: page === "briefme" ? T.cyan : "inherit", transition: "color .15s" }}>BriefMe</a>
               <a onClick={() => go("pricing")} style={{ cursor: "pointer", color: page === "pricing" ? T.cyan : "inherit", transition: "color .15s" }}>Pricing</a>
-              <a onClick={() => go("about")}       style={{ cursor: "pointer", color: page === "about"       ? T.cyan : "inherit", transition: "color .15s" }}>About Us</a>
               <a onClick={() => go("contributor")} style={{ cursor: "pointer", color: page === "contributor" ? T.cyan : "inherit", transition: "color .15s" }}>Join Us</a>
               <a onClick={() => go("contact")}     style={{ cursor: "pointer", color: page === "contact"     ? T.cyan : "inherit", transition: "color .15s" }}>Contact</a>
+              {/* BriefMe and About Us hidden for now — pages still exist, just not in nav */}
             </div>
 
             <div className="qd-members-btn">
