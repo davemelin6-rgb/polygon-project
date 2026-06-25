@@ -145,14 +145,14 @@ function getVerdict(sc, scFull) {
     else                       summary = "Scores are below threshold across multiple dimensions. Avoid until there is meaningful improvement.";
   }
 
-  if (sig >= 70) return { label: "STRONG · 180D",  color: "#00dc82", grade: "A", sig, summary };
+  if (sig >= 63) return { label: "STRONG · 180D",  color: "#00dc82", grade: "A", sig, summary };
   // Transition Alert: Grade B + strong positive acceleration = highest 180d expected return
-  if (sig >= 55) {
+  if (sig >= 48) {
     const accel = scFull?.acceleration ?? sc?.acceleration ?? 0;
     if (accel > 0.12) return { label: "⚡ RISING · 180D", color: "#a78bfa", grade: "B", sig, summary, transition: true };
     return { label: "WATCH · 180D",  color: "#22D3EE", grade: "B", sig, summary };
   }
-  if (sig >= 40) return { label: "MIXED · 180D",  color: "#f59e0b", grade: "C", sig, summary };
+  if (sig >= 35) return { label: "MIXED · 180D",  color: "#f59e0b", grade: "C", sig, summary };
   return              { label: "AVOID · 180D",   color: "#ff3c50", grade: "D", sig, summary };
 }
 

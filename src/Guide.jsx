@@ -88,10 +88,10 @@ export default function Guide() {
         </p>
         <div style={{ display: "flex", flexDirection: "column", gap: ".65rem" }}>
           {[
-            { grade: "A", range: "70–100", label: "STRONG · 180D", color: "#00dc82", desc: "High conviction. All or most signals align. Act." },
-            { grade: "B", range: "55–70",  label: "WATCH · 180D",  color: "#22D3EE", desc: "Some positives but incomplete. Watch for confirmation." },
-            { grade: "C", range: "40–55",  label: "MIXED · 180D",  color: "#f59e0b", desc: "No clear edge. Wait for a cleaner setup." },
-            { grade: "D", range: "0–40",   label: "AVOID · 180D",  color: "#ff3c50", desc: "Multiple weak signals. Stay on the sidelines." },
+            { grade: "A", range: "63–100", label: "STRONG · 180D", color: "#00dc82", desc: "High conviction. All or most signals align. Act." },
+            { grade: "B", range: "48–63",  label: "WATCH · 180D",  color: "#22D3EE", desc: "Some positives but incomplete. Watch for confirmation." },
+            { grade: "C", range: "35–48",  label: "MIXED · 180D",  color: "#f59e0b", desc: "No clear edge. Wait for a cleaner setup." },
+            { grade: "D", range: "0–35",   label: "AVOID · 180D",  color: "#ff3c50", desc: "Multiple weak signals. Stay on the sidelines." },
           ].map(s => (
             <div key={s.grade} style={{ display: "grid", gridTemplateColumns: "36px 60px 140px 1fr", alignItems: "center", gap: "1rem" }}>
               <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.1rem", fontWeight: 700, color: s.color }}>{s.grade}</div>

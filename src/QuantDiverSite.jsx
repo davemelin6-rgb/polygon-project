@@ -182,7 +182,7 @@ function HomePage({ go, onEnterApp }) {
             <div style={{
               marginTop: 48, display: "flex", gap: 36, flexWrap: "wrap",
             }}>
-              {[["+19.96%", "avg 90d return · Grade A signals"], ["75.6%", "Grade A win rate · 90 days"], ["3,136", "back-tested data points"]].map(([n, l]) => (
+              {[["+18.16%", "avg 90d return · Grade A signals"], ["65.9%", "Grade A win rate · 90 days"], ["3,136", "back-tested data points"]].map(([n, l]) => (
                 <div key={l}>
                   <div style={{ fontFamily: ff.mono, fontSize: "1.5rem", fontWeight: 700, color: "#00dc82" }}>{n}</div>
                   <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: T.dim, marginTop: 2 }}>{l}</div>
@@ -282,7 +282,7 @@ function HomePage({ go, onEnterApp }) {
 
             {/* Buckets */}
             {[
-              { grade: "A", label: "Grade A — Strong (>70)", ret: "+19.96%", samples: "295 data points", color: "#00dc82", bg: "rgba(0,220,130,.04)", desc: "High conviction — strong accelerating momentum, 75.6% win rate at 90 days. Average +26.7% at 180 days." },
+              { grade: "A", label: "Grade A — Strong (≥63)", ret: "+18.16%", samples: "925 data points", color: "#00dc82", bg: "rgba(0,220,130,.04)", desc: "High conviction — 65.9% win rate at 90 days. Outperforms in both Phase 1 (+18.16%) and Phase 2 (+15.59%) of the 180-day hold." },
               { grade: "B/C", label: "Grade B/C — Neutral (40–70)", ret: "+8.74%", samples: "1,802 data points", color: "#f59e0b", bg: "rgba(245,158,11,.03)", desc: "Mixed signals — some positive but no clear conviction. Watch and wait for confirmation." },
               { grade: "D", label: "Grade D — Weak (<40)", ret: "+8.08%", samples: "831 data points", color: "#ff3c50", bg: "rgba(255,60,80,.04)", desc: "Weak or declining momentum. The model says wait — Grade A outperforms Grade D by 16.56%." },
             ].map(b => (

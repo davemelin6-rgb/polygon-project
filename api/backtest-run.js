@@ -40,8 +40,8 @@ const BUCKETS = [
 
 // Legacy spread buckets (kept for backward compat with front-end)
 const SPREAD_BUCKETS = [
-  { label: "Strong (>70)",   min: 70, max: 101 },
-  { label: "Neutral (40-70)",min: 40, max: 70  },
+  { label: "Strong (>63)",   min: 63, max: 101 },
+  { label: "Neutral (35-63)",min: 35, max: 63  },
   { label: "Weak (<40)",     min: 0,  max: 40  },
 ];
 
