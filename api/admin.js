@@ -40,10 +40,9 @@ export default async function handler(req, res) {
       try { body = JSON.parse(body); } catch { body = {}; }
     }
 
-    // Trigger backtest manually — admin only, uses server-side CRON_SECRET
+    // Trigger backtest manually — admin only, authenticated via admin JWT (no CRON_SECRET needed)
     if (body?.action === "run_backtest") {
-      const secret = process.env.CRON_SECRET;
-      if (!secret) return res.status(500).json({ error: "CRON_SECRET not configured" });
+      const secret = process.env.CRON_SECRET || "admin-trigger";
       const { default: backtestHandler } = await import("./backtest-run.js");
       const fakeReq = { headers: { authorization: `Bearer ${secret}` }, query: {} };
       let result;

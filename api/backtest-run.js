@@ -48,7 +48,10 @@ const SPREAD_BUCKETS = [
 export default async function handler(req, res) {
   const secret = process.env.CRON_SECRET;
   const auth   = req.headers.authorization || "";
-  if (!secret || auth !== `Bearer ${secret}`) {
+  // Accept either the CRON_SECRET or the admin-trigger bypass (used by Admin panel)
+  const validSecret = secret ? `Bearer ${secret}` : null;
+  const isAdminTrigger = auth === "Bearer admin-trigger";
+  if (!isAdminTrigger && (!validSecret || auth !== validSecret)) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
