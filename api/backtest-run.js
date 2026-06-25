@@ -61,11 +61,13 @@ export default async function handler(req, res) {
 
   const { fetchFundamentals } = await import("../lib/fetchFMP.js");
 
-  // Pre-fetch VIX history
-  let vixHistory = [];
-  try {
-    vixHistory = await fetchAggregates("I:VIX", polygonKey, 600) || [];
-  } catch {}
+  // Pre-fetch VIX + benchmarks in parallel
+  let vixHistory = [], spyAggs = [], qqqAggs = [];
+  await Promise.all([
+    fetchAggregates("I:VIX", polygonKey, 600).then(d => { vixHistory = d || []; }).catch(() => {}),
+    fetchAggregates("SPY",   polygonKey, 600).then(d => { spyAggs   = d || []; }).catch(() => {}),
+    fetchAggregates("QQQ",   polygonKey, 600).then(d => { qqqAggs   = d || []; }).catch(() => {}),
+  ]);
 
   const allSamples = [];
 
@@ -110,16 +112,36 @@ export default async function handler(req, res) {
         const p90  = aggs[cutoff + 89]?.c  ?? null;
         const p180 = aggs[cutoff + 179]?.c ?? null;
 
+        // Benchmark returns for the SAME time window (SPY + QQQ)
+        const spyCutoff  = spyAggs.length  - (weeksBack * 5);
+        const qqqCutoff  = qqqAggs.length  - (weeksBack * 5);
+        const spyNow  = spyCutoff > 0 ? spyAggs[spyCutoff]?.c  : null;
+        const qqqNow  = qqqCutoff > 0 ? qqqAggs[qqqCutoff]?.c  : null;
+        const spy90   = spyCutoff > 0 ? spyAggs[spyCutoff + 89]?.c  : null;
+        const qqq90   = qqqCutoff > 0 ? qqqAggs[qqqCutoff + 89]?.c  : null;
+        const spy180  = spyCutoff > 0 ? spyAggs[spyCutoff + 179]?.c : null;
+        const qqq180  = qqqCutoff > 0 ? qqqAggs[qqqCutoff + 179]?.c : null;
+
+        const spyReturn90d  = spyNow && spy90  ? (spy90  - spyNow) / spyNow : null;
+        const qqqReturn90d  = qqqNow && qqq90  ? (qqq90  - qqqNow) / qqqNow : null;
+        const spyReturn180d = spyNow && spy180 ? (spy180 - spyNow) / spyNow : null;
+        const qqqReturn180d = qqqNow && qqq180 ? (qqq180 - qqqNow) / qqqNow : null;
+
+        const ret90d  = p90  != null ? (p90  - price) / price : null;
+        const ret180d = p180 != null ? (p180 - price) / price : null;
+
         allSamples.push({
-          ticker,
-          momentum,
-          risk,
-          signal,
-          weeksBack,
+          ticker, momentum, risk, signal, weeksBack,
           return30d:  p30  != null ? (p30  - price) / price : null,
           return60d:  p60  != null ? (p60  - price) / price : null,
-          return90d:  p90  != null ? (p90  - price) / price : null,
-          return180d: p180 != null ? (p180 - price) / price : null,
+          return90d:  ret90d,
+          return180d: ret180d,
+          // Alpha = stock return minus benchmark return (same time window)
+          alpha90d_spy:  ret90d  != null && spyReturn90d  != null ? ret90d  - spyReturn90d  : null,
+          alpha90d_qqq:  ret90d  != null && qqqReturn90d  != null ? ret90d  - qqqReturn90d  : null,
+          alpha180d_spy: ret180d != null && spyReturn180d != null ? ret180d - spyReturn180d : null,
+          alpha180d_qqq: ret180d != null && qqqReturn180d != null ? ret180d - qqqReturn180d : null,
+          spyReturn90d, qqqReturn90d,
         });
       }
     } catch (e) {
@@ -135,27 +157,58 @@ export default async function handler(req, res) {
   function calcBuckets(buckets) {
     return buckets.map(bucket => {
       const samples = allSamples.filter(s => s.signal >= bucket.min && s.signal < bucket.max);
-      const with30  = samples.filter(s => s.return30d  !== null);
-      const with60  = samples.filter(s => s.return60d  !== null);
       const with90  = samples.filter(s => s.return90d  !== null);
       const with180 = samples.filter(s => s.return180d !== null);
+      const withAlpha90SPY  = samples.filter(s => s.alpha90d_spy  !== null);
+      const withAlpha90QQQ  = samples.filter(s => s.alpha90d_qqq  !== null);
+      const withAlpha180SPY = samples.filter(s => s.alpha180d_spy !== null);
 
       const avg = (arr, key) => arr.length
         ? Math.round(arr.reduce((s, x) => s + x[key], 0) / arr.length * 10000) / 100
         : null;
 
-      // Win rate at 90d (not 30d — more meaningful)
+      const stdDev = (arr, key) => {
+        if (arr.length < 2) return null;
+        const mean = arr.reduce((s, x) => s + x[key], 0) / arr.length;
+        const variance = arr.reduce((s, x) => s + Math.pow(x[key] - mean, 2), 0) / (arr.length - 1);
+        return Math.round(Math.sqrt(variance) * 10000) / 100;
+      };
+
+      // t-statistic: tests if avg alpha is significantly different from zero
+      // t = mean / (stdDev / sqrt(n))
+      const tStat = (arr, key) => {
+        if (arr.length < 10) return null;
+        const mean = arr.reduce((s, x) => s + x[key], 0) / arr.length;
+        const sd   = Math.sqrt(arr.reduce((s, x) => s + Math.pow(x[key] - mean, 2), 0) / (arr.length - 1));
+        return sd > 0 ? Math.round((mean / (sd / Math.sqrt(arr.length))) * 100) / 100 : null;
+      };
+
       const wins90   = with90.filter(s => s.return90d > 0).length;
       const winRate  = with90.length ? Math.round(wins90 / with90.length * 1000) / 10 : null;
 
+      // Sharpe approximation (using 0% risk-free rate for simplicity)
+      const avg90Raw  = with90.length  ? with90.reduce((s, x)  => s + x.return90d,  0) / with90.length  : null;
+      const std90     = stdDev(with90,  "return90d");
+      const sharpe90  = avg90Raw != null && std90 ? Math.round((avg90Raw / (std90 / 100)) * 100) / 100 : null;
+
       return {
-        bucket:  bucket.label,
-        samples: samples.length,
-        avg30d:  avg(with30,  "return30d"),
-        avg60d:  avg(with60,  "return60d"),
-        avg90d:  avg(with90,  "return90d"),
-        avg180d: avg(with180, "return180d"),
+        bucket:   bucket.label,
+        samples:  samples.length,
+        avg30d:   avg(samples.filter(s => s.return30d !== null), "return30d"),
+        avg60d:   avg(samples.filter(s => s.return60d !== null), "return60d"),
+        avg90d:   avg(with90,  "return90d"),
+        avg180d:  avg(with180, "return180d"),
         winRate,
+        // Alpha vs benchmarks (excess return over index, same time window)
+        alpha90d_spy:   avg(withAlpha90SPY,  "alpha90d_spy"),
+        alpha90d_qqq:   avg(withAlpha90QQQ,  "alpha90d_qqq"),
+        alpha180d_spy:  avg(withAlpha180SPY, "alpha180d_spy"),
+        // Standard deviation of 90d returns (volatility measure)
+        stdDev90d:      stdDev(with90, "return90d"),
+        // Sharpe ratio approximation
+        sharpe90d:      sharpe90,
+        // t-statistic for alpha vs SPY (is outperformance statistically significant?)
+        tStat_alpha_spy: tStat(withAlpha90SPY, "alpha90d_spy"),
       };
     });
   }
