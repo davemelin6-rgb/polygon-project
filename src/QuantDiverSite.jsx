@@ -2018,11 +2018,10 @@ export default function QuantDiverSite({ onEnterApp }) {
             <div className="qd-mobile-menu">
               {[
                 ["Home",       "home"],
-                ["Scores",     "scores"],
-                ["BriefMe",    "briefme"],
+                ["How It Works","scores"],
                 ["Pricing",    "pricing"],
-                ["About Us",   "about"],
                 ["Join Us",    "contributor"],
+                // BriefMe and About Us hidden for now
                 ["Contact",    "contact"],
               ].map(([label, route]) => (
                 <a key={route} className={`qd-mobile-link ${page === route ? "active" : ""}`}
