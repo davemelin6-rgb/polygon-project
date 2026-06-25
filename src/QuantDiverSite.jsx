@@ -777,6 +777,91 @@ function ScoresPage({ onEnterApp }) {
         </div>
       </section>
 
+      {/* HOW WE BACK-TEST */}
+      <section style={{ padding: "96px 0", background: "rgba(255,255,255,.015)" }}>
+        <div className="qd-wrap" style={{ maxWidth: 820, margin: "0 auto" }}>
+
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>
+              Proof · Validation methodology
+            </div>
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 800, letterSpacing: "-.02em", margin: "0 0 18px" }}>
+              How we back-test our models
+            </h2>
+            <p style={{ fontFamily: ff.body, color: T.sub, fontSize: ".95rem", lineHeight: 1.75, maxWidth: "42rem", margin: "0 auto" }}>
+              Anyone can show you back-test results that look good. The question is whether they mean anything. Here is exactly how we test — so you can judge for yourself.
+            </p>
+          </div>
+
+          {/* Timeline visual */}
+          <div style={{ background: T.s1, border: `1px solid ${T.border}`, borderRadius: 16, padding: "40px 40px 32px", marginBottom: 40 }}>
+
+            {/* The 6-month window */}
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2, marginBottom: 32 }}>
+              {/* Phase 1 */}
+              <div style={{ background: "rgba(34,211,238,.06)", border: "1px solid rgba(34,211,238,.2)", borderRadius: "10px 0 0 10px", padding: "24px 28px" }}>
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: T.cyan, marginBottom: 8 }}>
+                  Months 1–3 · The Lookback
+                </div>
+                <div style={{ fontFamily: ff.display, fontSize: "1.1rem", fontWeight: 700, color: T.ink, marginBottom: 10 }}>
+                  Price history → Score
+                </div>
+                <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.sub, lineHeight: 1.65, margin: 0 }}>
+                  We calculate the momentum score using only the price data available in these 3 months. This is what the model "sees" — nothing from the future.
+                </p>
+              </div>
+              {/* Phase 2 */}
+              <div style={{ background: "rgba(0,220,130,.06)", border: "1px solid rgba(0,220,130,.2)", borderRadius: "0 10px 10px 0", padding: "24px 28px" }}>
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#00dc82", marginBottom: 8 }}>
+                  Months 4–6 · The Real Test
+                </div>
+                <div style={{ fontFamily: ff.display, fontSize: "1.1rem", fontWeight: 700, color: T.ink, marginBottom: 10 }}>
+                  What actually happened next
+                </div>
+                <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.sub, lineHeight: 1.65, margin: 0 }}>
+                  We measure the actual price return in these 3 months — after the score was set, without the model knowing the outcome. This is the honest test.
+                </p>
+              </div>
+            </div>
+
+            {/* The dividing line — where the score is set */}
+            <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 32 }}>
+              <div style={{ flex: 1, height: 1, background: T.border }} />
+              <div style={{ background: "rgba(167,139,250,.15)", border: "1px solid rgba(167,139,250,.35)", borderRadius: 999, padding: "6px 20px", fontFamily: ff.mono, fontSize: ".72rem", fontWeight: 700, color: "#a78bfa", whiteSpace: "nowrap" }}>
+                ↑ Score is set here · The model makes its call
+              </div>
+              <div style={{ flex: 1, height: 1, background: T.border }} />
+            </div>
+
+            {/* Why this matters */}
+            <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, lineHeight: 1.7, margin: 0, textAlign: "center" }}>
+              This eliminates look-ahead bias. The score is calculated from history. The return is measured from what happens next.
+              The model cannot "cheat" by knowing the future — because the future hasn't happened yet when the score is set.
+            </p>
+          </div>
+
+          {/* Results */}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 32 }}>
+            {[
+              { value: "+12.69%", label: "Grade A alpha vs S&P 500", sub: "In months 4–6, same market conditions", color: "#00dc82" },
+              { value: "+10.53%", label: "Grade A alpha vs QQQ", sub: "Outperforms even the tech index", color: "#00dc82" },
+              { value: "8.23", label: "t-statistic", sub: "Statistical significance (>2.0 = significant)", color: T.cyan },
+              { value: "65.9%", label: "Win rate · Grade A", sub: "Of predictions profitable at 90 days", color: T.amber },
+            ].map(s => (
+              <div key={s.label} style={{ background: T.s1, border: `1px solid ${T.border}`, borderRadius: 12, padding: "20px 20px 16px" }}>
+                <div style={{ fontFamily: ff.mono, fontSize: "1.6rem", fontWeight: 700, color: s.color, lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontFamily: ff.display, fontWeight: 700, fontSize: ".85rem", color: T.ink, margin: "8px 0 4px" }}>{s.label}</div>
+                <div style={{ fontFamily: ff.body, fontSize: ".75rem", color: T.dim, lineHeight: 1.5 }}>{s.sub}</div>
+              </div>
+            ))}
+          </div>
+
+          <p style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.dim, textAlign: "center", margin: 0 }}>
+            Based on 3,136 data points across 65 stocks · 52 weeks of history · Updated every Sunday
+          </p>
+        </div>
+      </section>
+
       {/* CTA */}
       <section style={{ padding: "96px 0 112px", textAlign: "center" }}>
         <div className="qd-wrap" style={{ maxWidth: 520, margin: "0 auto" }}>
