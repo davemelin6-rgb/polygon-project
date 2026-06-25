@@ -648,7 +648,7 @@ const SCORE_DEFS = [
 const GRADE_COLORS = { A: "#00dc82", B: "#22D3EE", C: "#f59e0b", D: "#ff3c50" };
 const GRADE_LABELS = { A: "STRONG · 180D", B: "WATCH · 180D", C: "MIXED · 180D", D: "AVOID · 180D" };
 
-function ScoreBar({ label, value, avgValue, color }) {
+function DemoScoreBar({ label, value, avgValue, color }) {
   const pct = value != null ? value : 0;
   const avgPct = avgValue != null ? avgValue : null;
   return (
@@ -780,7 +780,7 @@ function TryItSection() {
                   { label: "INNOVATION", value: result.innovation,  avg: result.gradeAAvg?.innovation,  color: "#10B981" },
                   { label: "SENTIMENT",  value: result.sentiment,   avg: result.gradeAAvg?.sentiment,   color: "#F59E0B" },
                 ].map(s => (
-                  <ScoreBar key={s.label} label={s.label} value={s.value} avgValue={s.avg} color={s.color} />
+                  <DemoScoreBar key={s.label} label={s.label} value={s.value} avgValue={s.avg} color={s.color} />
                 ))}
               </div>
             </div>
