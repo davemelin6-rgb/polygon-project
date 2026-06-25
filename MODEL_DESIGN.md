@@ -1,5 +1,5 @@
 # QuantDiver — Model Design Specification
-## Neuro Quant Engine — Research & Development Document
+## QuantDiver Engine — Research & Development Document
 
 **Status:** Active research — not yet fully implemented
 **Purpose:** Define what makes QuantDiver's models genuinely unique, what data we need, and how to communicate it to customers.
@@ -133,7 +133,7 @@ Technology: frontend sliders that call our scoring functions with custom weights
 
 ---
 
-## The Neuro Quant Proof of Concept
+## The QuantDiver Proof of Concept
 
 ### Concept
 A public-facing section on the landing page (no login required) that shows the full QuantDiver pipeline visually and interactively. Any visitor can see exactly how we go from raw data to a grade — and why it's not just another momentum screener.
@@ -167,11 +167,11 @@ Every Sunday, the model re-validates. If it drifts, we fix it.
 
 ### What the User Experiences
 - Animated pipeline diagram showing data flowing from sources → models → grade
-- Live example: pick any stock, watch the Neuro Quant Engine process it in real time
+- Live example: pick any stock, watch the QuantDiver Engine process it in real time
 - The "proof" section: "On [date] we graded NVDA as A. Here's what happened."
 - Clear explanation of each model in plain English (no formulas)
 
-### Why "Neuro Quant"
+### Why "QuantDiver"
 - **Neuro**: the system learns from its own predictions and improves iteratively, like a neural loop
 - **Quant**: grounded in quantitative, mathematical models — not opinion or gut feel
 - Together: intelligent quantitative analysis that improves over time
@@ -197,7 +197,7 @@ A diagram showing the pipeline: data in → four models → one grade. Compared 
 65 stocks across AI, Quantum, Defence, Biotech, Semiconductors. Pre-analysed, ranked, updated hourly.
 
 **Option B — Analyse any stock**
-Type in any ticker. The Neuro Quant Engine runs all four models and returns a grade in seconds.
+Type in any ticker. The QuantDiver Engine runs all four models and returns a grade in seconds.
 
 **Option C (future) — Build your own model**
 Adjust the signal weights to match your philosophy. More momentum-focused? More INNOV? Your call.
@@ -207,7 +207,7 @@ Adjust the signal weights to match your philosophy. More momentum-focused? More 
 ## Prioritised Build Order
 
 ### Phase 1 — Foundation (Now)
-1. Neuro Quant Proof of Concept section on landing page (visual pipeline)
+1. QuantDiver Proof of Concept section on landing page (visual pipeline)
 2. "Analyse any stock" feature — prominent on dashboard
 3. Forward validation results on landing page (our real track record)
 
@@ -233,7 +233,7 @@ Adjust the signal weights to match your philosophy. More momentum-focused? More 
 
 ## Open Questions
 
-1. Should "Neuro Quant" be the product name, a sub-brand, or just the engine name?
+1. Should "QuantDiver" be the product name, a sub-brand, or just the engine name?
 2. Do we launch the Proof of Concept section before or after Phase 2 data expansion?
 3. What is the minimum viable macro signal that adds real value without complexity?
 4. Should the "analyse any stock" feature be gated (Pro only) or open to all?

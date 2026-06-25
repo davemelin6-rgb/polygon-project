@@ -677,7 +677,7 @@ function ScoresPage({ onEnterApp }) {
           <div style={{ textAlign: "center", marginBottom: 64 }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(139,92,246,.1)", border: "1px solid rgba(139,92,246,.3)", borderRadius: 999, padding: "6px 18px", marginBottom: 20 }}>
               <span style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#a78bfa" }}>
-                ⚡ Neuro Quant Engine · How it works
+                ⚡ QuantDiver Engine · How it works
               </span>
             </div>
             <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 800, letterSpacing: "-.02em", margin: "0 0 18px", color: T.ink }}>
@@ -687,7 +687,7 @@ function ScoresPage({ onEnterApp }) {
               </span>
             </h2>
             <p style={{ color: T.sub, maxWidth: "42rem", margin: "0 auto", lineHeight: 1.7, fontFamily: ff.body, fontSize: ".95rem" }}>
-              Most platforms give you data and leave you to figure it out. The Neuro Quant Engine processes every stock through seven systematic stages — and records every prediction so we can prove it works.
+              Most platforms give you data and leave you to figure it out. The QuantDiver Engine processes every stock through seven systematic stages — and records every prediction so we can prove it works.
             </p>
           </div>
 
@@ -727,7 +727,7 @@ function ScoresPage({ onEnterApp }) {
               <div style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 3 }}>the model re-validates</div>
             </div>
             <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, lineHeight: 1.7, margin: 0, flex: 1, minWidth: 200 }}>
-              This is not a black box. Every stage is defined, every weight is tested, and every prediction is on record. That is the Neuro Quant standard.
+              This is not a black box. Every stage is defined, every weight is tested, and every prediction is on record. That is the QuantDiver standard.
             </p>
           </div>
         </div>
