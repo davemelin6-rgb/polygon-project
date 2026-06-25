@@ -215,8 +215,79 @@ function HomePage({ go, onEnterApp }) {
         </div>
       </section>
 
-      {/* THIN RULE */}
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
+      {/* WHAT YOU GET */}
+      <section style={{ padding: "96px 0" }}>
+        <div className="qd-wrap">
+          <div style={{ textAlign: "center", marginBottom: 56 }}>
+            <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>
+              Everything included · One membership
+            </div>
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 800, letterSpacing: "-.02em", margin: "0 0 16px" }}>
+              Why serious investors join QuantDiver
+            </h2>
+            <p style={{ fontFamily: ff.body, color: T.sub, fontSize: ".95rem", lineHeight: 1.7, maxWidth: "40rem", margin: "0 auto" }}>
+              Not a data feed. Not a news aggregator. A complete system — from signal to community — built for investors who care about AI, quantum, defence, and biotech.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 16, marginBottom: 48 }}>
+            {[
+              {
+                icon: "📊", color: T.cyan, title: "Six Proprietary Scores",
+                desc: "Every stock runs through six models — MOMENTUM, RISK, TECH QUALITY, TECH DEMAND, INNOVATION, and SENTIMENT. Aggregated into one grade: A, B, C, or D. One decision. No noise.",
+                proof: "Grade A returns +18.16% avg · 65.9% win rate",
+              },
+              {
+                icon: "☀️", color: T.amber, title: "Daily Intelligence Brief",
+                desc: "Two AI-curated briefings every trading day — 08:00 and 15:00. What moved and why. Which sectors are accelerating. What the model sees that the headlines don't.",
+                proof: "Morning brief + US market preview · Every weekday",
+              },
+              {
+                icon: "🤝", color: "#a78bfa", title: "Trader Connect",
+                desc: "Pick a sector — AI, Quantum, Defence, or Biotech — and get matched live with another QuantDiver investor who shares your focus. Real conversations. No public feed.",
+                proof: "Live 1-on-1 matching · Tested and working",
+              },
+              {
+                icon: "💬", color: "#10B981", title: "Community Forum",
+                desc: "A focused forum for tech-sector investors. Pro members only. No noise, no memes — just serious discussion from people running the same models as you.",
+                proof: "Pro Forum · Contributor ranks · Usefulness voting",
+              },
+              {
+                icon: "🔬", color: "#00dc82", title: "Deep Analysis Per Stock",
+                desc: "Click any stock to see the full breakdown — price chart, technical signals, financial intelligence, sector ranking, analyst consensus, insider activity, key ratios. Everything in one place.",
+                proof: "Price chart · RSI/MACD · Analyst targets · Insider feed",
+              },
+              {
+                icon: "✅", color: T.cyan, title: "Validated. Every Sunday.",
+                desc: "Our model back-tests itself every week against 12 months of history. If the scores drift, we catch it and fix it. You always know whether the model is working — we publish the result.",
+                proof: "+12.69% alpha vs S&P 500 · t-stat 8.23 · Statistically proven",
+              },
+            ].map(f => (
+              <div key={f.title} style={{ background: T.s1, border: `1px solid ${T.border}`, borderLeft: `3px solid ${f.color}`, borderRadius: 14, padding: "24px 24px 20px" }}>
+                <div style={{ fontSize: "1.6rem", marginBottom: 12 }}>{f.icon}</div>
+                <div style={{ fontFamily: ff.display, fontWeight: 700, fontSize: "1rem", color: T.ink, marginBottom: 8 }}>{f.title}</div>
+                <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.sub, lineHeight: 1.7, margin: "0 0 14px" }}>{f.desc}</p>
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, color: f.color, letterSpacing: ".06em" }}>{f.proof}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <div style={{ textAlign: "center", background: "rgba(0,180,255,.05)", border: "1px solid rgba(0,180,255,.18)", borderRadius: 16, padding: "40px 32px" }}>
+            <div style={{ fontFamily: ff.display, fontSize: "clamp(1.5rem,2.5vw,2rem)", fontWeight: 800, color: T.ink, marginBottom: 12 }}>
+              14 days free. No credit card.
+            </div>
+            <p style={{ fontFamily: ff.body, color: T.sub, fontSize: ".95rem", margin: "0 0 28px" }}>
+              Full access to everything above from day one. Cancel anytime.
+            </p>
+            <PrimaryBtn onClick={() => onEnterApp("plan")} style={{ padding: "16px 40px", fontSize: "1rem" }}>
+              Start free trial →
+            </PrimaryBtn>
+          </div>
+        </div>
+      </section>
 
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
 
