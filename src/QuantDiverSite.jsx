@@ -566,38 +566,82 @@ const SCORE_DEFS = [
   {
     key: "MOMENTUM", icon: "🚀", color: T.cyan,
     tagline: "Is the stock accelerating?",
-    description: "Momentum measures the strength and direction of a stock's recent price movement. A high score means buyers are in control — the trend is up, and volume confirms it. A low score means the stock is stalling or in decline.",
+    description: "Momentum measures the strength and direction of a stock's price movement — and crucially, whether that movement is speeding up or slowing down. A stock gaining 30% in the last 3 months when it only gained 5% in the 3 months before that is accelerating. That acceleration is the signal.",
     components: [
-      { label: "3-Month Return",  weight: 35, desc: "Medium-term price trend — the primary driver" },
-      { label: "1-Month Return",  weight: 30, desc: "Recent short-term price performance" },
-      { label: "MA Trend",        weight: 20, desc: "50-day vs 200-day moving average crossover" },
-      { label: "Relative Volume", weight: 15, desc: "Current volume vs 20-day average" },
+      { label: "6-Month Return",       weight: 30, desc: "Primary trend direction — the dominant driver" },
+      { label: "Momentum Acceleration",weight: 25, desc: "Is momentum building or fading? recent 3M vs prior 3M" },
+      { label: "3-Month Return",       weight: 20, desc: "Recent trend confirmation" },
+      { label: "MA Trend (50/200)",    weight: 18, desc: "Price position vs moving averages" },
+      { label: "Earnings Surprise",    weight: 5,  desc: "Fundamental backing — are they beating estimates?" },
+      { label: "Relative Volume",      weight: 2,  desc: "Smart money confirmation" },
     ],
-    note: "Score 65+ → strong uptrend. Score below 40 → trend is weakening or reversing.",
+    note: "Score 63+ → strong accelerating trend. Score below 35 → trend is weakening or reversing.",
   },
   {
     key: "RISK", icon: "🛡️", color: T.green,
-    tagline: "How solid is the balance sheet?",
-    description: "Risk scores the financial strength of the company — not how wild the stock price swings. Higher always means SAFER. A score of 75 means low debt, healthy liquidity, and stable price behavior. A score of 25 means the company is financially fragile.",
+    tagline: "Can this company survive a downturn?",
+    description: "Risk scores the financial survivability of the company. Higher always means SAFER. We use it as a floor — a company with great momentum but a RISK score below 20 is a lottery ticket, not an investment. The balance sheet must be able to survive long enough for the thesis to play out.",
     components: [
-      { label: "Debt Ratio",          weight: 30, desc: "Total liabilities vs total assets" },
-      { label: "Current Ratio",       weight: 25, desc: "Short-term assets vs short-term liabilities" },
-      { label: "Interest Coverage",   weight: 20, desc: "Operating income vs interest expense" },
-      { label: "Price Volatility",    weight: 25, desc: "30-day standard deviation of daily returns" },
+      { label: "Debt/Equity Ratio",  weight: 22, desc: "How leveraged is the balance sheet?" },
+      { label: "Liquidity",          weight: 18, desc: "Current ratio + trend — can they pay short-term bills?" },
+      { label: "Interest Coverage",  weight: 18, desc: "Can operating income service the debt?" },
+      { label: "Price Volatility",   weight: 18, desc: "Standard deviation of daily returns" },
+      { label: "Return on Assets",   weight: 12, desc: "How efficiently does the company use its assets?" },
+      { label: "Cash Runway",        weight: 12, desc: "Months of cash remaining (for pre-profit companies)" },
     ],
-    note: "Higher is always SAFER. Score 70+ = strong foundation. Score below 35 = proceed with caution.",
+    note: "Higher is always SAFER. Score 70+ = strong balance sheet. Score below 20 = too dangerous for Grade A.",
   },
   {
-    key: "TECH VALUE", icon: "💡", color: T.amber,
-    tagline: "Is the business built to last?",
-    description: "Tech Value scores the quality and durability of the business model. It focuses on R&D investment, margin quality, and growth — the metrics that separate companies with lasting competitive advantage from those burning cash to stay relevant.",
+    key: "TECH QUALITY", icon: "💡", color: T.amber,
+    tagline: "How good is the business today?",
+    description: "Tech Quality scores the current business performance — margins, profitability, R&D investment, and earnings consistency. It answers: is this a high-quality business right now? Sector-normalised so a semiconductor company at 50% gross margin scores correctly against its peers, not against software companies.",
     components: [
-      { label: "Gross Margin",    weight: 35, desc: "Revenue minus cost of goods sold — the moat proxy" },
-      { label: "R&D Intensity",   weight: 30, desc: "R&D spend as % of revenue — future investment signal" },
-      { label: "Revenue Growth",  weight: 20, desc: "Year-over-year top-line growth rate" },
-      { label: "FCF Margin",      weight: 15, desc: "Free cash flow as % of revenue" },
+      { label: "R&D Intensity",      weight: 18, desc: "R&D spend as % of revenue — future investment signal" },
+      { label: "Gross Margin",       weight: 18, desc: "Pricing power — the moat proxy" },
+      { label: "Net Margin",         weight: 13, desc: "Bottom-line profitability" },
+      { label: "Revenue Growth",     weight: 13, desc: "Year-over-year top-line growth" },
+      { label: "Analyst Consensus",  weight: 12, desc: "Forward revenue growth forecast" },
+      { label: "FCF Margin",         weight: 9,  desc: "Cash generation quality" },
+      { label: "ROE",                weight: 9,  desc: "Return on shareholder equity" },
+      { label: "Earnings Surprise",  weight: 8,  desc: "Consistency of beating estimates" },
     ],
-    note: "Score 65+ = strong moat. Score 40–65 = average. Score below 40 = limited competitive advantage.",
+    note: "Score 65+ = strong moat. Score 40–65 = average quality. Score below 40 = weak business fundamentals.",
+  },
+  {
+    key: "TECH DEMAND", icon: "📡", color: "#a78bfa",
+    tagline: "How much will the world need this technology?",
+    description: "Tech Demand answers the question standard financial models miss: is this technology growing or shrinking in demand over the next 1-5 years? A company with great margins on declining technology is a trap. A company in a sector where demand is accelerating has structural tailwinds beyond just its own execution.",
+    components: [
+      { label: "Sector Demand Score", weight: 30, desc: "1-5 year demand trajectory for this technology sector (updated quarterly)" },
+      { label: "Analyst Forward Growth",weight: 30, desc: "Wall Street consensus on next-year revenue growth" },
+      { label: "Sector ETF Momentum", weight: 25, desc: "How is the sector performing? Institutional money flow proxy" },
+      { label: "Revenue Acceleration", weight: 15, desc: "Is the company's growth rate itself accelerating?" },
+    ],
+    note: "Score 80+ = strong tailwinds for the sector. Score below 50 = mature or declining demand environment.",
+  },
+  {
+    key: "INNOVATION", icon: "⚗️", color: "#10B981",
+    tagline: "Is R&D converting to real results?",
+    description: "Innovation scores whether a company's technology investment is actually paying off — even if the company has no profit yet. Built specifically for pre-profit companies in quantum, AI, and biotech. IONQ can score 70+ on Innovation even with no earnings, as long as R&D is converting to revenue and adoption is accelerating.",
+    components: [
+      { label: "R&D Intensity",         weight: 25, desc: "Is the company seriously investing in technology?" },
+      { label: "R&D Productivity",      weight: 25, desc: "Revenue growth $ per $ of R&D spend" },
+      { label: "Revenue Acceleration",  weight: 25, desc: "Is adoption speeding up?" },
+      { label: "Gross Margin Trend",    weight: 15, desc: "Is pricing power improving over time?" },
+      { label: "Analyst Conviction",    weight: 10, desc: "Are experts getting more bullish?" },
+    ],
+    note: "Works for pre-profit companies. Score 70+ = R&D is building real value. Score below 40 = investment not yet converting.",
+  },
+  {
+    key: "SENTIMENT", icon: "📊", color: "#F59E0B",
+    tagline: "Are experts getting more bullish or bearish?",
+    description: "Sentiment measures the direction of expert opinion — not just the level. A stock where analysts have raised estimates 3 times in the last quarter is fundamentally different from one where estimates have been flat or cut. Consistent earnings beats build positive sentiment momentum that compounds over time.",
+    components: [
+      { label: "Estimate Revision Direction", weight: 40, desc: "Are analyst revenue forecasts trending up or down?" },
+      { label: "Earnings Beat Consistency",   weight: 35, desc: "How consistently does the company beat estimates?" },
+      { label: "Analyst Revenue Conviction",  weight: 25, desc: "How strong is the absolute consensus growth forecast?" },
+    ],
+    note: "Score 70+ = experts getting more bullish. Score below 40 = estimate cuts or consistent misses.",
   },
 ];
 
@@ -609,11 +653,11 @@ function ScoresPage({ onEnterApp }) {
         <div className="qd-wrap" style={{ maxWidth: 640, margin: "0 auto" }}>
           <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 16 }}>Proprietary · 0–100 · Live</div>
           <h1 style={{ fontFamily: ff.display, fontSize: "clamp(2.4rem,4.5vw,3.8rem)", fontWeight: 800, letterSpacing: "-.035em", margin: "0 0 20px", lineHeight: 1.05 }}>
-            Three scores.<br/>
-            <span style={{ background: `linear-gradient(100deg, ${T.cyan}, #60A5FA 50%, #818CF8)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One edge.</span>
+            Six scores.<br/>
+            <span style={{ background: `linear-gradient(100deg, ${T.cyan}, #60A5FA 50%, #818CF8)`, WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>One decision.</span>
           </h1>
           <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.65, margin: "0 0 36px" }}>
-            Every stock in QuantDiver is scored across three dimensions — Momentum, Risk, and Tech Value — calculated from live market data and real financial statements. No opinions. Just signal.
+            Every stock runs through six proprietary models — Momentum, Risk, Tech Quality, Tech Demand, Innovation, and Sentiment. Each calculated independently. All combined into one Signal grade: A, B, C, or D.
           </p>
           <PrimaryBtn onClick={() => onEnterApp("plan")}>See live scores →</PrimaryBtn>
         </div>
