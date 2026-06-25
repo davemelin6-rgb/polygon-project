@@ -319,6 +319,94 @@ function HomePage({ go, onEnterApp }) {
 
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
 
+      {/* NEURO QUANT PROOF OF CONCEPT */}
+      <section style={{ padding: "96px 0", background: "linear-gradient(180deg, transparent, rgba(139,92,246,.04) 50%, transparent)" }}>
+        <div className="qd-wrap">
+
+          {/* Header */}
+          <div style={{ textAlign: "center", marginBottom: 64 }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(139,92,246,.1)", border: "1px solid rgba(139,92,246,.3)", borderRadius: 999, padding: "6px 18px", marginBottom: 20 }}>
+              <span style={{ fontFamily: ff.mono, fontSize: ".65rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#a78bfa" }}>
+                ⚡ Neuro Quant Engine · How it works
+              </span>
+            </div>
+            <h2 style={{ fontFamily: ff.display, fontSize: "clamp(2rem,3.5vw,2.8rem)", fontWeight: 800, letterSpacing: "-.02em", margin: "0 0 18px", color: T.ink }}>
+              From raw data to a grade.<br />
+              <span style={{ background: "linear-gradient(100deg, #a78bfa, #22D3EE)", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
+                Seven stages. One decision.
+              </span>
+            </h2>
+            <p style={{ color: T.sub, maxWidth: "42rem", margin: "0 auto", lineHeight: 1.7, fontFamily: ff.body, fontSize: ".95rem" }}>
+              Most platforms give you data and leave you to figure it out. The Neuro Quant Engine processes every stock through seven systematic stages — and records every prediction so we can prove it works.
+            </p>
+          </div>
+
+          {/* Pipeline */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 0, maxWidth: 780, margin: "0 auto 56px" }}>
+            {[
+              { num: "01", icon: "🌐", title: "Universe Selection", color: T.cyan,
+                desc: "55+ stocks across AI, Quantum Computing, Defence & Space, Biotech, and Semiconductors. Each ticker is curated — we cover the sectors defining the next 20 years, not the whole market." },
+              { num: "02", icon: "📡", title: "Data Ingestion", color: "#22D3EE",
+                desc: "Live price data (Polygon.io) and fundamental data (FMP) flow in continuously. Price history, volume, balance sheets, revenue growth, R&D spend, analyst estimates — all normalised for comparison." },
+              { num: "03", icon: "⚙️", title: "Four Independent Models", color: "#a78bfa",
+                desc: "MOMENTUM measures price trend and acceleration. RISK measures balance sheet strength. TECH VALUE measures business quality. INNOVATION measures R&D productivity and adoption trajectory. Each runs independently — no circular logic." },
+              { num: "04", icon: "🔢", title: "Signal Synthesis", color: "#f59e0b",
+                desc: "The four scores combine into one Signal Score (0–100) using proprietary weights derived from back-test data: MOM 45% · INNOV 30% · TECH 15% · RISK 10%. Weights evolve as the back-test data grows." },
+              { num: "05", icon: "🌍", title: "Macro Overlay", color: "#10B981",
+                desc: "The same stock scores differently depending on the market environment. VIX regime, fear/greed conditions, and sector rotation signals adjust the final output — because a great company in a crisis market still goes down." },
+              { num: "06", icon: "📊", title: "Grade Assignment", color: "#00dc82",
+                desc: "A (≥70): Act. B (55–70): Watch. C (40–55): Wait. D (<40): Avoid. One clear decision per stock. No ambiguity, no information overload. The grade tells you what to do with the signal." },
+              { num: "07", icon: "✅", title: "Validation Loop", color: "#00dc82",
+                desc: "Every prediction is recorded with a timestamp and price. 90 and 180 days later, we check if we were right. Every Sunday, the engine re-validates against 12 months of history. If the model drifts, we catch it and fix it before users act on bad signals." },
+            ].map((s, i) => (
+              <div key={s.num} style={{ display: "flex", gap: 0, position: "relative" }}>
+                {/* Connector line */}
+                {i < 6 && (
+                  <div style={{ position: "absolute", left: 27, top: 56, width: 2, height: "calc(100% - 0px)", background: `linear-gradient(180deg, ${s.color}40, transparent)`, zIndex: 0 }} />
+                )}
+                {/* Stage */}
+                <div style={{ display: "flex", gap: 20, alignItems: "flex-start", padding: "20px 0", position: "relative", zIndex: 1 }}>
+                  <div style={{
+                    flexShrink: 0, width: 56, height: 56, borderRadius: 16,
+                    background: s.color + "15", border: `1px solid ${s.color}40`,
+                    display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2,
+                  }}>
+                    <span style={{ fontSize: "1.2rem" }}>{s.icon}</span>
+                    <span style={{ fontFamily: ff.mono, fontSize: ".55rem", fontWeight: 700, color: s.color, letterSpacing: ".06em" }}>{s.num}</span>
+                  </div>
+                  <div style={{ paddingTop: 6, flex: 1 }}>
+                    <div style={{ fontFamily: ff.display, fontWeight: 700, fontSize: "1rem", color: T.ink, marginBottom: 6 }}>{s.title}</div>
+                    <p style={{ fontFamily: ff.body, fontSize: ".85rem", color: T.sub, lineHeight: 1.7, margin: 0 }}>{s.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Bottom callout */}
+          <div style={{
+            background: "rgba(139,92,246,.06)", border: "1px solid rgba(139,92,246,.2)",
+            borderRadius: 16, padding: "28px 36px", display: "flex", alignItems: "center",
+            gap: 32, flexWrap: "wrap", maxWidth: 780, margin: "0 auto",
+          }}>
+            <div style={{ flexShrink: 0 }}>
+              <div style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: "#a78bfa", lineHeight: 1 }}>7</div>
+              <div style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 3 }}>stages, every stock</div>
+            </div>
+            <div style={{ flexShrink: 0 }}>
+              <div style={{ fontFamily: ff.mono, fontSize: "1.8rem", fontWeight: 700, color: "#00dc82", lineHeight: 1 }}>Every Sunday</div>
+              <div style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 3 }}>the model re-validates</div>
+            </div>
+            <p style={{ fontFamily: ff.body, fontSize: ".88rem", color: T.sub, lineHeight: 1.7, margin: 0, flex: 1, minWidth: 200 }}>
+              This is not a black box. Every stage is defined, every weight is tested, and every prediction is on record. That is the Neuro Quant standard.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
+
       {/* LEADERBOARD */}
       <section style={{ padding: "96px 0" }}>
         <div className="qd-wrap">
