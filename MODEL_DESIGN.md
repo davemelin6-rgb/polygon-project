@@ -1,8 +1,42 @@
 # QuantDiver — Model Design Specification
 ## QuantDiver Engine — Research & Development Document
 
-**Status:** Active research — not yet fully implemented
-**Purpose:** Define what makes QuantDiver's models genuinely unique, what data we need, and how to communicate it to customers.
+---
+
+## Purpose & Mission
+
+> **QuantDiver exists to prove that the right combination of data, rigorously aggregated and continuously validated, can help investors make better decisions than they would make alone.**
+
+### The Three Levels of Value
+
+**Level 1 — Data** *(commodity)*
+Anyone can buy price data from Polygon, fundamentals from FMP, news from any provider. Data alone is not a product. It is a starting point.
+
+**Level 2 — Aggregation** *(harder)*
+Taking 5-8 signals per dimension, combining them with the right weights, normalising for sector differences, and producing one meaningful score per stock. This requires methodology, domain knowledge, and iteration. Most platforms stop here but don't even do it well — they show you the raw data and leave you to figure it out.
+
+**Level 3 — Proven Aggregation** *(the moat)*
+Back-testing demonstrates that stocks with high scores actually outperform stocks with low scores over a defined time period. Forward validation records every prediction made today and checks it in 90-180 days. This is what separates a product worth paying for from a data dashboard. This is where QuantDiver must live.
+
+### What This Means for Every Decision We Make
+
+Before adding any signal, score, or feature, ask:
+1. Does this improve the predictive power of our aggregation?
+2. Can we back-test it — i.e., does it actually help high scores outperform low scores?
+3. If we can't back-test it yet, does it have strong theoretical or empirical backing from finance research?
+
+If the answer to all three is no — don't build it.
+
+### Our Differentiation in One Sentence
+
+> *"We don't give you data. We give you a verdict — and we have the back-test to prove it's worth trusting."*
+
+### Why This Is Hard to Replicate
+
+1. The formula weights are derived from back-test outcomes — not theory. They improve every week as the model validates itself.
+2. The forward validation dataset is proprietary and grows daily. After 12 months, we will have 365 daily prediction records per ticker. No one else has this dataset for our universe.
+3. The sector-specific normalisation means our scores are comparable across sectors — a TECH VALUE of 60 means the same thing for a quantum company as for a semiconductor company, after adjustment.
+4. The community intelligence layer (what stocks Pro users are watching and acting on) is a unique signal that no external data provider can replicate.
 
 ---
 
