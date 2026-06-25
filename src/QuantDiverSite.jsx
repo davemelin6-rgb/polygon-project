@@ -665,8 +665,54 @@ function ScoresPage({ onEnterApp }) {
 
       <div style={{ height: 1, background: "linear-gradient(90deg, transparent, rgba(90,130,200,.15) 30%, rgba(90,130,200,.15) 70%, transparent)" }} />
 
-      {/* Score deep-dives */}
-      {SCORE_DEFS.map((s, i) => (
+      {/* Score cards — 2-column grid */}
+      <section style={{ padding: "72px 0" }}>
+        <div className="qd-wrap">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 20 }}>
+            {SCORE_DEFS.map(s => (
+              <div key={s.key} style={{ background: T.s1, border: `1px solid ${T.border}`, borderLeft: `3px solid ${s.color}`, borderRadius: 16, padding: "28px 28px 24px" }}>
+
+                {/* Header */}
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                  <span style={{ fontSize: "1.4rem" }}>{s.icon}</span>
+                  <div>
+                    <div style={{ fontFamily: ff.display, fontWeight: 800, fontSize: "1rem", color: T.ink }}>{s.key}</div>
+                    <div style={{ fontFamily: ff.body, fontSize: ".78rem", color: s.color, fontWeight: 600 }}>{s.tagline}</div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <p style={{ fontFamily: ff.body, fontSize: ".83rem", color: T.sub, lineHeight: 1.7, margin: "0 0 18px" }}>
+                  {s.description}
+                </p>
+
+                {/* Components */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                  {s.components.map(c => (
+                    <div key={c.label}>
+                      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                        <span style={{ fontFamily: ff.mono, fontSize: ".7rem", color: T.ink, fontWeight: 600 }}>{c.label}</span>
+                        <span style={{ fontFamily: ff.mono, fontSize: ".7rem", fontWeight: 700, color: s.color }}>{c.weight}%</span>
+                      </div>
+                      <div style={{ height: 3, background: "rgba(100,140,200,.08)", borderRadius: 3, overflow: "hidden" }}>
+                        <div style={{ width: `${c.weight * 2.5}%`, height: "100%", background: s.color, borderRadius: 3, opacity: .7 }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Note */}
+                <div style={{ fontFamily: ff.mono, fontSize: ".65rem", color: T.dim, marginTop: 16, paddingTop: 14, borderTop: `1px solid ${T.border}`, lineHeight: 1.5 }}>
+                  {s.note}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* HIDDEN — old deep-dive sections replaced by grid above */}
+      {false && SCORE_DEFS.map((s, i) => (
         <section key={s.key} style={{ padding: "88px 0", background: i % 2 === 1 ? "rgba(255,255,255,.015)" : "transparent" }}>
           <div className="qd-wrap">
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "start" }}>
@@ -715,7 +761,7 @@ function ScoresPage({ onEnterApp }) {
         </section>
       ))}
 
-      {/* NEURO QUANT PROOF OF CONCEPT */}
+      {/* QuantDiver ENGINE PIPELINE */}
       <section style={{ padding: "96px 0", background: "linear-gradient(180deg, transparent, rgba(139,92,246,.04) 50%, transparent)" }}>
         <div className="qd-wrap">
           <div style={{ textAlign: "center", marginBottom: 64 }}>
