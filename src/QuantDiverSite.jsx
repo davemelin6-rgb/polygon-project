@@ -175,6 +175,7 @@ function HomePage({ go, onEnterApp }) {
 
             <div style={{ display: "flex", gap: 14, flexWrap: "wrap", alignItems: "center" }}>
               <PrimaryBtn onClick={() => onEnterApp("plan")}>Get started</PrimaryBtn>
+              <GhostBtn onClick={() => go("scores")}>Try it live →</GhostBtn>
               <GhostBtn onClick={() => go("briefme")}>Explore BriefMe →</GhostBtn>
             </div>
 
