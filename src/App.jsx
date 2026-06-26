@@ -20,7 +20,8 @@ import ScoreHistory      from "./ScoreHistory.jsx";
 import SectorRanking     from "./SectorRanking.jsx";
 import Portfolio         from "./Portfolio.jsx";
 import MarketRegime      from "./MarketRegime.jsx";
-import SectorRiskPanel   from "./SectorRiskPanel.jsx";
+import SectorRiskPanel      from "./SectorRiskPanel.jsx";
+import GradePortfolioPanel  from "./GradePortfolioPanel.jsx";
 import Crypto            from "./Crypto.jsx";
 import Guide             from "./Guide.jsx";
 
@@ -1044,6 +1045,7 @@ export default function App({ session, onLogout, onAdmin }) {
             <MarketRegime session={session} />
           </section>
           <SectorRiskPanel session={session} />
+          <GradePortfolioPanel session={session} />
         </div>
       )}
 
