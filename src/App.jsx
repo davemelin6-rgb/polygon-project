@@ -30,35 +30,78 @@ const SECTORS = [
     name: "Quantum Stocks",
     icon: "⚛️",
     accent: "#8B5CF6",
-    tickers: ["IONQ", "RGTI", "QUBT", "QBTS", "IBM", "GOOGL", "MSFT"],
+    tickers: [
+      // Pure-play quantum
+      "IONQ", "RGTI", "QUBT", "QBTS", "ARQQ",
+      // Tech giants with major quantum investment
+      "IBM", "GOOGL", "MSFT", "INTC", "HON", "AMZN",
+      // AI/compute adjacent enabling quantum
+      "NVDA", "AMAT", "ONTO", "MKSI",
+    ],
   },
   {
     id: "ai",
     name: "AI Stocks",
     icon: "🧠",
     accent: "#22D3EE",
-    tickers: ["NVDA", "AMD", "META", "MSFT", "PLTR", "AI", "SOUN", "SMCI"],
+    tickers: [
+      // Core AI infrastructure
+      "NVDA", "AMD", "GOOGL", "MSFT", "META", "AMZN", "ORCL", "IBM",
+      // AI software & platforms
+      "PLTR", "AI", "NOW", "CRM", "SNOW", "MDB", "DDOG", "NET",
+      // AI applications
+      "SOUN", "SMCI", "PATH", "BBAI", "UPST", "ANET", "CRWD", "ZS",
+      // Semiconductor enablers
+      "AVGO", "MRVL", "QCOM", "TSM",
+    ],
   },
   {
     id: "defence",
     name: "Defence & Space",
     icon: "🛡️",
     accent: "#F59E0B",
-    tickers: ["LMT", "RTX", "NOC", "GD", "BA", "RKLB", "ASTS", "KTOS"],
+    tickers: [
+      // Traditional prime contractors
+      "LMT", "RTX", "NOC", "GD", "BA", "HII", "LHX", "TXT",
+      // Defence tech & services
+      "KTOS", "AXON", "AVAV", "CACI", "LDOS", "SAIC", "BWXT", "DRS",
+      // New space
+      "RKLB", "ASTS", "IRDM", "VSAT",
+      // Cyber & intelligence
+      "CRWD", "SAIC", "BAH", "SPIR", "RDW",
+    ],
   },
   {
     id: "biotech",
     name: "Biotech & MedTech",
     icon: "🧬",
     accent: "#10B981",
-    tickers: ["LLY", "NVO", "MRNA", "REGN", "VRTX", "GILD", "ISRG", "DXCM"],
+    tickers: [
+      // Large cap pharma/biotech
+      "LLY", "NVO", "ABBV", "BMY", "AMGN", "GILD", "BIIB", "REGN", "VRTX",
+      // Mid-cap biotech
+      "MRNA", "ALNY", "INCY", "EXEL", "ALKS", "ACAD", "AXSM", "RARE",
+      // Gene editing
+      "CRSP", "EDIT", "BEAM", "NTLA",
+      // MedTech
+      "ISRG", "DXCM", "ILMN", "MDT", "ABT", "SYK", "HOLX",
+    ],
   },
   {
     id: "semiconductors",
     name: "Semiconductors",
     icon: "🔬",
     accent: "#F97316",
-    tickers: ["NVDA", "TSM", "AVGO", "AMD", "QCOM", "INTC", "MU", "ASML", "TXN", "AMAT"],
+    tickers: [
+      // Leaders
+      "NVDA", "TSM", "AVGO", "AMD", "QCOM", "INTC", "MU", "ASML", "TXN", "AMAT",
+      // Equipment & materials
+      "LRCX", "KLAC", "TER", "ACLS", "ENTG", "ONTO",
+      // Design & analog
+      "ADI", "NXPI", "ON", "MRVL", "MPWR", "SWKS",
+      // Emerging & specialty
+      "WOLF", "SLAB", "CRUS", "AMBA", "PI", "FORM",
+    ],
   },
 ];
 
