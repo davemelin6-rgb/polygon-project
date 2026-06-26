@@ -105,7 +105,7 @@
 
 .ss-col-heads {
   display: grid;
-  grid-template-columns: 36px 70px 90px 80px 1fr 48px;
+  grid-template-columns: 36px 130px 90px 80px 1fr 48px;
   gap: 0 12px;
   padding: 8px 22px;
   font-size: .62rem;
@@ -128,7 +128,7 @@
 /* ── Rows ───────────────────────────────────────────────────── */
 .ss-row {
   display: grid;
-  grid-template-columns: 36px 70px 90px 80px 1fr 48px;
+  grid-template-columns: 36px 130px 90px 80px 1fr 48px;
   gap: 0 12px;
   align-items: center;
   padding: 12px 22px;
@@ -154,11 +154,28 @@
   color: #2d4a5f;
 }
 
+.ss-ticker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
 .ss-ticker {
   font-weight: 700;
-  font-size: .9rem;
+  font-size: .88rem;
   letter-spacing: .03em;
   color: #dce8f4;
+  line-height: 1;
+}
+
+.ss-company-name {
+  font-size: .62rem;
+  color: #3d5c78;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
 }
 
 .ss-price {

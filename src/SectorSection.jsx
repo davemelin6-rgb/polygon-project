@@ -1,6 +1,44 @@
 import { useState, useEffect } from "react";
 import "./SectorSection.css";
 
+const COMPANY_NAMES = {
+  // AI & Software
+  NVDA:"NVIDIA", AMD:"Advanced Micro Devices", META:"Meta Platforms", MSFT:"Microsoft",
+  GOOGL:"Alphabet", AMZN:"Amazon", PLTR:"Palantir", IBM:"IBM", AI:"C3.ai", SOUN:"SoundHound",
+  SMCI:"Super Micro Computer", ORCL:"Oracle", CRM:"Salesforce", NOW:"ServiceNow",
+  SNOW:"Snowflake", MDB:"MongoDB", DDOG:"Datadog", NET:"Cloudflare", PATH:"UiPath",
+  BBAI:"BigBear.ai", UPST:"Upstart", ANET:"Arista Networks", CRWD:"CrowdStrike",
+  ZS:"Zscaler", AVGO:"Broadcom", MRVL:"Marvell Technology", QCOM:"Qualcomm", TSM:"TSMC",
+  // Quantum
+  IONQ:"IonQ", RGTI:"Rigetti Computing", QUBT:"Quantum Computing Inc", QBTS:"D-Wave Quantum",
+  ARQQ:"Arqit Quantum", HON:"Honeywell", INTC:"Intel", ONTO:"Onto Innovation", MKSI:"MKS Instruments",
+  // Defence & Space
+  LMT:"Lockheed Martin", RTX:"RTX Corporation", NOC:"Northrop Grumman", GD:"General Dynamics",
+  BA:"Boeing", HII:"Huntington Ingalls", LHX:"L3Harris Technologies", TXT:"Textron",
+  KTOS:"Kratos Defense", AXON:"Axon Enterprise", AVAV:"AeroVironment", CACI:"CACI International",
+  LDOS:"Leidos", SAIC:"Science Applications", BWXT:"BWX Technologies", DRS:"Leonardo DRS",
+  RKLB:"Rocket Lab", ASTS:"AST SpaceMobile", IRDM:"Iridium", VSAT:"Viasat", BAH:"Booz Allen Hamilton",
+  SPIR:"Spire Global", RDW:"Redwire",
+  // Biotech & MedTech
+  LLY:"Eli Lilly", NVO:"Novo Nordisk", ABBV:"AbbVie", BMY:"Bristol-Myers Squibb",
+  AMGN:"Amgen", GILD:"Gilead Sciences", BIIB:"Biogen", REGN:"Regeneron", VRTX:"Vertex Pharma",
+  MRNA:"Moderna", ALNY:"Alnylam Pharma", INCY:"Incyte", EXEL:"Exelixis", ALKS:"Alkermes",
+  ACAD:"Acadia Pharma", AXSM:"Axsome Therapeutics", RARE:"Ultragenyx",
+  CRSP:"CRISPR Therapeutics", EDIT:"Editas Medicine", BEAM:"Beam Therapeutics", NTLA:"Intellia",
+  ISRG:"Intuitive Surgical", DXCM:"Dexcom", ILMN:"Illumina", MDT:"Medtronic",
+  ABT:"Abbott Laboratories", SYK:"Stryker", HOLX:"Hologic",
+  // Semiconductors
+  MU:"Micron Technology", ASML:"ASML Holding", TXN:"Texas Instruments", AMAT:"Applied Materials",
+  LRCX:"Lam Research", KLAC:"KLA Corporation", TER:"Teradyne", ACLS:"Axcelis Technologies",
+  ENTG:"Entegris", ADI:"Analog Devices", NXPI:"NXP Semiconductors", ON:"ON Semiconductor",
+  MPWR:"Monolithic Power", SWKS:"Skyworks", WOLF:"Wolfspeed", SLAB:"Silicon Labs",
+  CRUS:"Cirrus Logic", AMBA:"Ambarella", PI:"Impinj", FORM:"FormFactor",
+  // Other
+  AAPL:"Apple", TSLA:"Tesla", JPM:"JPMorgan Chase", V:"Visa", MA:"Mastercard",
+  SPY:"S&P 500 ETF", QQQ:"Nasdaq 100 ETF", SOXX:"Semiconductor ETF", IBB:"Biotech ETF",
+  XAR:"Aerospace ETF", ARKQ:"ARK Innovation ETF",
+};
+
 /* composite score: average of momentum, techValue, inverted risk */
 function composite(s) {
   if (!s) return -1;
@@ -161,28 +199,12 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
                   >
                     <span className="ss-rank">{String(i + 1).padStart(2, "0")}</span>
 
-                    <span className="ss-ticker">
-                      {stock.symbol}
-                      {i === 0 && (
-                        <span style={{
-                          display: "inline-block",
-                          marginLeft: 7,
-                          fontFamily: "inherit",
-                          fontSize: ".58rem",
-                          fontWeight: 700,
-                          letterSpacing: ".1em",
-                          textTransform: "uppercase",
-                          color: accent,
-                          background: `${accent}18`,
-                          border: `1px solid ${accent}40`,
-                          borderRadius: 999,
-                          padding: "2px 7px",
-                          verticalAlign: "middle",
-                        }}>
-                          ★ QuantDiver Top Rank
-                        </span>
+                    <div className="ss-ticker-wrap">
+                      <span className="ss-ticker">{stock.symbol}</span>
+                      {COMPANY_NAMES[stock.symbol] && (
+                        <span className="ss-company-name">{COMPANY_NAMES[stock.symbol]}</span>
                       )}
-                    </span>
+                    </div>
 
                     <span className="ss-price">
                       ${stock.price != null ? Number(stock.price).toFixed(2) : "—"}
