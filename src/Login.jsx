@@ -182,11 +182,11 @@ export default function Login({ onLogin, onBack, initialMode = "plan", initialPl
             <form className="login-form" onSubmit={handleSignIn}>
               <div className="login-field">
                 <label>Email</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required autoComplete="email" />
               </div>
               <div className="login-field">
                 <label>Password</label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required autoComplete="current-password" />
               </div>
               {error && <p className="login-error">{error}</p>}
               {resetSent && (
@@ -284,11 +284,11 @@ export default function Login({ onLogin, onBack, initialMode = "plan", initialPl
               </div>
               <div className="login-field">
                 <label>Email</label>
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" required autoComplete="email" />
               </div>
               <div className="login-field">
                 <label>Password</label>
-                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 8 characters" required minLength={8} />
+                <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 8 characters" required minLength={8} autoComplete="new-password" />
               </div>
               {error && <p className="login-error">{error}</p>}
               <button className="login-btn" type="submit" disabled={loading}>
