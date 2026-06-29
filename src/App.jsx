@@ -879,6 +879,9 @@ export default function App({ session, onLogout, onAdmin }) {
                   <button className="user-menu-item" onClick={() => { setShowUserMenu(false); setShowContact(true); }}>
                     <span>✉</span> Contact Support
                   </button>
+                  <button className="user-menu-item" onClick={() => { setShowUserMenu(false); window.open('https://www.quantdiver.com', '_blank'); }}>
+                    <span>ℹ</span> About Us
+                  </button>
                   <div className="user-menu-divider" />
                   <button className="user-menu-item danger" onClick={async () => { setShowUserMenu(false); await import("./supabaseClient.js").then(m => m.supabase.auth.signOut()); onLogout(); }}>
                     <span>→</span> Sign Out
@@ -899,11 +902,15 @@ export default function App({ session, onLogout, onAdmin }) {
           { id: "brief",      label: "Daily Brief",   icon: "☀️" },
           { id: "crypto",     label: "Crypto",        icon: "₿"  },
           { id: "guide",      label: "Guide",         icon: "📖" },
+          { id: "about",      label: "About Us",      icon: "ℹ️" },
         ].map(tab => (
           <button
             key={tab.id}
             className={`app-tab ${activeTab === tab.id ? "active" : ""}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              if (tab.id === "about") { window.open("https://www.quantdiver.com", "_blank"); return; }
+              setActiveTab(tab.id);
+            }}
           >
             <span className="app-tab-icon">{tab.icon}</span>
             <span className="app-tab-label">{tab.label}</span>
