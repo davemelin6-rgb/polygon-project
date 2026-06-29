@@ -105,7 +105,7 @@
 
 .ss-col-heads {
   display: grid;
-  grid-template-columns: 36px 150px 100px 90px 1fr 56px;
+  grid-template-columns: 36px 150px 100px 90px 1fr 72px;
   gap: 0 16px;
   padding: 10px 24px;
   font-size: .62rem;
@@ -128,7 +128,7 @@
 /* ── Rows ───────────────────────────────────────────────────── */
 .ss-row {
   display: grid;
-  grid-template-columns: 36px 150px 100px 90px 1fr 56px;
+  grid-template-columns: 36px 150px 100px 90px 1fr 72px;
   gap: 0 16px;
   align-items: center;
   padding: 14px 24px;
