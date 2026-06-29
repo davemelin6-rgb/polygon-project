@@ -21,6 +21,7 @@ import SectorRanking     from "./SectorRanking.jsx";
 import Portfolio         from "./Portfolio.jsx";
 import MarketRegime      from "./MarketRegime.jsx";
 import SectorRiskPanel      from "./SectorRiskPanel.jsx";
+import HowItWorks           from "./HowItWorks.jsx";
 import GradePortfolioPanel  from "./GradePortfolioPanel.jsx";
 import Crypto            from "./Crypto.jsx";
 import Guide             from "./Guide.jsx";
@@ -653,6 +654,7 @@ export default function App({ session, onLogout, onAdmin }) {
   const [showContact,    setShowContact]    = useState(false);
   const [showCommunity,  setShowCommunity]  = useState(false);
   const [showUserMenu,   setShowUserMenu]   = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [activeTab,      setActiveTab]      = useState("dashboard");
   const [dashTab,        setDashTab]        = useState("watchlist");
 
@@ -879,7 +881,7 @@ export default function App({ session, onLogout, onAdmin }) {
                   <button className="user-menu-item" onClick={() => { setShowUserMenu(false); setShowContact(true); }}>
                     <span>✉</span> Contact Support
                   </button>
-                  <button className="user-menu-item" onClick={() => { setShowUserMenu(false); window.open('https://www.quantdiver.com', '_blank'); document.dispatchEvent(new CustomEvent('qd-goto', {detail:'scores'})); }}>
+                  <button className="user-menu-item" onClick={() => { setShowUserMenu(false); setShowHowItWorks(true); }}>
                     <span>ℹ</span> How It Works
                   </button>
                   <div className="user-menu-divider" />
@@ -1105,6 +1107,9 @@ export default function App({ session, onLogout, onAdmin }) {
           userEmail={session?.user?.email}
           onClose={() => setShowContact(false)}
         />
+      )}
+      {showHowItWorks && (
+        <HowItWorks onClose={() => setShowHowItWorks(false)} />
       )}
 
       <footer className="app-footer">
