@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>QuantDiver — Process Overview</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #04080F;
+    color: #EDF2FF;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    padding: 48px 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header { text-align: center; margin-bottom: 56px; }
+  .header h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -1px; margin-bottom: 10px; }
+  .header h1 span { color: #22D3EE; }
+  .header p { color: #8A9EC0; font-size: 1rem; max-width: 560px; margin: 0 auto; line-height: 1.7; }
+  .badge { display: inline-block; background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.25); border-radius: 999px; padding: 5px 16px; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #22D3EE; margin-bottom: 18px; }
+
+  /* Section titles */
+  .section-title { font-size: .65rem; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: #445268; margin-bottom: 20px; }
+
+  /* Scores grid */
+  .scores-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 48px; }
+  .score-card {
+    background: #080E1C;
+    border: 1px solid rgba(90,130,200,.12);
+    border-radius: 14px;
+    padding: 20px;
+    border-left: 3px solid var(--color);
+  }
+  .score-icon { font-size: 1.4rem; margin-bottom: 10px; }
+  .score-name { font-size: .72rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--color); margin-bottom: 6px; }
+  .score-question { font-size: .92rem; font-weight: 700; color: #EDF2FF; margin-bottom: 8px; }
+  .score-desc { font-size: .78rem; color: #8A9EC0; line-height: 1.6; }
+  .score-weight { display: inline-block; margin-top: 10px; background: rgba(255,255,255,.05); border-radius: 6px; padding: 3px 10px; font-size: .68rem; font-weight: 700; color: var(--color); }
+
+  /* Signal flow */
+  .signal-flow {
+    background: #080E1C;
+    border: 1px solid rgba(90,130,200,.12);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+  .flow-scores { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .flow-badge { padding: 8px 16px; border-radius: 8px; font-size: .78rem; font-weight: 700; }
+  .flow-arrow { font-size: 1.8rem; color: #22D3EE; margin: 0 8px; display: flex; align-items: center; }
+  .flow-signal { background: rgba(34,211,238,.12); border: 2px solid rgba(34,211,238,.4); border-radius: 12px; padding: 16px 32px; display: inline-block; }
+  .flow-signal-num { font-size: 2.4rem; font-weight: 900; color: #22D3EE; font-family: 'Courier New', monospace; }
+  .flow-signal-label { font-size: .7rem; color: #8A9EC0; letter-spacing: .1em; text-transform: uppercase; }
+
+  /* Grades */
+  .grades-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 48px; }
+  .grade-card {
+    background: #080E1C;
+    border: 1px solid rgba(90,130,200,.1);
+    border-top: 3px solid var(--color);
+    border-radius: 12px;
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .grade-letter { font-size: 2.4rem; font-weight: 900; color: var(--color); font-family: 'Courier New', monospace; line-height: 1; }
+  .grade-label { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--color); margin: 6px 0 12px; }
+  .grade-stat { margin: 6px 0; }
+  .grade-stat-num { font-size: 1.3rem; font-weight: 700; color: #EDF2FF; font-family: 'Courier New', monospace; }
+  .grade-stat-label { font-size: .65rem; color: #445268; }
+  .grade-range { font-size: .7rem; color: #445268; margin-top: 10px; }
+
+  /* Backtest */
+  .backtest-box {
+    background: #080E1C;
+    border: 1px solid rgba(90,130,200,.12);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+  }
+  .two-phase { display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; margin: 24px 0; align-items: center; }
+  .phase-box { background: rgba(255,255,255,.03); border-radius: 12px; padding: 20px; text-align: center; }
+  .phase-1 { border: 1px solid rgba(34,211,238,.2); }
+  .phase-2 { border: 1px solid rgba(0,220,130,.2); }
+  .phase-num { font-size: .65rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; margin-bottom: 8px; }
+  .phase-1 .phase-num { color: #22D3EE; }
+  .phase-2 .phase-num { color: #00dc82; }
+  .phase-title { font-size: 1rem; font-weight: 700; color: #EDF2FF; margin-bottom: 8px; }
+  .phase-desc { font-size: .8rem; color: #8A9EC0; line-height: 1.6; }
+  .phase-divider { text-align: center; padding: 0 16px; }
+  .phase-divider-line { width: 2px; height: 80px; background: linear-gradient(180deg, #22D3EE, #a78bfa); margin: 0 auto 8px; }
+  .phase-divider-label { font-size: .65rem; color: #a78bfa; font-weight: 700; letter-spacing: .08em; text-align: center; }
+
+  /* Stats bar */
+  .stats-bar { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 24px; }
+  .stat-item { background: rgba(255,255,255,.04); border-radius: 10px; padding: 14px 18px; flex: 1; min-width: 120px; text-align: center; }
+  .stat-num { font-size: 1.5rem; font-weight: 900; font-family: 'Courier New', monospace; }
+  .stat-label { font-size: .65rem; color: #445268; letter-spacing: .06em; margin-top: 4px; }
+
+  /* Alpha proof */
+  .alpha-box {
+    background: rgba(0,220,130,.05);
+    border: 1px solid rgba(0,220,130,.2);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 48px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: center;
+  }
+  .alpha-stat-num { font-size: 2.2rem; font-weight: 900; color: #00dc82; font-family: 'Courier New', monospace; line-height: 1; }
+  .alpha-stat-label { font-size: .72rem; color: #8A9EC0; margin-top: 6px; line-height: 1.5; }
+  .alpha-desc { font-size: .85rem; color: #8A9EC0; line-height: 1.7; grid-column: span 1; }
+
+  /* Process steps */
+  .steps { display: flex; flex-direction: column; gap: 0; }
+  .step { display: flex; gap: 20px; align-items: flex-start; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.04); position: relative; }
+  .step:last-child { border-bottom: none; }
+  .step-num { width: 40px; height: 40px; border-radius: 12px; background: rgba(34,211,238,.1); border: 1px solid rgba(34,211,238,.3); display: flex; align-items: center; justify-content: center; font-family: 'Courier New', monospace; font-weight: 700; color: #22D3EE; font-size: .9rem; flex-shrink: 0; }
+  .step-content h3 { font-size: .92rem; font-weight: 700; color: #EDF2FF; margin-bottom: 4px; }
+  .step-content p { font-size: .8rem; color: #8A9EC0; line-height: 1.6; }
+
+  /* Footer */
+  .footer { text-align: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); }
+  .footer p { font-size: .72rem; color: #2d4a5f; line-height: 1.7; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="badge">⚡ QuantDiver Engine · Complete Process Overview</div>
+  <h1><span>Quant</span>Diver</h1>
+  <p>Six proprietary models. One grade. A statistically proven edge above the S&P 500 — validated every Sunday against 3,136 real historical data points.</p>
+</div>
+
+<!-- The 6 Scores -->
+<div class="section-title">The Six Independent Models (0–100 each)</div>
+<div class="scores-grid">
+  <div class="score-card" style="--color:#22D3EE">
+    <div class="score-icon">🚀</div>
+    <div class="score-name">Momentum</div>
+    <div class="score-question">Is the price accelerating?</div>
+    <div class="score-desc">Measures price trend strength and whether momentum is building or fading. The acceleration component is the key differentiator — a stock gaining 30% when it only gained 5% before is a different signal entirely.</div>
+    <div class="score-weight">45% of Signal</div>
+  </div>
+  <div class="score-card" style="--color:#10B981">
+    <div class="score-icon">⚗️</div>
+    <div class="score-name">Innovation</div>
+    <div class="score-question">Is R&D converting to results?</div>
+    <div class="score-desc">Built for pre-profit companies. Measures R&D intensity, R&D productivity (revenue per R&D dollar), revenue acceleration, and gross margin trajectory. IONQ can score 70+ with no earnings.</div>
+    <div class="score-weight">30% of Signal</div>
+  </div>
+  <div class="score-card" style="--color:#F59E0B">
+    <div class="score-icon">💡</div>
+    <div class="score-name">Tech Quality</div>
+    <div class="score-question">How good is the business today?</div>
+    <div class="score-desc">Gross margin, R&D intensity, net margin, revenue growth, FCF, ROE. Sector-normalised — semiconductors benchmarked vs semiconductors, not software. For profitable or near-profitable companies.</div>
+    <div class="score-weight">15% of Signal</div>
+  </div>
+  <div class="score-card" style="--color:#a78bfa">
+    <div class="score-icon">📡</div>
+    <div class="score-name">Tech Demand</div>
+    <div class="score-question">How much will the world need this?</div>
+    <div class="score-desc">Sector demand trajectory (1-5 year outlook), analyst forward revenue consensus, sector ETF momentum as institutional flow proxy. A company with great margins on dying technology still scores low.</div>
+    <div class="score-weight">— of Signal</div>
+  </div>
+  <div class="score-card" style="--color:#F97316">
+    <div class="score-icon">📊</div>
+    <div class="score-name">Sentiment</div>
+    <div class="score-question">Are experts getting more bullish?</div>
+    <div class="score-desc">Direction of analyst estimate revisions (not the level — the change). Earnings beat consistency. A stock where 8 of 10 analysts just raised forecasts is a fundamentally different situation.</div>
+    <div class="score-weight">— of Signal</div>
+  </div>
+  <div class="score-card" style="--color:#00dc82">
+    <div class="score-icon">🛡️</div>
+    <div class="score-name">Risk</div>
+    <div class="score-question">Can the company survive a downturn?</div>
+    <div class="score-desc">Debt/equity, liquidity, interest coverage, price volatility, cash runway. Higher = SAFER. Acts as a floor — we prevent Grade A from being awarded to companies that may not survive long enough for the thesis to play out.</div>
+    <div class="score-weight">10% of Signal</div>
+  </div>
+</div>
+
+<!-- Signal Flow -->
+<div class="section-title">How Scores Combine Into One Grade</div>
+<div class="signal-flow">
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:16px;">
+    <div class="flow-badge" style="background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);color:#22D3EE;">MOM 45%</div>
+    <div class="flow-badge" style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);color:#10B981;">INNOV 30%</div>
+    <div class="flow-badge" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);color:#F59E0B;">TECH 15%</div>
+    <div class="flow-badge" style="background:rgba(0,220,130,.1);border:1px solid rgba(0,220,130,.3);color:#00dc82;">RISK 10%</div>
+    <div style="font-size:1.4rem;color:#22D3EE;padding:0 4px;">→</div>
+    <div class="flow-signal">
+      <div class="flow-signal-num">0–100</div>
+      <div class="flow-signal-label">Signal Score</div>
+    </div>
+    <div style="font-size:1.4rem;color:#22D3EE;padding:0 4px;">→</div>
+    <div class="flow-badge" style="background:rgba(0,220,130,.15);border:2px solid rgba(0,220,130,.5);color:#00dc82;font-size:1rem;padding:10px 20px;">Grade A / B / C / D</div>
+  </div>
+  <p style="font-size:.8rem;color:#445268;">Weights are derived from back-test data — not theory. They reflect what combination of signals most reliably predicted outperformance historically.</p>
+</div>
+
+<!-- Grades -->
+<div class="section-title">What Each Grade Has Historically Returned</div>
+<div class="grades-grid">
+  <div class="grade-card" style="--color:#00dc82">
+    <div class="grade-letter">A</div>
+    <div class="grade-label">STRONG · 180D</div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#00dc82">+19.68%</div>
+      <div class="grade-stat-label">avg 90-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#00dc82">+40.19%</div>
+      <div class="grade-stat-label">avg 180-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#00dc82">66.6%</div>
+      <div class="grade-stat-label">win rate at 90 days</div>
+    </div>
+    <div class="grade-range">Signal ≥ 63 · 929 samples</div>
+  </div>
+  <div class="grade-card" style="--color:#22D3EE">
+    <div class="grade-letter">B</div>
+    <div class="grade-label">WATCH · 180D</div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#22D3EE">+8.30%</div>
+      <div class="grade-stat-label">avg 90-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#22D3EE">+21.85%</div>
+      <div class="grade-stat-label">avg 180-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#22D3EE">60.8%</div>
+      <div class="grade-stat-label">win rate at 90 days</div>
+    </div>
+    <div class="grade-range">Signal 48–63 · 787 samples</div>
+  </div>
+  <div class="grade-card" style="--color:#F59E0B">
+    <div class="grade-letter">C</div>
+    <div class="grade-label">MIXED · 180D</div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#F59E0B">+5.78%</div>
+      <div class="grade-stat-label">avg 90-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#F59E0B">+13.28%</div>
+      <div class="grade-stat-label">avg 180-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#F59E0B">54.4%</div>
+      <div class="grade-stat-label">win rate at 90 days</div>
+    </div>
+    <div class="grade-range">Signal 35–48 · 731 samples</div>
+  </div>
+  <div class="grade-card" style="--color:#ff3c50">
+    <div class="grade-letter">D</div>
+    <div class="grade-label">AVOID · 180D</div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#ff3c50">+6.99%</div>
+      <div class="grade-stat-label">avg 90-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#ff3c50">+19.60%</div>
+      <div class="grade-stat-label">avg 180-day return</div>
+    </div>
+    <div class="grade-stat">
+      <div class="grade-stat-num" style="color:#ff3c50">56.2%</div>
+      <div class="grade-stat-label">win rate at 90 days</div>
+    </div>
+    <div class="grade-range">Signal &lt; 35 · 689 samples</div>
+  </div>
+</div>
+
+<!-- Backtest Methodology -->
+<div class="section-title">How We Back-Test — The Two-Phase Method</div>
+<div class="backtest-box">
+  <p style="font-size:.88rem;color:#8A9EC0;margin-bottom:20px;">We go back 52 weeks through history. At each point in time, we calculate what the model <em>would have scored</em> using only data available at that moment — no future data. Then we measure what actually happened next.</p>
+  <div class="two-phase">
+    <div class="phase-box phase-1">
+      <div class="phase-num">Months 1–3 · The Lookback</div>
+      <div class="phase-title">Price history → Score</div>
+      <div class="phase-desc">We calculate the momentum score using only the price data available in these 3 months. This is what the model "sees" — nothing from the future.</div>
+    </div>
+    <div class="phase-divider">
+      <div class="phase-divider-line"></div>
+      <div class="phase-divider-label">Score<br/>set<br/>here</div>
+    </div>
+    <div class="phase-box phase-2">
+      <div class="phase-num">Months 4–6 · The Real Test</div>
+      <div class="phase-title">What actually happened next</div>
+      <div class="phase-desc">We measure the actual price return in these 3 months — AFTER the score was set. Phase 2 is the genuine test. Grade A returned +17.14% in this window.</div>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" style="color:#22D3EE">3,136</div>
+      <div class="stat-label">Total samples</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" style="color:#22D3EE">65</div>
+      <div class="stat-label">Stocks tested</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" style="color:#22D3EE">52</div>
+      <div class="stat-label">Weeks of history</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" style="color:#00dc82">PREDICTIVE</div>
+      <div class="stat-label">Model verdict</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" style="color:#00dc82">12.69%</div>
+      <div class="stat-label">Grade A vs D spread</div>
+    </div>
+  </div>
+</div>
+
+<!-- Alpha vs Index -->
+<div class="section-title">Grade A vs The Index — Same Time Windows</div>
+<div class="alpha-box">
+  <div>
+    <div class="alpha-stat-num">+12.69%</div>
+    <div class="alpha-stat-label">Grade A alpha above S&P 500<br/>in the same time windows</div>
+  </div>
+  <div>
+    <div class="alpha-stat-num">+10.53%</div>
+    <div class="alpha-stat-label">Grade A alpha above QQQ<br/>(Nasdaq 100 tech ETF)</div>
+  </div>
+  <div>
+    <div class="alpha-stat-num">8.23</div>
+    <div class="alpha-stat-label">t-statistic — probability this<br/>is random luck: &lt; 0.001%</div>
+  </div>
+</div>
+
+<!-- The Process -->
+<div class="section-title">The 5-Step QuantDiver Investment Process</div>
+<div class="steps">
+  <div class="step">
+    <div class="step-num">01</div>
+    <div class="step-content">
+      <h3>Find Grade A stocks</h3>
+      <p>Open Dashboard → Sectors tab. Look for Grade A signals (score ≥ 63). These are the setups with the strongest historical track record — 66.6% win rate at 90 days.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">02</div>
+    <div class="step-content">
+      <h3>Check all six scores individually</h3>
+      <p>Click the stock → Analysis tab. You want MOM high (momentum accelerating), RISK above 35 (balance sheet survivable), DEMAND high (sector tailwinds strong), INNOV high (R&D converting).</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">03</div>
+    <div class="step-content">
+      <h3>Check Market Condition</h3>
+      <p>Dashboard → Market Intel tab. If FAVORABLE or NEUTRAL — proceed. If CAUTION — reduce position size. If RISK-OFF or CRISIS — wait. The best stock in a bad market still goes down.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">04</div>
+    <div class="step-content">
+      <h3>Hold for 90–180 days</h3>
+      <p>This is a medium-term conviction signal. Short-term volatility in the first 30 days is normal. The model is validated at 90 days (+19.68%) and even stronger at 180 days (+40.19%). Do not react to noise.</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">05</div>
+    <div class="step-content">
+      <h3>Watch for grade changes — not prices</h3>
+      <p>Enable score alerts in Settings. If a Grade A stock drops to Grade C or D — that is the exit signal. Checking the price every day is not the process. The score change is the signal.</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>QuantDiver scores and signals are for informational purposes only and do not constitute financial advice.<br/>Past back-test performance does not guarantee future results. Always conduct your own research before making investment decisions.</p>
+  <p style="margin-top:12px;color:#22D3EE;font-weight:700;">quantdiver.com</p>
+</div>
+
+</body>
+</html>

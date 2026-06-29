@@ -179,7 +179,7 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
                 <SortHead col="price">Price</SortHead>
                 <SortHead col="change" className="ss-hide-sm">Change</SortHead>
                 <span className="ss-scores-head">MOM · RISK · TECH</span>
-                <SortHead col="score">Score</SortHead>
+                <SortHead col="score">Grade</SortHead>
               </div>
 
               {sorted.map((stock, i) => {
@@ -220,12 +220,27 @@ export default function SectorSection({ name, icon, tickers, session, accent = "
                       <MiniScore label="TECH" value={sc?.techValue}  invert={false} />
                     </div>
 
-                    <span
-                      className="ss-composite"
-                      style={{ color: comp >= 0 ? scoreColor(comp) : "#2d4a5f" }}
-                    >
-                      {comp >= 0 ? Math.round(comp) : "—"}
-                    </span>
+                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 3 }}>
+                      {(() => {
+                        const sig = sc?.signal ?? null;
+                        const grade = sig != null ? (sig >= 63 ? "A" : sig >= 48 ? "B" : sig >= 35 ? "C" : "D") : null;
+                        const gradeColor = { A: "#00dc82", B: "#22D3EE", C: "#f59e0b", D: "#ff3c50" };
+                        return grade ? (
+                          <span style={{
+                            fontFamily: "'Space Mono',monospace", fontSize: ".65rem", fontWeight: 700,
+                            color: gradeColor[grade], background: gradeColor[grade] + "15",
+                            border: `1px solid ${gradeColor[grade]}40`,
+                            borderRadius: 4, padding: "1px 6px", letterSpacing: ".06em",
+                          }}>{grade}</span>
+                        ) : null;
+                      })()}
+                      <span
+                        className="ss-composite"
+                        style={{ color: comp >= 0 ? scoreColor(comp) : "#2d4a5f" }}
+                      >
+                        {comp >= 0 ? Math.round(comp) : "—"}
+                      </span>
+                    </div>
                   </div>
                 );
               })}
