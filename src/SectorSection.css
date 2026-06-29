@@ -105,9 +105,9 @@
 
 .ss-col-heads {
   display: grid;
-  grid-template-columns: 36px 130px 90px 80px 1fr 48px;
-  gap: 0 12px;
-  padding: 8px 22px;
+  grid-template-columns: 36px 150px 100px 90px 1fr 56px;
+  gap: 0 16px;
+  padding: 10px 24px;
   font-size: .62rem;
   font-weight: 700;
   letter-spacing: .14em;
@@ -128,10 +128,10 @@
 /* ── Rows ───────────────────────────────────────────────────── */
 .ss-row {
   display: grid;
-  grid-template-columns: 36px 130px 90px 80px 1fr 48px;
-  gap: 0 12px;
+  grid-template-columns: 36px 150px 100px 90px 1fr 56px;
+  gap: 0 16px;
   align-items: center;
-  padding: 12px 22px;
+  padding: 14px 24px;
   cursor: pointer;
   border-bottom: 1px solid rgba(255,255,255,.03);
   transition: background .15s;
@@ -180,7 +180,7 @@
 
 .ss-price {
   font-family: 'Space Mono', monospace;
-  font-size: .85rem;
+  font-size: .9rem;
   color: #8fa0c4;
 }
 
@@ -208,20 +208,20 @@
 
 .ss-mini-label {
   font-family: 'Space Mono', monospace;
-  font-size: .58rem;
-  letter-spacing: .08em;
-  color: #2d4a5f;
-  width: 28px;
+  font-size: .65rem;
+  letter-spacing: .06em;
+  color: #4a6a88;
+  width: 34px;
   flex-shrink: 0;
 }
 
 .ss-mini-track {
   flex: 1;
-  height: 4px;
-  background: rgba(255,255,255,.05);
-  border-radius: 2px;
+  height: 6px;
+  background: rgba(255,255,255,.06);
+  border-radius: 3px;
   overflow: hidden;
-  min-width: 28px;
+  min-width: 36px;
 }
 
 .ss-mini-fill {
