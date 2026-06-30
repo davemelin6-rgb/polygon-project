@@ -45,14 +45,20 @@ export default function TradePlanner({ session }) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // Load grade A stocks from DB — wait for session
+  // Load grade A stocks via REST API using session token
   useEffect(() => {
     if (!session?.access_token) return;
-    supabase.from("scores").select("symbol, signal, momentum, risk").gte("signal", 63)
-      .order("signal", { ascending: false }).limit(50)
-      .then(({ data, error }) => {
-        if (!error) setGradeAStocks(data || []);
-      });
+    const SUPABASE_URL = "https://ksgodgqwtfpwazmxbdrk.supabase.co";
+    const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZ29kZ3F3dGZwd2F6bXhiZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MzIxNTEsImV4cCI6MjA5NTEwODE1MX0.pqta512IgXbxffptl9dqUEtNhoE2UyePBCiG1NmWtNg";
+    fetch(`${SUPABASE_URL}/rest/v1/scores?select=symbol,signal,momentum,risk&signal=gte.63&order=signal.desc&limit=60`, {
+      headers: {
+        "apikey": ANON_KEY,
+        "Authorization": `Bearer ${session.access_token}`,
+      }
+    })
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setGradeAStocks(data); })
+      .catch(() => {});
   }, [session]);
 
   // Load benchmarks independently
