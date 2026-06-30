@@ -52,21 +52,30 @@ export default function TradePlanner({ session }) {
       .then(({ data }) => setGradeAStocks(data || []));
   }, []);
 
-  // Load prices for grade A stocks + benchmarks
+  // Load benchmarks independently
+  useEffect(() => {
+    if (!session?.access_token) return;
+    const headers = { Authorization: `Bearer ${session.access_token}` };
+    fetch(`/api/stocks?tickers=${BENCHMARKS.join(",")}`, { headers })
+      .then(r => r.json())
+      .then(d => {
+        const benchMap = {};
+        for (const s of d.data || []) benchMap[s.symbol] = s;
+        setBenchmarks(benchMap);
+      }).catch(() => {});
+  }, [session]);
+
+  // Load prices for grade A stocks
   useEffect(() => {
     if (!gradeAStocks.length || !session?.access_token) return;
-    const tickers = [...gradeAStocks.map(s => s.symbol), ...BENCHMARKS].join(",");
+    const tickers = gradeAStocks.map(s => s.symbol).join(",");
     const headers = { Authorization: `Bearer ${session.access_token}` };
     fetch(`/api/stocks?tickers=${encodeURIComponent(tickers)}`, { headers })
       .then(r => r.json())
       .then(d => {
-        const priceMap = {}, benchMap = {};
-        for (const s of d.data || []) {
-          if (BENCHMARKS.includes(s.symbol)) benchMap[s.symbol] = s;
-          else priceMap[s.symbol] = s;
-        }
+        const priceMap = {};
+        for (const s of d.data || []) priceMap[s.symbol] = s;
         setPrices(priceMap);
-        setBenchmarks(benchMap);
         setLoading(false);
       }).catch(() => setLoading(false));
   }, [gradeAStocks, session]);
