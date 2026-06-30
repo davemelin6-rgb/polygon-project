@@ -23,6 +23,7 @@ import MarketRegime      from "./MarketRegime.jsx";
 import SectorRiskPanel      from "./SectorRiskPanel.jsx";
 import HowItWorks           from "./HowItWorks.jsx";
 import GradePortfolioPanel  from "./GradePortfolioPanel.jsx";
+import TradePlanner         from "./TradePlanner.jsx";
 import Crypto            from "./Crypto.jsx";
 import Guide             from "./Guide.jsx";
 
@@ -898,7 +899,8 @@ export default function App({ session, onLogout, onAdmin }) {
       {/* ── Navigation tabs ── */}
       <div className="app-tabs">
         {[
-          { id: "dashboard",  label: "Dashboard",     icon: "📊" },
+          { id: "dashboard",    label: "Dashboard",     icon: "📊" },
+          { id: "tradeplanner", label: "Trade Planner", icon: "🎯" },
           { id: "portfolio",  label: "My Portfolio",  icon: "💼" },
           { id: "community",  label: "Community",     icon: "💬" },
           { id: "brief",      label: "Daily Brief",   icon: "☀️" },
@@ -915,6 +917,9 @@ export default function App({ session, onLogout, onAdmin }) {
           </button>
         ))}
       </div>
+
+      {/* ── Trade Planner tab ── */}
+      {activeTab === "tradeplanner" && <TradePlanner session={session} />}
 
       {/* ── Portfolio tab ── */}
       {activeTab === "portfolio" && <Portfolio session={session} />}
