@@ -146,23 +146,23 @@ export default function HowItWorks({ onClose }) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: 14, marginBottom: 56 }}>
           {SCORES.map(s => (
             <div key={s.key} style={{ background: "#080E1C", border: `1px solid rgba(90,130,200,.1)`, borderLeft: `3px solid ${s.color}`, borderRadius: 14, padding: "20px" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
-                <span style={{ fontSize: "1.2rem" }}>{s.icon}</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 12 }}>
+                <span style={{ fontSize: "1.4rem" }}>{s.icon}</span>
                 <div>
-                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 700, fontSize: ".9rem", color: "#EDF2FF" }}>{s.key}</div>
-                  <div style={{ fontSize: ".72rem", color: s.color, fontWeight: 600 }}>{s.tagline}</div>
+                  <div style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, fontSize: "1rem", color: "#EDF2FF" }}>{s.key}</div>
+                  <div style={{ fontSize: ".8rem", color: s.color, fontWeight: 700 }}>{s.tagline}</div>
                 </div>
               </div>
-              <p style={{ fontSize: ".8rem", color: "#8A9EC0", lineHeight: 1.65, margin: "0 0 14px" }}>{s.desc}</p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              <p style={{ fontSize: ".86rem", color: "#aabcd4", lineHeight: 1.7, margin: "0 0 16px" }}>{s.desc}</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {s.components.map(c => (
                   <div key={c.label}>
-                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 3 }}>
-                      <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".65rem", color: "#EDF2FF", fontWeight: 600 }}>{c.label}</span>
-                      <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".65rem", fontWeight: 700, color: s.color }}>{c.weight}%</span>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 5 }}>
+                      <span style={{ fontFamily: "Arial, sans-serif", fontSize: ".82rem", color: "#c8d8e8", fontWeight: 600 }}>{c.label}</span>
+                      <span style={{ fontFamily: "Arial, sans-serif", fontSize: ".82rem", fontWeight: 800, color: s.color }}>{c.weight}%</span>
                     </div>
-                    <div style={{ height: 3, background: "rgba(255,255,255,.05)", borderRadius: 2, overflow: "hidden" }}>
-                      <div style={{ width: `${c.weight * 2.5}%`, height: "100%", background: s.color, borderRadius: 2, opacity: .7 }} />
+                    <div style={{ height: 5, background: "rgba(255,255,255,.06)", borderRadius: 3, overflow: "hidden" }}>
+                      <div style={{ width: `${c.weight * 2.5}%`, height: "100%", background: s.color, borderRadius: 3, opacity: .8 }} />
                     </div>
                   </div>
                 ))}
