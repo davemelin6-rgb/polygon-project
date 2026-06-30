@@ -45,12 +45,15 @@ export default function TradePlanner({ session }) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // Load grade A stocks from DB
+  // Load grade A stocks from DB — wait for session
   useEffect(() => {
+    if (!session?.access_token) return;
     supabase.from("scores").select("symbol, signal, momentum, risk").gte("signal", 63)
       .order("signal", { ascending: false }).limit(50)
-      .then(({ data }) => setGradeAStocks(data || []));
-  }, []);
+      .then(({ data, error }) => {
+        if (!error) setGradeAStocks(data || []);
+      });
+  }, [session]);
 
   // Load benchmarks independently
   useEffect(() => {
