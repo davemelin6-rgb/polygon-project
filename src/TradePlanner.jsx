@@ -3,6 +3,8 @@ import { supabase } from "./supabaseClient";
 
 const BENCHMARKS = ["SPY", "QQQ", "IXIC"];
 
+const ALL_TICKERS = "NVDA,AMD,META,MSFT,GOOGL,AMZN,PLTR,IBM,AI,SOUN,SMCI,ORCL,CRM,NOW,SNOW,MDB,DDOG,NET,PATH,BBAI,UPST,ANET,CRWD,ZS,AVGO,MRVL,QCOM,TSM,IONQ,RGTI,QUBT,QBTS,ARQQ,HON,INTC,LMT,RTX,NOC,GD,BA,HII,LHX,KTOS,AXON,AVAV,RKLB,ASTS,IRDM,BAH,LLY,NVO,ABBV,BMY,AMGN,GILD,BIIB,REGN,VRTX,MRNA,ALNY,CRSP,EDIT,BEAM,ISRG,DXCM,ILMN,MDT,ABT,SYK,MU,ASML,TXN,AMAT,LRCX,KLAC,ADI,NXPI,ON,MPWR,WOLF,AMBA";
+
 function scoreColor(v) {
   if (v == null) return "#2d4a5f";
   return v >= 65 ? "#00dc82" : v >= 40 ? "#f59e0b" : "#ff3c50";
@@ -45,49 +47,33 @@ export default function TradePlanner({ session }) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // Load grade A stocks via REST API using session token
-  useEffect(() => {
-    if (!session?.access_token) return;
-    const SUPABASE_URL = "https://ksgodgqwtfpwazmxbdrk.supabase.co";
-    const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZ29kZ3F3dGZwd2F6bXhiZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MzIxNTEsImV4cCI6MjA5NTEwODE1MX0.pqta512IgXbxffptl9dqUEtNhoE2UyePBCiG1NmWtNg";
-    fetch(`${SUPABASE_URL}/rest/v1/scores?select=symbol,signal,momentum,risk&signal=gte.63&order=signal.desc&limit=60`, {
-      headers: {
-        "apikey": ANON_KEY,
-        "Authorization": `Bearer ${session.access_token}`,
-      }
-    })
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setGradeAStocks(data); })
-      .catch(() => {});
-  }, [session]);
-
-  // Load benchmarks independently
+  // Load ALL scores + prices in one shot via /api/scores
   useEffect(() => {
     if (!session?.access_token) return;
     const headers = { Authorization: `Bearer ${session.access_token}` };
-    fetch(`/api/stocks?tickers=${BENCHMARKS.join(",")}`, { headers })
+
+    // Fetch scores for all tickers
+    fetch(`/api/scores?tickers=${encodeURIComponent(ALL_TICKERS)}`, { headers })
       .then(r => r.json())
       .then(d => {
-        const benchMap = {};
-        for (const s of d.data || []) benchMap[s.symbol] = s;
-        setBenchmarks(benchMap);
+        const gradeA = (d.scores || []).filter(s => (s.signal ?? 0) >= 63);
+        setGradeAStocks(gradeA);
       }).catch(() => {});
-  }, [session]);
 
-  // Load prices for grade A stocks
-  useEffect(() => {
-    if (!gradeAStocks.length || !session?.access_token) return;
-    const tickers = gradeAStocks.map(s => s.symbol).join(",");
-    const headers = { Authorization: `Bearer ${session.access_token}` };
-    fetch(`/api/stocks?tickers=${encodeURIComponent(tickers)}`, { headers })
+    // Fetch prices for all tickers + benchmarks
+    fetch(`/api/stocks?tickers=${encodeURIComponent(ALL_TICKERS + "," + BENCHMARKS.join(","))}`, { headers })
       .then(r => r.json())
       .then(d => {
-        const priceMap = {};
-        for (const s of d.data || []) priceMap[s.symbol] = s;
+        const priceMap = {}, benchMap = {};
+        for (const s of d.data || []) {
+          if (BENCHMARKS.includes(s.symbol)) benchMap[s.symbol] = s;
+          else priceMap[s.symbol] = s;
+        }
         setPrices(priceMap);
+        setBenchmarks(benchMap);
         setLoading(false);
       }).catch(() => setLoading(false));
-  }, [gradeAStocks, session]);
+  }, [session]);
 
   // Load news for top grade A tickers
   useEffect(() => {
