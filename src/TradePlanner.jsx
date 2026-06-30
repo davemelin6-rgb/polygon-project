@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "./supabaseClient";
 
-const BENCHMARKS = ["SPY", "QQQ", "IXIC"];
+const BENCHMARKS = ["SPY", "QQQ", "XLK"]; // SPY=S&P500, QQQ=Nasdaq100, XLK=Tech ETF
 
 const ALL_TICKERS = "NVDA,AMD,META,MSFT,GOOGL,AMZN,PLTR,IBM,AI,SOUN,SMCI,ORCL,CRM,NOW,SNOW,MDB,DDOG,NET,PATH,BBAI,UPST,ANET,CRWD,ZS,AVGO,MRVL,QCOM,TSM,IONQ,RGTI,QUBT,QBTS,ARQQ,HON,INTC,LMT,RTX,NOC,GD,BA,HII,LHX,KTOS,AXON,AVAV,RKLB,ASTS,IRDM,BAH,LLY,NVO,ABBV,BMY,AMGN,GILD,BIIB,REGN,VRTX,MRNA,ALNY,CRSP,EDIT,BEAM,ISRG,DXCM,ILMN,MDT,ABT,SYK,MU,ASML,TXN,AMAT,LRCX,KLAC,ADI,NXPI,ON,MPWR,WOLF,AMBA";
 
@@ -37,6 +37,7 @@ const COMPANY_NAMES = {
 };
 
 export default function TradePlanner({ session }) {
+  const [allScores,    setAllScores]       = useState([]);
   const [gradeAStocks, setGradeAStocks]   = useState([]);
   const [prices,       setPrices]          = useState({});
   const [benchmarks,   setBenchmarks]      = useState({});
@@ -56,8 +57,9 @@ export default function TradePlanner({ session }) {
     fetch(`/api/scores?tickers=${encodeURIComponent(ALL_TICKERS)}`, { headers })
       .then(r => r.json())
       .then(d => {
-        const gradeA = (d.scores || []).filter(s => (s.signal ?? 0) >= 63);
-        setGradeAStocks(gradeA);
+        const scores = d.scores || [];
+        setAllScores(scores);
+        setGradeAStocks(scores.filter(s => (s.signal ?? 0) >= 63));
       }).catch(() => {});
 
     // Fetch prices for all tickers + benchmarks
@@ -104,15 +106,17 @@ export default function TradePlanner({ session }) {
     setTimeout(() => setPlanSaved(false), 2000);
   }, [session, today]);
 
-  // Compute alpha index return
-  const alphaReturns = gradeAStocks
-    .map(s => prices[s.symbol]?.changePercent)
-    .filter(v => v != null);
-  const alphaReturn = alphaReturns.length
-    ? alphaReturns.reduce((a, b) => a + b, 0) / alphaReturns.length
-    : null;
+  // Compute returns per grade
+  const avgReturn = (stocks) => {
+    const vals = stocks.map(s => prices[s.symbol]?.changePercent).filter(v => v != null);
+    return vals.length ? Math.round(vals.reduce((a,b)=>a+b,0)/vals.length*100)/100 : null;
+  };
 
-  // Sort movers
+  const gradeAReturn = avgReturn(gradeAStocks);
+  const allStocksWithSignal = Object.entries(prices)
+    .map(([sym, p]) => ({ symbol: sym, changePercent: p.changePercent }));
+
+  // Sort movers from Grade A
   const withPrices = gradeAStocks.filter(s => prices[s.symbol]?.changePercent != null)
     .map(s => ({ ...s, ...prices[s.symbol] }))
     .sort((a, b) => (b.changePercent ?? 0) - (a.changePercent ?? 0));
@@ -129,40 +133,49 @@ export default function TradePlanner({ session }) {
         <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#3d5c78", marginBottom: 16 }}>
           Alpha Index · Today vs Benchmarks
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
-          {/* Alpha Index */}
-          <div style={{ background: "rgba(0,220,130,.06)", border: "1px solid rgba(0,220,130,.2)", borderRadius: 12, padding: "16px" }}>
-            <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: ".12em", textTransform: "uppercase", color: "#00dc82", marginBottom: 6 }}>
-              ⚡ Grade A Portfolio
-            </div>
-            <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: pctColor(alphaReturn), lineHeight: 1 }}>
-              {alphaReturn != null ? `${alphaReturn >= 0 ? "+" : ""}${alphaReturn.toFixed(2)}%` : "—"}
-            </div>
-            <div style={{ fontSize: ".7rem", color: "#3d5c78", marginTop: 4 }}>{gradeAStocks.length} Grade A stocks · avg today</div>
-          </div>
-
-          {/* Benchmarks */}
+        {/* Benchmarks row */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 10, marginBottom: 12 }}>
           {[
-            { key: "SPY",  name: "S&P 500",     color: "#22D3EE" },
-            { key: "QQQ",  name: "Nasdaq 100",  color: "#a78bfa" },
-            { key: "IXIC", name: "Nasdaq",      color: "#f59e0b" },
+            { key: "SPY", name: "S&P 500",    color: "#22D3EE" },
+            { key: "QQQ", name: "Nasdaq 100", color: "#a78bfa" },
+            { key: "XLK", name: "Tech ETF",   color: "#f59e0b" },
           ].map(b => {
             const bData = benchmarks[b.key];
-            const diff  = alphaReturn != null && bData?.changePercent != null
-              ? alphaReturn - bData.changePercent : null;
             return (
-              <div key={b.key} style={{ background: "rgba(255,255,255,.025)", border: `1px solid ${b.color}20`, borderRadius: 12, padding: "16px" }}>
-                <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: b.color, marginBottom: 6 }}>
-                  {b.name}
+              <div key={b.key} style={{ background: "rgba(255,255,255,.025)", border: `1px solid ${b.color}20`, borderRadius: 12, padding: "14px 16px" }}>
+                <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: b.color, marginBottom: 6 }}>{b.name}</div>
+                <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.6rem", fontWeight: 700, color: pctColor(bData?.changePercent), lineHeight: 1 }}>
+                  {bData?.changePercent != null ? `${bData.changePercent >= 0 ? "+" : ""}${bData.changePercent.toFixed(2)}%` : "…"}
                 </div>
-                <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.8rem", fontWeight: 700, color: pctColor(bData?.changePercent), lineHeight: 1 }}>
-                  {bData?.changePercent != null ? `${bData.changePercent >= 0 ? "+" : ""}${bData.changePercent.toFixed(2)}%` : loading ? "…" : "—"}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* All grades vs benchmarks */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 10 }}>
+          {[
+            { label: "Grade A", min: 63,  max: 101, color: "#00dc82" },
+            { label: "Grade B", min: 48,  max: 63,  color: "#22D3EE" },
+            { label: "Grade C", min: 35,  max: 48,  color: "#f59e0b" },
+            { label: "Grade D", min: 0,   max: 35,  color: "#ff3c50" },
+          ].map(g => {
+            const stocks = allScores.filter(s => (s.signal ?? 0) >= g.min && (s.signal ?? 0) < g.max);
+            const ret = avgReturn(stocks);
+            const spy = benchmarks["SPY"]?.changePercent;
+            const alpha = ret != null && spy != null ? Math.round((ret - spy) * 100) / 100 : null;
+            return (
+              <div key={g.label} style={{ background: g.color + "08", border: `1px solid ${g.color}25`, borderRadius: 12, padding: "14px 16px" }}>
+                <div style={{ fontSize: ".65rem", fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: g.color, marginBottom: 6 }}>{g.label}</div>
+                <div style={{ fontFamily: "'Space Mono',monospace", fontSize: "1.4rem", fontWeight: 700, color: pctColor(ret), lineHeight: 1 }}>
+                  {ret != null ? `${ret >= 0 ? "+" : ""}${ret.toFixed(2)}%` : (loading ? "…" : "—")}
                 </div>
-                {diff != null && (
-                  <div style={{ fontSize: ".72rem", fontWeight: 700, color: diff >= 0 ? "#00dc82" : "#ff3c50", marginTop: 4 }}>
-                    Alpha: {diff >= 0 ? "+" : ""}{diff.toFixed(2)}%
+                {alpha != null && (
+                  <div style={{ fontSize: ".7rem", fontWeight: 700, color: alpha >= 0 ? "#00dc82" : "#ff3c50", marginTop: 4 }}>
+                    vs SPY: {alpha >= 0 ? "+" : ""}{alpha}%
                   </div>
                 )}
+                <div style={{ fontSize: ".65rem", color: "#3d5c78", marginTop: 4 }}>{stocks.length} stocks</div>
               </div>
             );
           })}
