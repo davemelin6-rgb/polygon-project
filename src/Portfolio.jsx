@@ -33,6 +33,7 @@ export default function Portfolio({ session }) {
   const [portfolioTickers, setPortfolioTickers] = useState([]);
   const [input,   setInput]   = useState("");
   const [scores,  setScores]  = useState({});
+  const [prices,  setPrices]  = useState({});
   const [loading, setLoading] = useState(false);
   const [saving,  setSaving]  = useState(false);
 
@@ -57,11 +58,17 @@ export default function Portfolio({ session }) {
     setLoading(true);
     const headers = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
     try {
-      const res = await fetch(`/api/scores?tickers=${encodeURIComponent(portfolioTickers.join(","))}`, { headers });
-      const json = await res.json();
+      const [scoresRes, pricesRes] = await Promise.all([
+        fetch(`/api/scores?tickers=${encodeURIComponent(portfolioTickers.join(","))}`, { headers }),
+        fetch(`/api/stocks?tickers=${encodeURIComponent(portfolioTickers.join(","))}`, { headers }),
+      ]);
+      const [scoresJson, pricesJson] = await Promise.all([scoresRes.json(), pricesRes.json()]);
       const map = {};
-      for (const s of json.scores || []) map[s.symbol] = s;
+      for (const s of scoresJson.scores || []) map[s.symbol] = s;
+      const priceMap = {};
+      for (const s of pricesJson.data || []) priceMap[s.symbol] = s;
       setScores(map);
+      setPrices(priceMap);
     } catch {}
     setLoading(false);
   }, [portfolioTickers, session]);
@@ -225,8 +232,14 @@ export default function Portfolio({ session }) {
                     const sig = sc?.signal ?? null;
                     const c   = scoreColor(sig);
                     return (
-                      <div key={t} style={{ display: "grid", gridTemplateColumns: "80px 1fr 48px 48px 48px 56px", alignItems: "center", gap: "0.75rem", padding: "0.65rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.02)" }}>
+                      <div key={t} style={{ display: "grid", gridTemplateColumns: "80px 80px 60px 1fr 48px 48px 48px 56px", alignItems: "center", gap: "0.75rem", padding: "0.65rem 0.75rem", borderRadius: 8, background: "rgba(255,255,255,0.02)" }}>
                         <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".85rem", fontWeight: 700, color: "#5a7a9a" }}>{t}</span>
+                        <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".82rem", fontWeight: 700, color: "#dce8f4" }}>
+                          {prices[t]?.price ? `$${Number(prices[t].price).toFixed(2)}` : "—"}
+                        </span>
+                        <span style={{ fontFamily: "'Space Mono',monospace", fontSize: ".75rem", fontWeight: 700, color: prices[t]?.changePercent >= 0 ? "#00dc82" : "#ff3c50" }}>
+                          {prices[t]?.changePercent != null ? `${prices[t].changePercent >= 0 ? "+" : ""}${prices[t].changePercent.toFixed(2)}%` : "—"}
+                        </span>
                         <div style={{ height: 4, background: "rgba(255,255,255,0.04)", borderRadius: 99, overflow: "hidden" }}>
                           <div style={{ height: "100%", borderRadius: 99, background: c, width: sig != null ? `${sig}%` : "0%" }} />
                         </div>
@@ -239,7 +252,7 @@ export default function Portfolio({ session }) {
                   })}
                 </div>
                 <div style={{ display: "flex", gap: "1.5rem", marginTop: "0.5rem", paddingLeft: "0.75rem" }}>
-                  {[["MOM","#00dc82"],["RISK","#f59e0b"],["TECH","#8b5cf6"],["SIG","#00b4ff"]].map(([l,c]) => (
+                  {[["PRICE","#dce8f4"],["CHG%","#3d5c78"],["","#000"],["MOM","#00dc82"],["RISK","#f59e0b"],["TECH","#8b5cf6"],["SIG","#00b4ff"]].map(([l,c]) => (
                     <span key={l} style={{ fontSize: ".62rem", color: c, fontWeight: 700, letterSpacing: ".1em" }}>{l}</span>
                   ))}
                 </div>
