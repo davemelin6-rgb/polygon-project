@@ -97,7 +97,7 @@ const RESPONSES = [
 
   // Subscription / pricing
   { keywords: ["price", "cost", "subscription", "how much", "free", "trial", "pay", "upgrade", "plan"],
-    reply: "There's a 14-day free trial — full access, no credit card required during trial. After that, a subscription keeps you in the game. Contact support if you have questions about plans. The scores don't come cheap to build — but they're cheaper than a bad trade. 💳" },
+    reply: "There's a 90-day free trial — full access, no credit card required during trial. After that, a subscription keeps you in the game. Contact support if you have questions about plans. The scores don't come cheap to build — but they're cheaper than a bad trade. 💳" },
 
   // Settings
   { keywords: ["settings", "profile", "avatar", "theme", "color", "dark mode", "customize"],

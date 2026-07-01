@@ -277,7 +277,7 @@ function HomePage({ go, onEnterApp }) {
           {/* CTA */}
           <div style={{ textAlign: "center", background: "rgba(0,180,255,.05)", border: "1px solid rgba(0,180,255,.18)", borderRadius: 16, padding: "40px 32px" }}>
             <div style={{ fontFamily: ff.display, fontSize: "clamp(1.5rem,2.5vw,2rem)", fontWeight: 800, color: T.ink, marginBottom: 12 }}>
-              14 days free. No credit card.
+              90 days free. No credit card.
             </div>
             <p style={{ fontFamily: ff.body, color: T.sub, fontSize: ".95rem", margin: "0 0 28px" }}>
               Full access to everything above from day one. Cancel anytime.
@@ -489,9 +489,9 @@ function HomePage({ go, onEnterApp }) {
       {/* PRICING */}
       <section id="pricing" style={{ padding: "96px 0 112px" }}>
         <div className="qd-wrap" style={{ maxWidth: 520, textAlign: "center" }}>
-          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>14-day free trial · No card required</div>
+          <div style={{ fontFamily: ff.mono, fontSize: ".68rem", letterSpacing: ".18em", textTransform: "uppercase", color: T.cyan, marginBottom: 14 }}>90-day free trial · No card required</div>
           <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.5rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 12px" }}>
-            Try free for 14 days
+            Try free for 90 days
           </h2>
           <p style={{ fontFamily: ff.body, color: T.sub, fontSize: "1rem", margin: "0 0 40px" }}>
             From 49 SEK / month — cancel anytime
@@ -1104,7 +1104,7 @@ function ScoresPage({ onEnterApp }) {
       <section style={{ padding: "96px 0 112px", textAlign: "center" }}>
         <div className="qd-wrap" style={{ maxWidth: 520, margin: "0 auto" }}>
           <h2 style={{ fontFamily: ff.display, fontSize: "clamp(1.8rem,3vw,2.5rem)", fontWeight: 700, letterSpacing: "-.02em", margin: "0 0 16px" }}>Ready to see the numbers?</h2>
-          <p style={{ fontFamily: ff.body, color: T.sub, fontSize: "1rem", margin: "0 0 32px" }}>14-day free trial — full access, no card required.</p>
+          <p style={{ fontFamily: ff.body, color: T.sub, fontSize: "1rem", margin: "0 0 32px" }}>90-day free trial — full access, no card required.</p>
           <PrimaryBtn onClick={() => onEnterApp("plan")} style={{ padding: "14px 32px", fontSize: "1rem" }}>Start free trial →</PrimaryBtn>
         </div>
       </section>
@@ -1147,7 +1147,7 @@ function PricingPage({ onEnterApp, go }) {
             Two plans.<br />Pick your edge.
           </h1>
           <p style={{ fontFamily: ff.body, fontSize: "1.05rem", color: T.sub, lineHeight: 1.65, margin: 0 }}>
-            Start free for 14 days — no card required. Upgrade or cancel anytime.
+            Start free for 90 days — no card required. Upgrade or cancel anytime.
           </p>
         </div>
       </section>
@@ -1193,7 +1193,7 @@ function PricingPage({ onEnterApp, go }) {
                 Start free trial →
               </button>
               <p style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 12, marginBottom: 0, textAlign: "center" }}>
-                14 days free · then 49 SEK/month
+                90 days free · then 49 SEK/month
               </p>
             </div>
 
@@ -1229,7 +1229,7 @@ function PricingPage({ onEnterApp, go }) {
                 Start free trial — no card needed →
               </PrimaryBtn>
               <p style={{ fontFamily: ff.body, fontSize: ".72rem", color: T.dim, marginTop: 12, marginBottom: 0, textAlign: "center" }}>
-                14 days free · then 99 SEK/month · cancel anytime
+                90 days free · then 99 SEK/month · cancel anytime
               </p>
             </div>
 
@@ -1659,7 +1659,7 @@ function AboutPage({ onEnterApp }) {
           {/* CTA */}
           <div style={{ textAlign: "center", paddingTop: 24 }}>
             <PrimaryBtn onClick={() => onEnterApp("plan")} style={{ fontSize: "1.05rem", padding: "18px 44px" }}>
-              Try QuantDiver free for 14 days →
+              Try QuantDiver free for 90 days →
             </PrimaryBtn>
             <p style={{ fontFamily: ff.body, fontSize: ".8rem", color: T.dim, marginTop: 16 }}>
               No credit card required · Cancel anytime · From 49 SEK/month
@@ -1877,7 +1877,7 @@ function TermsPage() {
           </>)}
 
           {sec("5. Subscription and payment", <>
-            <p>QuantDiver offers a 14-day free trial with full access. After the trial period, continued access requires a paid subscription at the then-current price (currently 99 SEK/month).</p>
+            <p>QuantDiver offers a 90-day free trial with full access. After the trial period, continued access requires a paid subscription at the then-current price (currently 99 SEK/month).</p>
             <p style={{ marginTop: 10 }}>Subscriptions are billed monthly. You may cancel at any time; cancellation takes effect at the end of the current billing period. We do not offer refunds for partial months.</p>
           </>)}
 
