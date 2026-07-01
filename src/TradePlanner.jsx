@@ -63,19 +63,21 @@ export default function TradePlanner({ session }) {
         setGradeAStocks(data.filter(s => (s.signal ?? 0) >= 63));
       }).catch(() => {});
 
-    // 2. Get prices for ALL scored stocks (fetched after we know what's in DB)
+    // 2. Get prices in batches of 30 to avoid timeout
     fetch(`/api/scores-summary`, { headers: stockHeaders })
       .then(r => r.json())
-      .then(d => {
-        const tickers = (d.scores || []).map(s => s.symbol).join(",");
-        if (!tickers) return;
-        return fetch(`/api/stocks?tickers=${encodeURIComponent(tickers)}`, { headers: stockHeaders });
-      })
-      .then(r => r?.json())
-      .then(d => {
-        if (!d) return;
+      .then(async d => {
+        const syms = (d.scores || []).map(s => s.symbol);
+        const BATCH = 30;
         const priceMap = {};
-        for (const s of d.data || []) priceMap[s.symbol] = s;
+        for (let i = 0; i < syms.length; i += BATCH) {
+          const chunk = syms.slice(i, i + BATCH).join(",");
+          try {
+            const r = await fetch(`/api/stocks?tickers=${encodeURIComponent(chunk)}`, { headers: stockHeaders });
+            const data = await r.json();
+            for (const s of data.data || []) priceMap[s.symbol] = s;
+          } catch {}
+        }
         setPrices(priceMap);
         setLoading(false);
       }).catch(() => setLoading(false));
