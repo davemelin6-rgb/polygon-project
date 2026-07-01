@@ -1,4 +1,4 @@
-// In-app How It Works page — shown when logged in users click "How It Works"
+// In-app How It Works page — combines scores reference + Guide (5-step method)
 const SCORES = [
   {
     key: "MOMENTUM", icon: "🚀", color: "#22D3EE",
@@ -87,6 +87,8 @@ function scoreColor(v) {
   if (v == null) return "#2d4a5f";
   return v >= 65 ? "#00dc82" : v >= 40 ? "#f59e0b" : "#ff3c50";
 }
+
+import Guide from "./Guide.jsx";
 
 export default function HowItWorks({ onClose }) {
   return (
@@ -203,6 +205,11 @@ export default function HowItWorks({ onClose }) {
           <p style={{ fontSize: ".85rem", color: "#8A9EC0", lineHeight: 1.65, margin: 0, flex: 1, minWidth: 200 }}>
             Grade A stocks outperformed the S&P 500 by +12.69% in the same time windows. t-statistic of 8.23 means the probability this is random is essentially zero.
           </p>
+        </div>
+
+        {/* Guide — 5-step method */}
+        <div style={{ marginTop: 48, paddingTop: 48, borderTop: "1px solid rgba(255,255,255,.07)" }}>
+          <Guide />
         </div>
 
       </div>
