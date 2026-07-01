@@ -1,7 +1,16 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "./supabaseClient";
 
-const BENCHMARKS = ["SPY", "QQQ", "XLK"]; // SPY=S&P500, QQQ=Nasdaq100, XLK=Tech ETF
+const BENCHMARKS = ["SPY", "QQQ", "XLK"];
+
+const SECTOR_TICKERS = {
+  ALL:           null,
+  AI:            new Set(["NVDA","AMD","META","MSFT","GOOGL","AMZN","PLTR","IBM","AI","SOUN","SMCI","ORCL","CRM","NOW","SNOW","MDB","DDOG","NET","PATH","BBAI","UPST","ANET","CRWD","ZS","AVGO","MRVL","QCOM","TSM"]),
+  Quantum:       new Set(["IONQ","RGTI","QUBT","QBTS","ARQQ","HON","INTC","ONTO","MKSI","IBM","GOOGL","MSFT"]),
+  Defence:       new Set(["LMT","RTX","NOC","GD","BA","HII","LHX","TXT","KTOS","AXON","AVAV","CACI","LDOS","SAIC","BWXT","DRS","RKLB","ASTS","IRDM","VSAT","BAH"]),
+  Biotech:       new Set(["LLY","NVO","ABBV","BMY","AMGN","GILD","BIIB","REGN","VRTX","MRNA","ALNY","INCY","EXEL","ALKS","ACAD","AXSM","RARE","CRSP","EDIT","BEAM","NTLA","ISRG","DXCM","ILMN","MDT","ABT","SYK","HOLX"]),
+  Semiconductors:new Set(["NVDA","TSM","AVGO","AMD","QCOM","INTC","MU","ASML","TXN","AMAT","LRCX","KLAC","TER","ACLS","ENTG","ADI","NXPI","ON","MPWR","SWKS","WOLF","SLAB","CRUS","AMBA","PI","FORM"]),
+};
 
 const ALL_TICKERS = "NVDA,AMD,META,MSFT,GOOGL,AMZN,PLTR,IBM,AI,SOUN,SMCI,ORCL,CRM,NOW,SNOW,MDB,DDOG,NET,PATH,BBAI,UPST,ANET,CRWD,ZS,AVGO,MRVL,QCOM,TSM,IONQ,RGTI,QUBT,QBTS,ARQQ,HON,INTC,LMT,RTX,NOC,GD,BA,HII,LHX,KTOS,AXON,AVAV,RKLB,ASTS,IRDM,BAH,LLY,NVO,ABBV,BMY,AMGN,GILD,BIIB,REGN,VRTX,MRNA,ALNY,CRSP,EDIT,BEAM,ISRG,DXCM,ILMN,MDT,ABT,SYK,MU,ASML,TXN,AMAT,LRCX,KLAC,ADI,NXPI,ON,MPWR,WOLF,AMBA";
 
@@ -40,6 +49,7 @@ export default function TradePlanner({ session }) {
   const [allScores,     setAllScores]      = useState([]);
   const [gradeAStocks,  setGradeAStocks]  = useState([]);
   const [moverGrade,    setMoverGrade]    = useState("A");
+  const [moverSector,   setMoverSector]  = useState("ALL");
   const [prices,       setPrices]          = useState({});
   const [benchmarks,   setBenchmarks]      = useState({});
   const [news,         setNews]            = useState([]);
@@ -136,10 +146,13 @@ export default function TradePlanner({ session }) {
   const GRADE_RANGES = { A: [63,101], B: [48,63], C: [35,48], D: [0,35] };
   const GRADE_COLORS = { A: "#00dc82", B: "#22D3EE", C: "#f59e0b", D: "#ff3c50" };
 
-  // Movers for selected grade
+  // Movers for selected grade + sector
   const moverStocks = allScores.filter(s => {
     const [min, max] = GRADE_RANGES[moverGrade];
-    return (s.signal ?? 0) >= min && (s.signal ?? 0) < max;
+    const gradeOk = (s.signal ?? 0) >= min && (s.signal ?? 0) < max;
+    const sectorSet = SECTOR_TICKERS[moverSector];
+    const sectorOk = !sectorSet || sectorSet.has(s.symbol);
+    return gradeOk && sectorOk;
   });
   const withPrices = moverStocks.filter(s => prices[s.symbol]?.changePercent != null)
     .map(s => ({ ...s, ...prices[s.symbol] }))
@@ -213,16 +226,30 @@ export default function TradePlanner({ session }) {
           <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#3d5c78" }}>
             Today's Movers
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontSize: ".68rem", fontWeight: 700, color: "#3d5c78", letterSpacing: ".1em", textTransform: "uppercase" }}>Grade</span>
-            {["A","B","C","D"].map(g => (
-              <button key={g} onClick={() => setMoverGrade(g)} style={{
-                padding: "4px 12px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
-                fontSize: ".75rem", fontWeight: 700, border: `1px solid ${moverGrade === g ? GRADE_COLORS[g] + "60" : "rgba(255,255,255,.07)"}`,
-                background: moverGrade === g ? GRADE_COLORS[g] + "15" : "rgba(255,255,255,.02)",
-                color: moverGrade === g ? GRADE_COLORS[g] : "#4a6a88",
-              }}>{g}</button>
-            ))}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, alignItems: "flex-end" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: ".68rem", fontWeight: 700, color: "#3d5c78", letterSpacing: ".1em", textTransform: "uppercase" }}>Grade</span>
+              {["A","B","C","D"].map(g => (
+                <button key={g} onClick={() => setMoverGrade(g)} style={{
+                  padding: "4px 12px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+                  fontSize: ".75rem", fontWeight: 700, border: `1px solid ${moverGrade === g ? GRADE_COLORS[g] + "60" : "rgba(255,255,255,.07)"}`,
+                  background: moverGrade === g ? GRADE_COLORS[g] + "15" : "rgba(255,255,255,.02)",
+                  color: moverGrade === g ? GRADE_COLORS[g] : "#4a6a88",
+                }}>{g}</button>
+              ))}
+            </div>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span style={{ fontSize: ".68rem", fontWeight: 700, color: "#3d5c78", letterSpacing: ".1em", textTransform: "uppercase" }}>Sector</span>
+              {["ALL","AI","Quantum","Defence","Biotech","Semiconductors"].map(s => (
+                <button key={s} onClick={() => setMoverSector(s)} style={{
+                  padding: "4px 10px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+                  fontSize: ".72rem", fontWeight: 600,
+                  border: `1px solid ${moverSector === s ? "rgba(0,180,255,.5)" : "rgba(255,255,255,.07)"}`,
+                  background: moverSector === s ? "rgba(0,180,255,.12)" : "rgba(255,255,255,.02)",
+                  color: moverSector === s ? "#00b4ff" : "#4a6a88",
+                }}>{s}</button>
+              ))}
+            </div>
           </div>
         </div>
 
