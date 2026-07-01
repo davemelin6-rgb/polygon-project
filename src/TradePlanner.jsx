@@ -52,22 +52,18 @@ export default function TradePlanner({ session }) {
   useEffect(() => {
     if (!session?.access_token) return;
 
-    const SUPA_URL = "https://ksgodgqwtfpwazmxbdrk.supabase.co";
-    const ANON    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZ29kZ3F3dGZwd2F6bXhiZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MzIxNTEsImV4cCI6MjA5NTEwODE1MX0.pqta512IgXbxffptl9dqUEtNhoE2UyePBCiG1NmWtNg";
-    const authHeaders = { "apikey": ANON, "Authorization": `Bearer ${session.access_token}` };
+    const stockHeaders = { Authorization: `Bearer ${session.access_token}` };
 
-    // 1. Get ALL scores from DB
-    fetch(`${SUPA_URL}/rest/v1/scores?select=symbol,signal,momentum&order=signal.desc&limit=200`, { headers: authHeaders })
+    // 1. Get ALL scores via backend API (service role bypasses RLS)
+    fetch(`/api/scores-summary`, { headers: stockHeaders })
       .then(r => r.json())
-      .then(data => {
-        if (Array.isArray(data)) {
-          setAllScores(data);
-          setGradeAStocks(data.filter(s => (s.signal ?? 0) >= 63));
-        }
+      .then(d => {
+        const data = d.scores || [];
+        setAllScores(data);
+        setGradeAStocks(data.filter(s => (s.signal ?? 0) >= 63));
       }).catch(() => {});
 
-    // 2. Get prices for Grade A tickers + benchmarks separately
-    const stockHeaders = { Authorization: `Bearer ${session.access_token}` };
+    // 2. Get prices
     fetch(`/api/stocks?tickers=${encodeURIComponent(ALL_TICKERS)}`, { headers: stockHeaders })
       .then(r => r.json())
       .then(d => {
