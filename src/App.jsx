@@ -941,9 +941,29 @@ export default function App({ session, onLogout, onAdmin }) {
             </button>
           ))}
         </div>
-        {communityTab === "forum"    && <Forum        session={session} onClose={null} onEnterApp={null} />}
-        {communityTab === "connect"  && <TraderMatch  session={session} dockMode={false} />}
-        {communityTab === "messages" && <Chat         session={session} dockMode={false} />}
+        {communityTab === "forum"    && <Forum session={session} onClose={null} onEnterApp={null} />}
+        {communityTab === "connect"  && (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "64px 24px", textAlign: "center", gap: 24 }}>
+            <div style={{ fontSize: "2.5rem" }}>🤝</div>
+            <h2 style={{ fontFamily: "'Space Grotesk',sans-serif", fontWeight: 800, fontSize: "1.8rem", color: "#EDF2FF", margin: 0 }}>
+              Trader Connect has moved
+            </h2>
+            <p style={{ color: "#8A9EC0", fontSize: ".95rem", lineHeight: 1.75, maxWidth: "36rem", margin: 0 }}>
+              Trader Connect now has its own dedicated platform — <strong style={{ color: "#22D3EE" }}>ConnectQuants</strong>. Free forever. Pick a sector, get matched instantly with another investor, and chat live.
+            </p>
+            <a href="https://www.connectquants.com" target="_blank" rel="noopener noreferrer" style={{
+              display: "inline-block", background: "#22D3EE", border: "none", borderRadius: 12,
+              color: "#04080F", fontFamily: "inherit", fontWeight: 800, fontSize: "1rem",
+              padding: "14px 36px", textDecoration: "none", cursor: "pointer",
+            }}>
+              Go to ConnectQuants.com →
+            </a>
+            <p style={{ fontSize: ".75rem", color: "#3d5c78", margin: 0 }}>
+              Free forever · No credit card · Same login as QuantDiver
+            </p>
+          </div>
+        )}
+        {communityTab === "messages" && <Chat session={session} dockMode={false} />}
       </>}
 
       {/* ── Dashboard tab ── */}
