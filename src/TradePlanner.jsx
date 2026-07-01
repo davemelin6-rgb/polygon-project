@@ -63,10 +63,17 @@ export default function TradePlanner({ session }) {
         setGradeAStocks(data.filter(s => (s.signal ?? 0) >= 63));
       }).catch(() => {});
 
-    // 2. Get prices
-    fetch(`/api/stocks?tickers=${encodeURIComponent(ALL_TICKERS)}`, { headers: stockHeaders })
+    // 2. Get prices for ALL scored stocks (fetched after we know what's in DB)
+    fetch(`/api/scores-summary`, { headers: stockHeaders })
       .then(r => r.json())
       .then(d => {
+        const tickers = (d.scores || []).map(s => s.symbol).join(",");
+        if (!tickers) return;
+        return fetch(`/api/stocks?tickers=${encodeURIComponent(tickers)}`, { headers: stockHeaders });
+      })
+      .then(r => r?.json())
+      .then(d => {
+        if (!d) return;
         const priceMap = {};
         for (const s of d.data || []) priceMap[s.symbol] = s;
         setPrices(priceMap);
