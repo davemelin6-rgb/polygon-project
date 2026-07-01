@@ -48,33 +48,43 @@ export default function TradePlanner({ session }) {
 
   const today = new Date().toISOString().slice(0, 10);
 
-  // Load ALL scores + prices in one shot via /api/scores
+  // Load all scores from DB + prices separately
   useEffect(() => {
     if (!session?.access_token) return;
-    const headers = { Authorization: `Bearer ${session.access_token}` };
 
-    // Fetch scores for all tickers
-    fetch(`/api/scores?tickers=${encodeURIComponent(ALL_TICKERS)}`, { headers })
+    const SUPA_URL = "https://ksgodgqwtfpwazmxbdrk.supabase.co";
+    const ANON    = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzZ29kZ3F3dGZwd2F6bXhiZHJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk1MzIxNTEsImV4cCI6MjA5NTEwODE1MX0.pqta512IgXbxffptl9dqUEtNhoE2UyePBCiG1NmWtNg";
+    const authHeaders = { "apikey": ANON, "Authorization": `Bearer ${session.access_token}` };
+
+    // 1. Get ALL scores from DB
+    fetch(`${SUPA_URL}/rest/v1/scores?select=symbol,signal,momentum&order=signal.desc&limit=200`, { headers: authHeaders })
       .then(r => r.json())
-      .then(d => {
-        const scores = d.scores || [];
-        setAllScores(scores);
-        setGradeAStocks(scores.filter(s => (s.signal ?? 0) >= 63));
+      .then(data => {
+        if (Array.isArray(data)) {
+          setAllScores(data);
+          setGradeAStocks(data.filter(s => (s.signal ?? 0) >= 63));
+        }
       }).catch(() => {});
 
-    // Fetch prices for all tickers + benchmarks
-    fetch(`/api/stocks?tickers=${encodeURIComponent(ALL_TICKERS + "," + BENCHMARKS.join(","))}`, { headers })
+    // 2. Get prices for Grade A tickers + benchmarks separately
+    const stockHeaders = { Authorization: `Bearer ${session.access_token}` };
+    fetch(`/api/stocks?tickers=${encodeURIComponent(ALL_TICKERS)}`, { headers: stockHeaders })
       .then(r => r.json())
       .then(d => {
-        const priceMap = {}, benchMap = {};
-        for (const s of d.data || []) {
-          if (BENCHMARKS.includes(s.symbol)) benchMap[s.symbol] = s;
-          else priceMap[s.symbol] = s;
-        }
+        const priceMap = {};
+        for (const s of d.data || []) priceMap[s.symbol] = s;
         setPrices(priceMap);
-        setBenchmarks(benchMap);
         setLoading(false);
       }).catch(() => setLoading(false));
+
+    // 3. Get benchmark prices independently
+    fetch(`/api/stocks?tickers=SPY,QQQ,XLK`, { headers: stockHeaders })
+      .then(r => r.json())
+      .then(d => {
+        const benchMap = {};
+        for (const s of d.data || []) benchMap[s.symbol] = s;
+        setBenchmarks(benchMap);
+      }).catch(() => {});
   }, [session]);
 
   // Load news for top grade A tickers
