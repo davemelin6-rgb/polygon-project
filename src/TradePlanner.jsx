@@ -213,7 +213,8 @@ export default function TradePlanner({ session }) {
           <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#3d5c78" }}>
             Today's Movers
           </div>
-          <div style={{ display: "flex", gap: 6 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: ".68rem", fontWeight: 700, color: "#3d5c78", letterSpacing: ".1em", textTransform: "uppercase" }}>Grade</span>
             {["A","B","C","D"].map(g => (
               <button key={g} onClick={() => setMoverGrade(g)} style={{
                 padding: "4px 12px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
