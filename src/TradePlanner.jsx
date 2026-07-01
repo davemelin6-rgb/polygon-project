@@ -37,8 +37,9 @@ const COMPANY_NAMES = {
 };
 
 export default function TradePlanner({ session }) {
-  const [allScores,    setAllScores]       = useState([]);
-  const [gradeAStocks, setGradeAStocks]   = useState([]);
+  const [allScores,     setAllScores]      = useState([]);
+  const [gradeAStocks,  setGradeAStocks]  = useState([]);
+  const [moverGrade,    setMoverGrade]    = useState("A");
   const [prices,       setPrices]          = useState({});
   const [benchmarks,   setBenchmarks]      = useState({});
   const [news,         setNews]            = useState([]);
@@ -131,8 +132,16 @@ export default function TradePlanner({ session }) {
   const allStocksWithSignal = Object.entries(prices)
     .map(([sym, p]) => ({ symbol: sym, changePercent: p.changePercent }));
 
-  // Sort movers from Grade A
-  const withPrices = gradeAStocks.filter(s => prices[s.symbol]?.changePercent != null)
+  // Grade thresholds
+  const GRADE_RANGES = { A: [63,101], B: [48,63], C: [35,48], D: [0,35] };
+  const GRADE_COLORS = { A: "#00dc82", B: "#22D3EE", C: "#f59e0b", D: "#ff3c50" };
+
+  // Movers for selected grade
+  const moverStocks = allScores.filter(s => {
+    const [min, max] = GRADE_RANGES[moverGrade];
+    return (s.signal ?? 0) >= min && (s.signal ?? 0) < max;
+  });
+  const withPrices = moverStocks.filter(s => prices[s.symbol]?.changePercent != null)
     .map(s => ({ ...s, ...prices[s.symbol] }))
     .sort((a, b) => (b.changePercent ?? 0) - (a.changePercent ?? 0));
   const rising  = withPrices.filter(s => s.changePercent > 0).slice(0, 6);
@@ -198,12 +207,30 @@ export default function TradePlanner({ session }) {
       </div>
 
       {/* Movers */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
+      <div style={panel}>
+        {/* Grade selector */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#3d5c78" }}>
+            Today's Movers
+          </div>
+          <div style={{ display: "flex", gap: 6 }}>
+            {["A","B","C","D"].map(g => (
+              <button key={g} onClick={() => setMoverGrade(g)} style={{
+                padding: "4px 12px", borderRadius: 8, cursor: "pointer", fontFamily: "inherit",
+                fontSize: ".75rem", fontWeight: 700, border: `1px solid ${moverGrade === g ? GRADE_COLORS[g] + "60" : "rgba(255,255,255,.07)"}`,
+                background: moverGrade === g ? GRADE_COLORS[g] + "15" : "rgba(255,255,255,.02)",
+                color: moverGrade === g ? GRADE_COLORS[g] : "#4a6a88",
+              }}>{g}</button>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.25rem" }}>
 
         {/* Rising */}
-        <div style={panel}>
-          <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#3d5c78", marginBottom: 14 }}>
-            ▲ Rising Today · Grade A
+        <div>
+          <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#00dc82", marginBottom: 14 }}>
+            ▲ Rising Today
           </div>
           {loading ? <div style={{ color: "#3d5c78", fontSize: ".8rem" }}>Loading…</div> :
           rising.length === 0 ? <div style={{ color: "#3d5c78", fontSize: ".8rem" }}>No data yet</div> :
@@ -217,16 +244,16 @@ export default function TradePlanner({ session }) {
                 <div style={{ fontFamily: "'Space Mono',monospace", fontSize: ".88rem", fontWeight: 700, color: "#00dc82" }}>
                   +{s.changePercent?.toFixed(2)}%
                 </div>
-                <div style={{ fontSize: ".65rem", color: "#3d5c78" }}>${s.price?.toFixed(2)}</div>
+                <div style={{ fontSize: ".65rem", color: "#3d5c78" }}>{s.price > 0 ? `$${s.price?.toFixed(2)}` : ""}</div>
               </div>
             </div>
           ))}
         </div>
 
         {/* Falling */}
-        <div style={panel}>
-          <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#3d5c78", marginBottom: 14 }}>
-            ▼ Falling Today · Grade A
+        <div>
+          <div style={{ fontSize: ".68rem", fontWeight: 700, letterSpacing: ".18em", textTransform: "uppercase", color: "#ff3c50", marginBottom: 14 }}>
+            ▼ Falling Today
           </div>
           {loading ? <div style={{ color: "#3d5c78", fontSize: ".8rem" }}>Loading…</div> :
           falling.length === 0 ? <div style={{ color: "#3d5c78", fontSize: ".8rem" }}>No data yet</div> :
@@ -240,10 +267,11 @@ export default function TradePlanner({ session }) {
                 <div style={{ fontFamily: "'Space Mono',monospace", fontSize: ".88rem", fontWeight: 700, color: "#ff3c50" }}>
                   {s.changePercent?.toFixed(2)}%
                 </div>
-                <div style={{ fontSize: ".65rem", color: "#3d5c78" }}>${s.price?.toFixed(2)}</div>
+                <div style={{ fontSize: ".65rem", color: "#3d5c78" }}>{s.price > 0 ? `$${s.price?.toFixed(2)}` : ""}</div>
               </div>
             </div>
           ))}
+        </div>
         </div>
       </div>
 
