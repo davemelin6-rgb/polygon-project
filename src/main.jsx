@@ -1,6 +1,7 @@
 import { StrictMode, useState, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { Analytics } from "@vercel/analytics/react";
+import CookieBanner from "./CookieBanner.jsx";
 import App from "./App.jsx";
 import Login from "./Login.jsx";
 import SetupPassword from "./SetupPassword.jsx";
@@ -92,5 +93,6 @@ createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Root />
     <Analytics />
+    <CookieBanner />
   </StrictMode>
 );

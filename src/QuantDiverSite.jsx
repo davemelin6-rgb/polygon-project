@@ -2100,7 +2100,7 @@ export default function QuantDiverSite({ onEnterApp }) {
               border: `1px solid ${T.border}`, borderRadius: 10, padding: "16px 18px",
               background: "rgba(8,14,28,.5)", fontFamily: ff.body,
             }}>
-              <b style={{ color: T.sub }}>Important:</b> QuantDiver and BriefMe provide general financial information and analysis for educational purposes only. Nothing on this platform constitutes investment advice, financial advice, or a recommendation to buy or sell any security. All investment decisions are made at your own risk. Past performance is not a guarantee of future results.
+              <b style={{ color: T.sub }}>Important:</b> QuantDiver provides financial data and proprietary scoring tools for informational and educational purposes only. Nothing on this platform constitutes investment advice, financial advice, or a recommendation to buy or sell any security. Back-tested and historical model performance does not guarantee future results. All investment decisions are made solely at your own risk.
             </div>
           </div>
         </footer>

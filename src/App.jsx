@@ -1120,7 +1120,8 @@ export default function App({ session, onLogout, onAdmin }) {
       <footer className="app-footer">
         <p style={{ marginBottom: "1.25rem" }}>
           QuantDiver provides data and proprietary scores for informational purposes only.
-          Nothing on this platform constitutes financial advice.
+          Nothing on this platform constitutes financial advice or a recommendation to buy or sell any security.
+          Past performance of back-tested models does not guarantee future results.
           Always conduct your own research before making any investment decision.
         </p>
         <div style={{

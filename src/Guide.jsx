@@ -164,8 +164,8 @@ export default function Guide() {
 
       {/* Disclaimer */}
       <p style={{ fontSize: ".75rem", color: "#1e3048", lineHeight: 1.8, textAlign: "center" }}>
-        QuantDiver scores and signals are for informational purposes only and do not constitute financial advice.
-        Past back-test performance does not guarantee future results. Always conduct your own research before making investment decisions.
+        QuantDiver scores and signals are for informational purposes only and do not constitute financial advice or a recommendation to buy or sell any security.
+        Back-tested and historical model performance does not guarantee future results. Always conduct your own research before making any investment decision.
       </p>
 
     </div>
