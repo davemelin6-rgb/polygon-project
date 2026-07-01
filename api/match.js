@@ -95,8 +95,11 @@ export default async function handler(req, res) {
 
     // ── join ──────────────────────────────────────────────────
     if (action === "join") {
-      const topic = (body.topic || "").toLowerCase();
+      const topic       = (body.topic || "").toLowerCase();
+      const traderType  = (body.trader_type || "swing").toLowerCase();
+      const VALID_TYPES = ["day", "swing", "long"];
       if (!VALID_TOPICS.includes(topic)) return res.status(400).json({ error: "Invalid topic" });
+      if (!VALID_TYPES.includes(traderType)) return res.status(400).json({ error: "Invalid trader type" });
 
       // Already in active session?
       const { data: existingSession } = await sb
@@ -113,11 +116,12 @@ export default async function handler(req, res) {
       const cutoff = new Date(Date.now() - STALE_MS).toISOString();
       await sb.from("match_queue").delete().lt("joined_at", cutoff).eq("status", "waiting");
 
-      // Look for a waiting match
+      // Look for a waiting match — same topic AND same trader type
       const { data: waiting } = await sb
         .from("match_queue")
         .select("*")
         .eq("topic", topic)
+        .eq("trader_type", traderType)
         .eq("status", "waiting")
         .neq("user_id", userId)
         .order("joined_at", { ascending: true })
@@ -125,28 +129,20 @@ export default async function handler(req, res) {
         .maybeSingle();
 
       if (waiting) {
-        // Create session
         const { data: session, error } = await sb
           .from("match_sessions")
           .insert({
-            user1_id:   waiting.user_id, user1_name: waiting.username,
-            user2_id:   userId,          user2_name: username,
-            topic,
+            user1_id: waiting.user_id, user1_name: waiting.username,
+            user2_id: userId,          user2_name: username,
+            topic, trader_type: traderType,
           })
-          .select()
-          .single();
+          .select().single();
 
         if (error) return res.status(500).json({ error: "Session creation failed" });
 
-        // Mark waiting user's entry as matched
-        await sb.from("match_queue")
-          .update({ status: "matched", session_id: session.id })
-          .eq("id", waiting.id);
-
-        // Insert own entry already matched (so their Realtime sub fires)
-        const { data: myEntry } = await sb
-          .from("match_queue")
-          .insert({ user_id: userId, username, topic, status: "matched", session_id: session.id })
+        await sb.from("match_queue").update({ status: "matched", session_id: session.id }).eq("id", waiting.id);
+        const { data: myEntry } = await sb.from("match_queue")
+          .insert({ user_id: userId, username, topic, trader_type: traderType, status: "matched", session_id: session.id })
           .select().single();
 
         return res.status(200).json({ matched: true, session, queueId: myEntry?.id });
@@ -155,10 +151,10 @@ export default async function handler(req, res) {
       // No match — join queue
       const { data: entry } = await sb
         .from("match_queue")
-        .insert({ user_id: userId, username, topic })
+        .insert({ user_id: userId, username, topic, trader_type: traderType })
         .select().single();
 
-      return res.status(200).json({ matched: false, queueId: entry?.id, topic });
+      return res.status(200).json({ matched: false, queueId: entry?.id, topic, trader_type: traderType });
     }
 
     // ── leave ─────────────────────────────────────────────────
