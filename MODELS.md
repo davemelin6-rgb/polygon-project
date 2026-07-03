@@ -215,6 +215,12 @@ MOM + RISK only:        MOM × 0.75 + RISK × 0.25
 
 1. **Look-ahead bias in INNOV/TECH backtest:** We cannot back-test INNOV/TECH because we only have current fundamentals. FMP Starter does not provide historical quarterly fundamentals. FMP Enterprise or Quandl would unlock this.
 
+2. **Annual reporters — up to 12 months of stale fundamental data:** Companies that file annually (common in Europe — NVO, ASML, many biotech and defence stocks) can have fundamental data that is 6-12 months old by the time the next report arrives. Example: a company with FY ending December 2025 files in March 2026 — by November 2026, you're scoring against revenue data that is 11 months old.
+   - **Impact:** TECH VALUE, TECH DEMAND, INNOVATION, and SENTIMENT scores for annual reporters may not reflect recent business performance.
+   - **Mitigation:** Analyst forward estimates (which we use) are updated continuously and partially offset this. Momentum is always real-time and unaffected.
+   - **UI disclosure:** Stock cards now show a ⚠️ warning when fundamentals are >6 months old, with the approximate age in months and whether the company reports annually.
+   - **Fix roadmap:** Weight analyst estimates more heavily for annual reporters. Add "last filing date" to the data display. Consider quarterly vs annual period detection to adjust confidence in TECH/INNOV scores.
+
 2. **Grade C vs D anomaly (90d):** Grade D slightly outperforms Grade C at 90 days (mean reversion effect). Reverses at 180 days. Long-term hold is the correct response.
 
 3. **Sector cycle blindness:** The model does not distinguish between a semiconductor stock at momentum 90 during a cycle peak vs mid-cycle. VIX adjustment partially mitigates but does not capture sector-specific cycles.

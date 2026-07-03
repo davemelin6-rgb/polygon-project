@@ -285,6 +285,14 @@ function StockCard({ stock, scores, chart, selected, onClick }) {
         </div>
       </div>
 
+      {/* Data age warning */}
+      {scores?.dataAgeDays != null && scores.dataAgeDays > 180 && (
+        <div style={{ fontSize: ".62rem", color: "#f59e0b", background: "rgba(245,158,11,.08)", border: "1px solid rgba(245,158,11,.2)", borderRadius: 6, padding: "4px 8px", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: 5 }}>
+          <span>⚠️</span>
+          <span>Fundamentals {Math.round(scores.dataAgeDays / 30)}mo old{scores.filingPeriod === "annual" ? " · annual reporter" : ""}</span>
+        </div>
+      )}
+
       <div className="score-section">
         <ScoreBar label="MOM"    value={scores?.momentum}   delta={scores?.deltas?.momentum}   />
         <ScoreBar label="RISK"   value={scores?.risk}        delta={scores?.deltas?.risk}       />
